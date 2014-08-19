@@ -6,7 +6,7 @@ namespace ChewyMoonsIrelia
     class Updater
     {
         public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsIrelia/Version/version.txt";
-        public static readonly string Version = "1.2-RELEASE";
+        public static readonly string Version = "1.2.1-RELEASE";
 
         public static void CheckForUpdates()
         {

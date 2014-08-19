@@ -124,7 +124,7 @@ namespace ChewyMoonsIrelia
             var useE = _menu.Item("useE").GetValue<bool>();
             var useR = _menu.Item("useR").GetValue<bool>();
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
-            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Physical);
             
             if (target == null) return;
 
