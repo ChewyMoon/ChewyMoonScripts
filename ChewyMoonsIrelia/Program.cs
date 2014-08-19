@@ -13,7 +13,7 @@ namespace ChewyMoonsIrelia
     class Program
     {
         private const string ChampName = "Irelia";
-        private const string Version = "0.1";
+        private const string Version = "0.2";
 
         private static Menu _menu;
         private static Orbwalking.Orbwalker _orbwalker;
@@ -33,7 +33,7 @@ namespace ChewyMoonsIrelia
 
         static void Game_OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.ChampionName != ChampName)
+            if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
             Q = new Spell(SpellSlot.Q, 650);
@@ -47,13 +47,12 @@ namespace ChewyMoonsIrelia
 
             SetupMenu();
 
-            Utilities.PrintChat("Loaded version (" + Version + ")");
+            Utilities.PrintChat("Loaded version (" + Version + ") by ChewyMoon.");
             Game.OnGameUpdate += Game_OnGameUpdate;
         }
 
         static void Game_OnGameUpdate(EventArgs args)
         {
-
             FireCharges();
 
             if (!Orbwalking.CanMove(100)) return;
@@ -73,12 +72,8 @@ namespace ChewyMoonsIrelia
             if (!_hasToFire) return;
 
             R.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical)); //Dunnno
-
             _charges -= 1;
-
             _hasToFire = _charges != 0;
-
-
         }
 
         private static void Combo()
