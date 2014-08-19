@@ -1,9 +1,10 @@
-ChewyMoonScripts
-================
+# ChewyMoon's Scripts :octocat:
 
 Collection of my scripts, for L#. Everything released under GPL v2
 
-Irelia
-======
+
+## Scripts
+
+###Irelia
 
 WIP, doesn't work yet.
