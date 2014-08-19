@@ -3,6 +3,8 @@ ChewyMoon's Scripts
 
 Hi, Im ChewyMoon. These are my scripts, currently only Irelia. I will be releasing more content, just give me time!
 
+**DOWNLOADS AVAILABLE AT:** https://github.com/ChewyMoon/ChewyMoonScripts/releases
+
 ### Donations
 
 I glady accept donations. Leave a message and if you want I'll make a script of your choice(Will be free and public). Be sure to include your Reddit/IRC username.
