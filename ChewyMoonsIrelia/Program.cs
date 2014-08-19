@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX.Win32;
+using SharpDX;
 
 namespace ChewyMoonsIrelia
 {
     class Program
     {
         private const string ChampName = "Irelia";
-        private const string Version = "0.2";
 
         private static Menu _menu;
         private static Orbwalking.Orbwalker _orbwalker;
@@ -25,6 +19,8 @@ namespace ChewyMoonsIrelia
         // Irelia Ultimate stuff.
         private static bool _hasToFire = false;
         private static int _charges = 0;
+
+        private static bool _packetCast;
 
         static void Main(string[] args)
         {
@@ -47,23 +43,65 @@ namespace ChewyMoonsIrelia
 
             SetupMenu();
 
-            Utilities.PrintChat("Loaded version (" + Version + ") by ChewyMoon.");
+            Updater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
+            Obj_AI_Base.OnProcessSpellCast += ObjAiBaseOnOnProcessSpellCast;
         }
+
+        private static void ObjAiBaseOnOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!_menu.Item("interruptUlts").GetValue<bool>()) return;
+
+            String[] spellsToInterrupt =
+            {
+                "AbsoluteZero",
+                "AlZaharNetherGrasp",
+                "CaitlynAceintheHole",
+                "Crowstorm",
+                "DrainChannel",
+                "FallenOne",
+                "GalioIdolOfDurand",
+                "InfiniteDuress",
+                "KatarinaR",
+                "MissFortuneBulletTime",
+                "Teleport",
+                "Pantheon_GrandSkyfall_Jump",
+                "ShenStandUnited",
+                "UrgotSwap2"
+            };
+
+            var spellName = args.SData.Name;
+            var target = sender;
+
+            foreach (var spell in spellsToInterrupt)
+            {
+                if (_menu.Item("interruptQE").GetValue<bool>())
+                {
+                    if (!CanStunTarget(target)) continue;
+                    if (Q.IsReady()) Q.Cast(target, _packetCast);
+                    if (E.IsReady()) E.Cast(target, _packetCast);
+                }
+                else
+                {
+                    if (!CanStunTarget(target)) continue;
+                    if (E.IsReady()) E.Cast(target, _packetCast);
+                }
+            }
+
+        }
+
 
         static void Game_OnGameUpdate(EventArgs args)
         {
+            _packetCast = _menu.Item("packetCast").GetValue<bool>();
+
             FireCharges();
 
             if (!Orbwalking.CanMove(100)) return;
 
-            if (_menu.Item("comboActive").GetValue<KeyBind>().Active)
+            if (_menu.Item("comboActive").GetValue<KeyBind>().Active && !ObjectManager.Player.IsDead)
             {
                 Combo();
-            }
-            else if (_menu.Item("harassActive").GetValue<KeyBind>().Active)
-            {
-                Harass();
             }
         }
 
@@ -71,7 +109,7 @@ namespace ChewyMoonsIrelia
         {
             if (!_hasToFire) return;
 
-            R.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical)); //Dunnno
+            R.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical), _packetCast); //Dunnno
             _charges -= 1;
             _hasToFire = _charges != 0;
         }
@@ -98,7 +136,7 @@ namespace ChewyMoonsIrelia
             // follow up with q
             if (useQ && Q.IsReady())
             {
-                Q.Cast(target);
+                Q.Cast(target, _packetCast);
             }
 
             // stunerino
@@ -108,12 +146,12 @@ namespace ChewyMoonsIrelia
                 {
                     if (CanStunTarget(target))
                     {
-                        E.Cast(target);
+                        E.Cast(target, _packetCast);
                     }
                 }
                 else
                 {
-                    E.Cast(target);
+                    E.Cast(target, _packetCast);
                 }
             }
             
@@ -122,11 +160,6 @@ namespace ChewyMoonsIrelia
             if (!useR || !R.IsReady() || _hasToFire) return;
             _hasToFire = true;
             _charges = 4;
-        }
-
-        private static void Harass()
-        {
-            // not implemented yet :/
         }
 
         private static bool CanStunTarget(AttackableUnit target)
@@ -156,10 +189,16 @@ namespace ChewyMoonsIrelia
             comboMenu.AddItem(new MenuItem("useEStun", "Use e only if target can be stunned").SetValue(false));
             comboMenu.AddItem(new MenuItem("useR", "Use R in combo").SetValue(true));
             _menu.AddSubMenu(comboMenu);
+            
+            //Misc
+            var miscMenu = new Menu("[ChewyMoon's Irelia - Misc", "cmIreliaMisc");
+            miscMenu.AddItem(new MenuItem("interruptUlts", "Interrupt ults with E").SetValue(true));
+            miscMenu.AddItem(new MenuItem("interruptQE", "Q + E to interrupt if not in range").SetValue(true));
+            miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));
+            _menu.AddSubMenu(miscMenu);
 
-            // Use combo / harass
+            // Use combo
             _menu.AddItem(new MenuItem("comboActive", "Combo").SetValue(new KeyBind(32, KeyBindType.Press)));
-            _menu.AddItem(new MenuItem("harassActive", "Harass").SetValue(new KeyBind('v', KeyBindType.Press)));
 
             // Finalize
             _menu.AddToMainMenu();
