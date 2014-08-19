@@ -11,11 +11,7 @@ Donate to chewymoonleaguesharp@gmail.com
 
 (Donation button also availble on website)
 
-## Scripts
-
-Here is the complete list of scripts.
-
-### Irelia
+##Irelia
 
 A simple script for Irelia, top lane.
 
