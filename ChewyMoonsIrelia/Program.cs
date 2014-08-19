@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -20,7 +21,7 @@ namespace ChewyMoonsIrelia
         private static bool _hasToFire = false;
         private static int _charges = 0;
 
-        private static bool _packetCast;
+        private const bool _packetCast = false;
 
         static void Main(string[] args)
         {
@@ -37,8 +38,8 @@ namespace ChewyMoonsIrelia
             E = new Spell(SpellSlot.E, 425);
             R = new Spell(SpellSlot.R, 1000);
 
-            Q.SetSkillshot(0.25f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.15f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotCircle);
+            //Q.SetSkillshot(0.25f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotLine);
+            //E.SetSkillshot(0.15f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotCircle);
             R.SetSkillshot(0.15f, 80f, 1500f, false, Prediction.SkillshotType.SkillshotLine);
 
             SetupMenu();
@@ -73,7 +74,7 @@ namespace ChewyMoonsIrelia
             var spellName = args.SData.Name;
             var target = sender;
 
-            foreach (var spell in spellsToInterrupt)
+            foreach (var spell in spellsToInterrupt.Where(spell => spell == spellName))
             {
                 if (_menu.Item("interruptQE").GetValue<bool>())
                 {
@@ -93,7 +94,7 @@ namespace ChewyMoonsIrelia
 
         static void Game_OnGameUpdate(EventArgs args)
         {
-            _packetCast = _menu.Item("packetCast").GetValue<bool>();
+            //_packetCast = _menu.Item("packetCast").GetValue<bool>();
 
             FireCharges();
 
@@ -117,17 +118,16 @@ namespace ChewyMoonsIrelia
         private static void Combo()
         {
             // Simple combo q -> w -> e -> r
-
+            Game.PrintChat("combo called");
             var useQ = _menu.Item("useQ").GetValue<bool>();
             var useW = _menu.Item("useW").GetValue<bool>();
             var useE = _menu.Item("useE").GetValue<bool>();
             var useR = _menu.Item("useR").GetValue<bool>();
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
-
             var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+            
             if (target == null) return;
 
-            // start with w.
             if (useW && W.IsReady())
             {
                 W.Cast();
@@ -194,7 +194,7 @@ namespace ChewyMoonsIrelia
             var miscMenu = new Menu("[ChewyMoon's Irelia - Misc", "cmIreliaMisc");
             miscMenu.AddItem(new MenuItem("interruptUlts", "Interrupt ults with E").SetValue(true));
             miscMenu.AddItem(new MenuItem("interruptQE", "Q + E to interrupt if not in range").SetValue(true));
-            miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));
+            //miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false)); //PACKETS BUGGY AF
             _menu.AddSubMenu(miscMenu);
 
             // Use combo
