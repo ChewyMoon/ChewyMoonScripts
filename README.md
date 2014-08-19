@@ -1,3 +1,11 @@
+### Donations
+
+I glady accept donations. Leave a message and if you want I'll make a script of your choice(Will be free and public). Be sure to include your Reddit/IRC username.
+
+Donate to chewymoonleaguesharp@gmail.com
+
+(Donation button also availble on website)
+
 ChewyMoon's Scripts
 ===================
 
