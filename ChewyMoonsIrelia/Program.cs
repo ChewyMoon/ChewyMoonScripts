@@ -272,14 +272,14 @@ namespace ChewyMoonsIrelia
             // Lasthiting
             var farmingMenu = new Menu("[ChewyMoon's Irelia] - Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
-            farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind('x', KeyBindType.Press)));
+            farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind(88, KeyBindType.Press)));
             farmingMenu.AddItem(new MenuItem("qNoFarmTower", "Don't Q minions under tower").SetValue(false));
             // Wave clear submenu
             var waveClearMenu = new Menu("Wave Clear", "cmIreliaFarmingWaveClear");
             waveClearMenu.AddItem(new MenuItem("useQWC", "Use Q").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("useWWC", "Use W").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("useRWC", "Use R").SetValue(false));
-            waveClearMenu.AddItem(new MenuItem("waveClear", "Wave Clear!").SetValue(new KeyBind('v', KeyBindType.Press)));
+            waveClearMenu.AddItem(new MenuItem("waveClear", "Wave Clear!").SetValue(new KeyBind(86, KeyBindType.Press)));
             farmingMenu.AddSubMenu(waveClearMenu);
             _menu.AddSubMenu(farmingMenu);
 
