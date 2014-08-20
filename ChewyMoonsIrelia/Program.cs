@@ -116,6 +116,11 @@ namespace ChewyMoonsIrelia
 
             if (!Orbwalking.CanMove(100)) return;
 
+            if (_menu.Item("waveClear").GetValue<KeyBind>().Active && !ObjectManager.Player.IsDead)
+            {
+                WaveClear();
+            }
+
             if (_menu.Item("comboActive").GetValue<KeyBind>().Active && !ObjectManager.Player.IsDead)
             {
                 Combo();
@@ -124,11 +129,6 @@ namespace ChewyMoonsIrelia
             if (_menu.Item("qLastHit").GetValue<KeyBind>().Active && _menu.Item("qLasthitEnable").GetValue<bool>() && !ObjectManager.Player.IsDead)
             {
                 LastHitWithQ();
-            }
-
-            if (_menu.Item("waveClear").GetValue<KeyBind>().Active && !ObjectManager.Player.IsDead)
-            {
-                WaveClear();
             }
         }
 
@@ -141,9 +141,9 @@ namespace ChewyMoonsIrelia
             var minions = MinionManager.GetMinions(ObjectManager.Player.Position, 650);
             foreach (var minion in minions)
             {
-                if (Q.IsReady() && useQ) Q.Cast(minion, _packetCast);
-                if (W.IsReady() && useW) W.Cast();
-                if (R.IsReady() && useR) R.Cast(minion, _packetCast);
+                if (useQ) Q.Cast(minion, _packetCast);
+                if (useW) W.Cast();
+                if (useR) R.Cast(minion, _packetCast);
             }
         }
 
