@@ -175,7 +175,24 @@ namespace ChewyMoonsIrelia
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
             var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Physical);
             
-            if (target == null) return;
+            if (target == null || !target.IsValid) return;
+
+            var isUnderTower = Utility.UnderTurret(target);
+            var diveTower = _menu.Item("diveTower").GetValue<bool>();
+            var doNotCombo = false;
+
+            // if target is under tower, and we do not want to dive
+            if (isUnderTower && !diveTower)
+            {
+                // Calculate percent hp
+                var percent = (int) target.Health/target.MaxHealth*100;
+                var overridePercent = _menu.Item("diveTowerPercent").GetValue<Slider>().Value;
+
+                if (percent > overridePercent) doNotCombo = true;
+
+            }
+
+            if (doNotCombo) return;
 
             if (useW && W.IsReady())
             {
@@ -264,6 +281,8 @@ namespace ChewyMoonsIrelia
             miscMenu.AddItem(new MenuItem("interruptUlts", "Interrupt ults with E").SetValue(true));
             miscMenu.AddItem(new MenuItem("interruptQE", "Q + E to interrupt if not in range").SetValue(true));
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));
+            miscMenu.AddItem(new MenuItem("diveTower", "Dive tower when combo'ing").SetValue(false));
+            miscMenu.AddItem(new MenuItem("diveTowerPercent", "Override dive tower").SetValue(new Slider(10)));
             _menu.AddSubMenu(miscMenu);
 
             // Use combo, last hit, c
