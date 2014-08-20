@@ -121,7 +121,7 @@ namespace ChewyMoonsIrelia
                 Combo();
             }
 
-            if (_menu.Item("qLasthit").GetValue<KeyBind>().Active && _menu.Item("qLasthitEnable").GetValue<bool>() && !ObjectManager.Player.IsDead)
+            if (_menu.Item("qLastHit").GetValue<KeyBind>().Active && _menu.Item("qLasthitEnable").GetValue<bool>() && !ObjectManager.Player.IsDead)
             {
                 LastHitWithQ();
             }
@@ -138,7 +138,7 @@ namespace ChewyMoonsIrelia
             var useW = _menu.Item("useWWC").GetValue<bool>();
             var useR = _menu.Item("useRWC").GetValue<bool>();
 
-            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
+            var minions = MinionManager.GetMinions(ObjectManager.Player.Position, 650);
             foreach (var minion in minions)
             {
                 if (Q.IsReady() && useQ) Q.Cast(minion, _packetCast);
@@ -150,7 +150,6 @@ namespace ChewyMoonsIrelia
         private static void LastHitWithQ()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
-
             foreach (var minion in minions.Where(minion => Q.GetDamage(minion) >= minion.Health))
             {
                 Q.Cast(minion, _packetCast);
