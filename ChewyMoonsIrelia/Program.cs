@@ -152,7 +152,20 @@ namespace ChewyMoonsIrelia
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
             foreach (var minion in minions.Where(minion => Q.GetDamage(minion) >= minion.Health))
             {
-                Q.Cast(minion, _packetCast);
+                var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
+                // If do not farm under tower
+                if (noFarmDangerous)
+                {
+                    if (!Utility.UnderTurret(minion))
+                    {
+                        Q.Cast(minion, _packetCast);
+                    }
+                }
+                else
+                {
+                    Q.Cast(minion, _packetCast);
+                }
+                
             }
         }
 
@@ -260,6 +273,7 @@ namespace ChewyMoonsIrelia
             var farmingMenu = new Menu("[ChewyMoon's Irelia] - Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
             farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind('x', KeyBindType.Press)));
+            farmingMenu.AddItem(new MenuItem("qNoFarmTower", "Don't Q minions under tower").SetValue(false));
             // Wave clear submenu
             var waveClearMenu = new Menu("Wave Clear", "cmIreliaFarmingWaveClear");
             waveClearMenu.AddItem(new MenuItem("useQWC", "Use Q").SetValue(true));
