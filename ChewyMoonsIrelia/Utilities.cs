@@ -2,7 +2,7 @@
 
 namespace ChewyMoonsIrelia
 {
-    class Utilities
+    public class Utilities
     {
         /// <summary>
         /// Thanks honda <3
