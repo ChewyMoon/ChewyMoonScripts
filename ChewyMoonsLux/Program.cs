@@ -14,6 +14,8 @@ namespace ChewyMoonsLux
         {
             if (ObjectManager.Player.BaseSkinName != "Lux") return;
 
+            Game.PrintChat("ChewyMoon's Lux is under development, sorry if SVNCompiler built it!");
+
             var lux = new ChewyMoonsLux();
             CustomEvents.Game.OnGameLoad += lux.OnGameLoad;
         }
