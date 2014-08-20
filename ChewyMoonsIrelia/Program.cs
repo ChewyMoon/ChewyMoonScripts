@@ -169,7 +169,6 @@ namespace ChewyMoonsIrelia
         private static void Combo()
         {
             // Simple combo q -> w -> e -> r
-            Game.PrintChat("combo called");
             var useQ = _menu.Item("useQ").GetValue<bool>();
             var useW = _menu.Item("useW").GetValue<bool>();
             var useE = _menu.Item("useE").GetValue<bool>();
