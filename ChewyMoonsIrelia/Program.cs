@@ -215,7 +215,19 @@ namespace ChewyMoonsIrelia
             // follow up with q
             if (useQ && Q.IsReady())
             {
-                Q.Cast(target, _packetCast);
+                if (_menu.Item("dontQ").GetValue<bool>())
+                {
+                    var distance = ObjectManager.Player.Distance(target);
+
+                    if (distance > _menu.Item("dontQRange").GetValue<Slider>().Value)
+                    {
+                        Q.Cast(target, _packetCast);
+                    }
+                }
+                else
+                {
+                    Q.Cast(target, _packetCast);
+                }
             }
 
             // stunerino
@@ -297,6 +309,8 @@ namespace ChewyMoonsIrelia
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));
             miscMenu.AddItem(new MenuItem("diveTower", "Dive tower when combo'ing").SetValue(false));
             miscMenu.AddItem(new MenuItem("diveTowerPercent", "Override dive tower").SetValue(new Slider(10)));
+            miscMenu.AddItem(new MenuItem("dontQ", "Dont Q if range is small").SetValue(false));
+            miscMenu.AddItem(new MenuItem("dontQRange", "Q Range").SetValue(new Slider(200, 0, 650)));
             _menu.AddSubMenu(miscMenu);
 
             // Use combo, last hit, c
