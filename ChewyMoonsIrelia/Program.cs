@@ -141,7 +141,21 @@ namespace ChewyMoonsIrelia
             var minions = MinionManager.GetMinions(ObjectManager.Player.Position, 650);
             foreach (var minion in minions)
             {
-                if (useQ) Q.Cast(minion, _packetCast);
+                if (useQ)
+                {
+                    if (_menu.Item("useQWCKillable").GetValue<bool>())
+                    {
+                        var damage = Q.GetDamage(minion);
+
+                        if (damage >= minion.Health)
+                            Q.Cast(minion, _packetCast);
+                    }
+                    else
+                    {
+                        Q.Cast(minion, _packetCast);
+                    }
+                }
+
                 if (useW) W.Cast();
                 if (useR) R.Cast(minion, _packetCast);
             }
@@ -291,6 +305,7 @@ namespace ChewyMoonsIrelia
             waveClearMenu.AddItem(new MenuItem("useQWC", "Use Q").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("useWWC", "Use W").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("useRWC", "Use R").SetValue(false));
+            waveClearMenu.AddItem(new MenuItem("useQWCKillable", "Only Q killable minions").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("waveClear", "Wave Clear!").SetValue(new KeyBind(86, KeyBindType.Press)));
             farmingMenu.AddSubMenu(waveClearMenu);
             _menu.AddSubMenu(farmingMenu);
