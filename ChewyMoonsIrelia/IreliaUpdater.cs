@@ -10,7 +10,7 @@ namespace ChewyMoonsIrelia
     class IreliaUpdater
     {
         public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsIrelia/Version/version.txt";
-        public static readonly string Version = "1.4.3";
+        public static readonly string Version = "1.4.4";
         public static readonly string UpdateUrl = "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsIrelia.exe";
 
         public static void CheckForUpdates()
@@ -53,11 +53,11 @@ namespace ChewyMoonsIrelia
         public bool NeedUpdate = false;
         public string UpdateVersion;
 
-        public Updater(string versionlink, string updatelink, float localversion)
+        public Updater(string versionlink, string updatelink, string localversion)
         {
             _updatelink = updatelink;
             UpdateVersion = _wc.DownloadString(versionlink);
-            NeedUpdate = Convert.ToInt32(UpdateVersion) > localversion;
+            NeedUpdate = UpdateVersion != localversion;
         }
 
         public bool Update()
