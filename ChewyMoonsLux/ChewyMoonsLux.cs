@@ -44,6 +44,9 @@ namespace ChewyMoonsLux
 
             //AntiGapCloser
             AntiGapcloser.OnEnemyGapcloser += QGapCloser.OnEnemyGapCloser;
+
+            // Orbwalker
+            Orbwalking.AfterAttack += LuxCombo.AfterAttack;
         }
 
         private static void OnDraw(EventArgs args)
@@ -94,6 +97,7 @@ namespace ChewyMoonsLux
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
+            comboMenu.AddItem(new MenuItem("aaAfterSpell", "AA after spell").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             // Harass Settings

@@ -41,6 +41,7 @@
     <Reference Include="LeagueSharp.Common">
       <HintPath>..\..\..\Assemblies\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="SharpDX, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Assemblies\System\SharpDX.dll</HintPath>
@@ -66,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Fakes Include="Fakes\LeagueSharp.fakes" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="chewie %281%29.ico" />
