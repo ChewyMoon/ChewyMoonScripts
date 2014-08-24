@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSharp;
+﻿using LeagueSharp;
 using LeagueSharp.Common;
+using System;
 
 namespace ChewyMoonsLux
 {
     class LuxCombo
     {
-        private static bool haveToAA = false;
+        private static bool _haveToAa;
 
         public static void OnGameUpdate(EventArgs args)
         {
@@ -25,7 +21,7 @@ namespace ChewyMoonsLux
 
         internal static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
-            haveToAA = false;
+            _haveToAa = false;
         }
 
         private static void Combo()
@@ -36,11 +32,41 @@ namespace ChewyMoonsLux
             var useR = ChewyMoonsLux.Menu.Item("useR").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
+            var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaAfterSpell").GetValue<bool>();
 
-            if (!target.IsValid || haveToAA) return;
+            if (!target.IsValid || _haveToAa) return;
+            if (useQ && !_haveToAa)
+            {
+                // Add option to change hitchance? Idkkk
+                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, Prediction.HitChance.HighHitchance,
+                    ChewyMoonsLux.PacketCast);
+                if (aaAfterSpell)
+                {
+                    _haveToAa = true;
+                    ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                }
+            }
 
+            if (useE && !_haveToAa)
+            {
+                ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
+                if (aaAfterSpell)
+                {
+                    _haveToAa = true;
+                    ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                }
+            }
 
+            if (useW)
+            {
+                ChewyMoonsLux.W.Cast(Game.CursorPos, ChewyMoonsLux.PacketCast);
+            }
 
+            if (!useR || _haveToAa) return;
+            ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
+            if (!aaAfterSpell) return;
+            _haveToAa = true;
+            ChewyMoonsLux.Orbwalker.ForceTarget(target);
         }
     }
 }
