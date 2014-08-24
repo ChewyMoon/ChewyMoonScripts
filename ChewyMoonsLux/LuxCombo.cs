@@ -4,7 +4,7 @@ using System;
 
 namespace ChewyMoonsLux
 {
-    class LuxCombo
+    internal class LuxCombo
     {
         private static bool _haveToAa;
 
@@ -35,7 +35,7 @@ namespace ChewyMoonsLux
             var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaAfterSpell").GetValue<bool>();
 
             if (!target.IsValid || _haveToAa) return;
-            if (useQ && !_haveToAa)
+            if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa) )
             {
                 // Add option to change hitchance? Idkkk
                 ChewyMoonsLux.Q.CastIfHitchanceEquals(target, Prediction.HitChance.HighHitchance,
@@ -47,7 +47,7 @@ namespace ChewyMoonsLux
                 }
             }
 
-            if (useE && !_haveToAa)
+            if (ChewyMoonsLux.E.IsReady() && useE && !_haveToAa) )
             {
                 ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
                 if (aaAfterSpell)
@@ -57,12 +57,12 @@ namespace ChewyMoonsLux
                 }
             }
 
-            if (useW)
+            if (ChewyMoonsLux.W.IsReady() && useW)
             {
                 ChewyMoonsLux.W.Cast(Game.CursorPos, ChewyMoonsLux.PacketCast);
             }
 
-            if (!useR || _haveToAa) return;
+            if (!ChewyMoonsLux.R.IsReady() || !useR || _haveToAa) return;
             ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
             if (!aaAfterSpell) return;
             _haveToAa = true;
