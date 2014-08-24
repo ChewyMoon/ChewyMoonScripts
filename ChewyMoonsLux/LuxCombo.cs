@@ -35,7 +35,7 @@ namespace ChewyMoonsLux
             var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaAfterSpell").GetValue<bool>();
 
             if (!target.IsValid || _haveToAa) return;
-            if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa) )
+            if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {
                 // Add option to change hitchance? Idkkk
                 ChewyMoonsLux.Q.CastIfHitchanceEquals(target, Prediction.HitChance.HighHitchance,
@@ -47,7 +47,7 @@ namespace ChewyMoonsLux
                 }
             }
 
-            if (ChewyMoonsLux.E.IsReady() && useE && !_haveToAa) )
+            if (ChewyMoonsLux.E.IsReady() && useE && !_haveToAa)
             {
                 ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
                 if (aaAfterSpell)
