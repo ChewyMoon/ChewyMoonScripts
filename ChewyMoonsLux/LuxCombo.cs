@@ -59,8 +59,7 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {
-                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, Prediction.HitChance.HighHitchance,
-                    ChewyMoonsLux.PacketCast);
+                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
                 if (aaAfterSpell)
                 {
                     _haveToAa = true;
@@ -90,8 +89,7 @@ namespace ChewyMoonsLux
             if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {
                 // Add option to change hitchance? Idkkk
-                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, Prediction.HitChance.HighHitchance,
-                    ChewyMoonsLux.PacketCast);
+                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
                 if (aaAfterSpell)
                 {
                     _haveToAa = true;
