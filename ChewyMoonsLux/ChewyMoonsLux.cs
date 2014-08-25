@@ -19,10 +19,10 @@ namespace ChewyMoonsLux
             R = new Spell(SpellSlot.R, 3340);
 
             // Refine skillshots
-            Q.SetSkillshot(0.25f, 80f, 1200f, true, Prediction.SkillshotType.SkillshotLine);
-            W.SetSkillshot(0.5f, 150f, 1200f, false, Prediction.SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.15f, 275f, 1300f, false, Prediction.SkillshotType.SkillshotCircle);
-            R.SetSkillshot(0.7f, 190f, float.MaxValue, false, Prediction.SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.25f, 80f, 1200f, true, SkillshotType.SkillshotLine);
+            W.SetSkillshot(0.5f, 150f, 1200f, false, SkillshotType.SkillshotLine);
+            E.SetSkillshot(0.15f, 275f, 1300f, false, SkillshotType.SkillshotCircle);
+            R.SetSkillshot(0.7f, 190f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
             // Setup Main Menu
             SetupMenu();
@@ -104,7 +104,7 @@ namespace ChewyMoonsLux
             // KS / Finisher Settings
             var ksMenu = new Menu("[ChewyMoon's Lux] - KS", "cmLuxKS");
             ksMenu.AddItem(new MenuItem("ultKS", "KS with R").SetValue(true));
-            ksMenu.AddItem(new MenuItem("recallExploitKS", "KS enemies recalling").SetValue(true));
+            //ksMenu.AddItem(new MenuItem("recallExploitKS", "KS enemies recalling").SetValue(true));
             Menu.AddSubMenu(ksMenu);
 
             // Items
@@ -132,8 +132,9 @@ namespace ChewyMoonsLux
             miscMenu.AddItem(new MenuItem("autoShieldPercent", "Auto Shield %").SetValue(new Slider(20)));
             Menu.AddSubMenu(miscMenu);
 
-            // Combo
+            // Combo / Harass
             Menu.AddItem(new MenuItem("combo", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
+            Menu.AddItem(new MenuItem("harass", "Harass!").SetValue(new KeyBind('v', KeyBindType.Press)));
 
             // Finalize
             Menu.AddToMainMenu();

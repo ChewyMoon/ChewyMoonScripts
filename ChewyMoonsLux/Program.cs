@@ -12,7 +12,7 @@ namespace ChewyMoonsLux
     {
         static void Main(string[] args)
         {
-            if (ObjectManager.Player.BaseSkinName != "Lux") return;
+            if (ObjectManager.Player.ChampionName != "Lux") return;
 
             Game.PrintChat("ChewyMoon's Lux is under development, sorry if SVNCompiler built it!");
 
