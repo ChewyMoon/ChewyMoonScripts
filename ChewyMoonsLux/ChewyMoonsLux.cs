@@ -73,20 +73,20 @@ namespace ChewyMoonsLux
 
         private static void SetupMenu()
         {
-            Menu = new Menu("--[ChewyMoon's Lux]--", "cmLux", true);
+            Menu = new Menu("[Chewy's Lux]", "cmLux", true);
 
             // Target Selector
-            var tsMenu = new Menu("[ChewyMoon's Lux] - TS", "cmLuxTs");
+            var tsMenu = new Menu("[Chewy's Lux] - TS", "cmLuxTs");
             SimpleTs.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
             // Orbwalker
-            var orbwalkerMenu = new Menu("[ChewyMoon's Lux] - Orbwalker", "cmLuxOrbwalker");
+            var orbwalkerMenu = new Menu("[Chewy's Lux] - Orbwalker", "cmLuxOrbwalker");
             Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
             Menu.AddSubMenu(orbwalkerMenu);
 
             // Combo settings
-            var comboMenu = new Menu("[ChewyMoon's Lux] - Combo", "cmLuxCombo");
+            var comboMenu = new Menu("[Chewy's Lux] - Combo", "cmLuxCombo");
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
@@ -95,25 +95,25 @@ namespace ChewyMoonsLux
             Menu.AddSubMenu(comboMenu);
 
             // Harass Settings
-            var harassMenu = new Menu("[ChewyMoon's Lux] - Harass", "cmLuxHarass");
+            var harassMenu = new Menu("[Chewy's Lux] - Harass", "cmLuxHarass");
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             harassMenu.AddItem(new MenuItem("aaHarass", "Auto attack after harass").SetValue(true));
             Menu.AddSubMenu(harassMenu);
 
             // KS / Finisher Settings
-            var ksMenu = new Menu("[ChewyMoon's Lux] - KS", "cmLuxKS");
+            var ksMenu = new Menu("[Chewy's Lux] - KS", "cmLuxKS");
             ksMenu.AddItem(new MenuItem("ultKS", "KS with R").SetValue(true));
             //ksMenu.AddItem(new MenuItem("recallExploitKS", "KS enemies recalling").SetValue(true));
             Menu.AddSubMenu(ksMenu);
 
             // Items
-            var itemsMenu = new Menu("[ChewyMoon's lux] - Items", "cmLuxItems");
+            var itemsMenu = new Menu("[Chewy's Lux] - Items", "cmLuxItems");
             itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
             Menu.AddSubMenu(itemsMenu);
 
             //Drawing
-            var drawingMenu = new Menu("[ChewyMoon's Lux] - Drawing", "cmLuxDrawing");
+            var drawingMenu = new Menu("[Chewy's Lux] - Drawing", "cmLuxDrawing");
             drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
             drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(false));
             drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
@@ -125,7 +125,7 @@ namespace ChewyMoonsLux
             Menu.AddSubMenu(drawingMenu);
 
             // Misc
-            var miscMenu = new Menu("[ChewyMoon's Lux] - Misc", "cmLuxMisc");
+            var miscMenu = new Menu("[Chewy's Lux] - Misc", "cmLuxMisc");
             miscMenu.AddItem(new MenuItem("antiGapCloserQ", "Stun all gap closers").SetValue(true));
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets for spells").SetValue(false));
             miscMenu.AddItem(new MenuItem("autoShield", "Auto-shield allies").SetValue(new KeyBind('c', KeyBindType.Toggle)));

@@ -85,7 +85,15 @@ namespace ChewyMoonsLux
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
             var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaAfterSpell").GetValue<bool>();
 
+            var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
+
             if (!target.IsValid || _haveToAa) return;
+
+            if (useDfg)
+            {
+                if(Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
+            }
+
             if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {
                 // Add option to change hitchance? Idkkk
