@@ -20,18 +20,15 @@ namespace ChewyMoonsLux
 
             // Refine skillshots
             Q.SetSkillshot(0.25f, 80f, 1200f, true, SkillshotType.SkillshotLine);
-            W.SetSkillshot(0.5f, 150f, 1200f, false, SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.15f, 275f, 1300f, false, SkillshotType.SkillshotCircle);
-            R.SetSkillshot(0.7f, 190f, float.MaxValue, false, SkillshotType.SkillshotLine);
+            W.SetSkillshot(0.25f, 150f, 1200f, false, SkillshotType.SkillshotLine);
+            E.SetSkillshot(0.25f, 275f, 1300f, false, SkillshotType.SkillshotCircle);
+            R.SetSkillshot(1.35f, 190f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
             // Setup Main Menu
             SetupMenu();
 
             // Checkerino for updates
             LuxUpdater.CheckForUpdates();
-
-            // Updaterino
-            Game.OnGameUpdate += LuxCombo.OnGameUpdate;
 
             // Draw
             Drawing.OnDraw += OnDraw;
@@ -41,6 +38,9 @@ namespace ChewyMoonsLux
 
             // Orbwalker
             Orbwalking.AfterAttack += LuxCombo.AfterAttack;
+
+            // Updaterino
+            Game.OnGameUpdate += LuxCombo.OnGameUpdate;
         }
 
         private static void OnDraw(EventArgs args)
