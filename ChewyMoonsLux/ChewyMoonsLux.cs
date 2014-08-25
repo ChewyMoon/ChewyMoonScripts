@@ -50,10 +50,10 @@ namespace ChewyMoonsLux
             var drawE = Menu.Item("drawE").GetValue<bool>();
             var drawR = Menu.Item("drawR").GetValue<bool>();
 
-            var qColor = Menu.Item("qColor").GetValue<Color>();
-            var wColor = Menu.Item("wColor").GetValue<Color>();
-            var eColor = Menu.Item("eColor").GetValue<Color>();
-            var rColor = Menu.Item("rColor").GetValue<Color>();
+            var qColor = Menu.Item("qColor").GetValue<Circle>().Color;
+            var wColor = Menu.Item("wColor").GetValue<Circle>().Color;
+            var eColor = Menu.Item("eColor").GetValue<Circle>().Color;
+            var rColor = Menu.Item("rColor").GetValue<Circle>().Color;
 
             var position = ObjectManager.Player.Position;
 
