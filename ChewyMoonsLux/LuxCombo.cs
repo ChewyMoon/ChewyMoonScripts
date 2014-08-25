@@ -28,11 +28,25 @@ namespace ChewyMoonsLux
                 Harass();
             }
 
+            if (ChewyMoonsLux.Menu.Item("autoShield").GetValue<KeyBind>().Active)
+            {
+                AutoShield();
+            }
+
         }
 
         internal static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
             _haveToAa = false;
+        }
+
+        private static void AutoShield()
+        {
+            // LINQ SO FUCKING GOOD
+            foreach (var hero in from hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()) let heroPercent = hero.Health/hero.MaxHealth*100 let shieldPercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<Slider>().Value where heroPercent <= shieldPercent select hero)
+            {
+                ChewyMoonsLux.W.Cast(hero, ChewyMoonsLux.PacketCast);
+            }
         }
 
         private static void KillSecure()

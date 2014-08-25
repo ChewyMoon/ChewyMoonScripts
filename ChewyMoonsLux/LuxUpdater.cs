@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,9 +12,37 @@ namespace ChewyMoonsLux
 {
     class LuxUpdater
     {
+
+        public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsLux/Version/version.txt";
+        public static readonly string Version = "1.0.0";
+        public static readonly string UpdateUrl = "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsLux.exe";
+
         public static void CheckForUpdates()
         {
-            //TODO
+            var bgWorker = new BackgroundWorker();
+            bgWorker.DoWork += delegate
+            {
+                var updater = new Updater(VersionUrl, UpdateUrl, Version);
+
+                if (updater.NeedUpdate)
+                {
+                    if (updater.Update())
+                    {
+                        //Success
+                        Utilities.PrintChat("Sucessfully updated to version " + updater.UpdateVersion + "!");
+                    }
+                    else
+                    {
+                        Utilities.PrintChat("Update failed.");
+                    }
+                }
+                else
+                {
+                    Utilities.PrintChat("You have the lastest version (" + Version + ")");
+                }
+
+            };
+            bgWorker.RunWorkerAsync();
         }
     }
 
