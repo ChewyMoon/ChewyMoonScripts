@@ -1,4 +1,5 @@
-﻿using LeagueSharp;
+﻿using System.Linq;
+using LeagueSharp;
 using LeagueSharp.Common;
 using System;
 
@@ -37,9 +38,8 @@ namespace ChewyMoonsLux
         private static void KillSecure()
         {
             // KILL SECURE MY ASS LOOL
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>())
+            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()))
             {
-                if (!hero.IsValidTarget()) return;
                 if (SharpDX.Vector2.Distance(hero.ServerPosition.To2D(), hero.ServerPosition.To2D()) > ChewyMoonsLux.R.Range) return;
                 if (ChewyMoonsLux.R.GetDamage(hero) < hero.Health) return;
 
@@ -55,7 +55,7 @@ namespace ChewyMoonsLux
             var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaHarass").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
-            if (!target.IsValid || !_haveToAa) return;
+            if (!target.IsValid || _haveToAa) return;
 
             if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {

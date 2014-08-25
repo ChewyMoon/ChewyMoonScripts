@@ -134,7 +134,7 @@ namespace ChewyMoonsLux
 
             // Combo / Harass
             Menu.AddItem(new MenuItem("combo", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
-            Menu.AddItem(new MenuItem("harass", "Harass!").SetValue(new KeyBind('v', KeyBindType.Press)));
+            //Menu.AddItem(new MenuItem("harass", "Harass!").SetValue(new KeyBind('v', KeyBindType.Press)));
 
             // Finalize
             Menu.AddToMainMenu();
