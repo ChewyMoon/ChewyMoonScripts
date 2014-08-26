@@ -10,7 +10,7 @@ namespace ChewyMoonsLux
     {
 
         public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsLux/Version/version.txt";
-        public static readonly string Version = "1.1.1";
+        public static readonly string Version = "1.2";
         public static readonly string UpdateUrl = "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsLux.exe";
 
         public static void CheckForUpdates()

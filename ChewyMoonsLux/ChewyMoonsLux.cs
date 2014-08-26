@@ -92,6 +92,7 @@ namespace ChewyMoonsLux
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
             comboMenu.AddItem(new MenuItem("aaAfterSpell", "AA after spell").SetValue(true));
+            comboMenu.AddItem(new MenuItem("onlyRIfKill", "Use R to kill only").SetValue(false));
             Menu.AddSubMenu(comboMenu);
 
             // Harass Settings

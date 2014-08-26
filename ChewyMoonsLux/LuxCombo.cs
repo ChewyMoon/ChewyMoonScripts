@@ -110,12 +110,15 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
             {
-                // Add option to change hitchance? Idkkk
-                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
-                if (aaAfterSpell)
+                // Add option to change hitchance? Idkkk;
+                var castedQ = ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
+                if (castedQ)
                 {
-                    _haveToAa = true;
-                    ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                    if (aaAfterSpell)
+                    {
+                        _haveToAa = true;
+                        ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                    }
                 }
             }
 
@@ -135,12 +138,19 @@ namespace ChewyMoonsLux
             }
 
             if (target.IsDead) return;
-
             if (!ChewyMoonsLux.R.IsReady() || !useR || _haveToAa) return;
-            ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
-            if (!aaAfterSpell) return;
-            _haveToAa = true;
-            ChewyMoonsLux.Orbwalker.ForceTarget(target);
+
+            if (ChewyMoonsLux.Menu.Item("onlyRIfKill").GetValue<bool>())
+            {
+                if (ChewyMoonsLux.R.GetDamage(target) >= target.Health)
+                {
+                    ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
+                }
+            }
+            else
+            {
+                ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
+            }
         }
     }
 }
