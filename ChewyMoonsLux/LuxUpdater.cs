@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChewyMoonsLux
 {
@@ -14,7 +10,7 @@ namespace ChewyMoonsLux
     {
 
         public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsLux/Version/version.txt";
-        public static readonly string Version = "1.1.0";
+        public static readonly string Version = "1.1.1";
         public static readonly string UpdateUrl = "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsLux.exe";
 
         public static void CheckForUpdates()

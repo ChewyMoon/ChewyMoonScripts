@@ -134,6 +134,8 @@ namespace ChewyMoonsLux
                 ChewyMoonsLux.W.Cast(Game.CursorPos, ChewyMoonsLux.PacketCast);
             }
 
+            if (target.IsDead) return;
+
             if (!ChewyMoonsLux.R.IsReady() || !useR || _haveToAa) return;
             ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
             if (!aaAfterSpell) return;
