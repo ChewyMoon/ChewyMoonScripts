@@ -1,7 +1,7 @@
 ChewyMoon's Scripts
 ===================
 
-Hi, Im ChewyMoon. These are my scripts, currently only Irelia. I will be releasing more content, just give me time!
+Hi, Im ChewyMoon. These are my scripts, currently only Irelia & Lux. I will be releasing more content, just give me time(riven..?)!
 
 **DOWNLOADS AVAILABLE AT:** https://github.com/ChewyMoon/ChewyMoonScripts/releases
 
