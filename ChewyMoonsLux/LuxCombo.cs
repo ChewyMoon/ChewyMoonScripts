@@ -37,28 +37,25 @@ namespace ChewyMoonsLux
 
         internal static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
+            if (!unit.IsMe) return;
             _haveToAa = false;
         }
 
         private static void AutoShield()
         {
-            // LINQ SO FUCKING GOOD
-            foreach (var hero in from hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()) let heroPercent = hero.Health/hero.MaxHealth*100 let shieldPercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<Slider>().Value where heroPercent <= shieldPercent select hero)
+            // linq op babbyyy
+            foreach (var teamMate in from teamMate in ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid) let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>() let ourPercent = teamMate.Health/teamMate.MaxHealth*100 where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady() select teamMate)
             {
-                ChewyMoonsLux.W.Cast(hero, ChewyMoonsLux.PacketCast);
+                ChewyMoonsLux.W.Cast(teamMate);
             }
         }
 
         private static void KillSecure()
         {
             // KILL SECURE MY ASS LOOL
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()))
+            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()).Where(hero => ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range && ChewyMoonsLux.R.GetDamage(hero) >= hero.Health && ChewyMoonsLux.R.IsReady()))
             {
-                if (SharpDX.Vector2.Distance(hero.ServerPosition.To2D(), hero.ServerPosition.To2D()) > ChewyMoonsLux.R.Range) return;
-                if (ChewyMoonsLux.R.GetDamage(hero) < hero.Health) return;
-
-                ChewyMoonsLux.R.Cast(hero, ChewyMoonsLux.PacketCast);
-                return;
+                ChewyMoonsLux.R.Cast(hero);
             }
         }
 
