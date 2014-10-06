@@ -2,54 +2,74 @@
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
 using Color = System.Drawing.Color;
 
 namespace ChewyMoonsIrelia
 {
-    class Program
+    internal class Program
     {
         private const string ChampName = "Irelia";
 
         private static Menu _menu;
-        private static Orbwalking.Orbwalker _orbwalker;
 
-        private static Spell Q, W, E, R;
+        private static Spell _q;
+        private static Spell _w;
+        private static Spell _e;
+        private static Spell _r;
 
         // Irelia Ultimate stuff.
         private static bool _hasToFire;
-        private static int _charges = 0;
+        private static int _charges;
 
         private static bool _packetCast;
 
-        static void Main(string[] args)
+        public static Orbwalking.Orbwalker Orbwalker { get; set; }
+
+        private static void Main()
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
-        static void Game_OnGameLoad(EventArgs args)
+        private static void Game_OnGameLoad(EventArgs args)
         {
             if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
-            Q = new Spell(SpellSlot.Q, 650);
-            W = new Spell(SpellSlot.W, ObjectManager.Player.AttackRange); // So confused.
-            E = new Spell(SpellSlot.E, 425);
-            R = new Spell(SpellSlot.R, 1000);
+            _q = new Spell(SpellSlot.Q, 650);
+            _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)); // So confused.
+            _e = new Spell(SpellSlot.E, 425);
+            _r = new Spell(SpellSlot.R, 1000);
 
             //Q.SetSkillshot(0.25f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotLine);
             //E.SetSkillshot(0.15f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotCircle);
-            R.SetSkillshot(0.15f, 80f, 1500f, false, SkillshotType.SkillshotLine); // fix new prediction
+            _r.SetSkillshot(0.15f, 80f, 1500f, false, SkillshotType.SkillshotLine); // fix new prediction
 
             SetupMenu();
 
             IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
-            Obj_AI_Base.OnProcessSpellCast += ObjAiBaseOnOnProcessSpellCast;
+            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
         }
 
-        static void Drawing_OnDraw(EventArgs args)
+        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        {
+            if (!_menu.Item("interruptUlts").GetValue<bool>()) return;
+            if (spell.DangerLevel != InterruptableDangerLevel.High || !CanStunTarget(unit)) return;
+
+            var range = unit.Distance(ObjectManager.Player);
+            if (range <= _e.Range)
+            {
+                _e.Cast(unit, _packetCast);
+            }
+            else if (range <= _q.Range)
+            {
+                _q.Cast(unit, _packetCast);
+                _e.Cast(unit, _packetCast);
+            }
+        }
+
+        private static void Drawing_OnDraw(EventArgs args)
         {
             var drawQ = _menu.Item("qDraw").GetValue<bool>();
             var drawE = _menu.Item("eDraw").GetValue<bool>();
@@ -57,58 +77,17 @@ namespace ChewyMoonsIrelia
 
             var position = ObjectManager.Player.Position;
 
-            if(drawQ)
-                Utility.DrawCircle(position, Q.Range, Color.Gray);
+            if (drawQ)
+                Utility.DrawCircle(position, _q.Range, Color.Gray);
 
-            if(drawE)
-                Utility.DrawCircle(position, E.Range, Color.Gray);
+            if (drawE)
+                Utility.DrawCircle(position, _e.Range, Color.Gray);
 
-            if(drawR)
-                Utility.DrawCircle(position, R.Range, Color.Gray);
+            if (drawR)
+                Utility.DrawCircle(position, _r.Range, Color.Gray);
         }
 
-        private static void ObjAiBaseOnOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (!_menu.Item("interruptUlts").GetValue<bool>()) return;
-
-            String[] spellsToInterrupt =
-            {
-                "AbsoluteZero",
-                "AlZaharNetherGrasp",
-                "CaitlynAceintheHole",
-                "Crowstorm",
-                "DrainChannel",
-                "FallenOne",
-                "GalioIdolOfDurand",
-                "InfiniteDuress",
-                "KatarinaR",
-                "MissFortuneBulletTime",
-                "Teleport",
-                "Pantheon_GrandSkyfall_Jump",
-                "ShenStandUnited",
-                "UrgotSwap2"
-            };
-
-            var spellName = args.SData.Name;
-            var target = sender;
-
-            foreach (var spell in spellsToInterrupt.Where(spell => spell == spellName))
-            {
-                if (_menu.Item("interruptQE").GetValue<bool>())
-                {
-                    if (!CanStunTarget(target)) continue;
-                    if (Q.IsReady()) Q.Cast(target, _packetCast);
-                    if (E.IsReady()) E.Cast(target, _packetCast);
-                }
-                else
-                {
-                    if (!CanStunTarget(target)) continue;
-                    if (E.IsReady()) E.Cast(target, _packetCast);
-                }
-            }
-        }
-
-        static void Game_OnGameUpdate(EventArgs args)
+        private static void Game_OnGameUpdate(EventArgs args)
         {
             _packetCast = _menu.Item("packetCast").GetValue<bool>();
 
@@ -126,7 +105,8 @@ namespace ChewyMoonsIrelia
                 Combo();
             }
 
-            if (_menu.Item("qLastHit").GetValue<KeyBind>().Active && _menu.Item("qLasthitEnable").GetValue<bool>() && !ObjectManager.Player.IsDead)
+            if (_menu.Item("qLastHit").GetValue<KeyBind>().Active && _menu.Item("qLasthitEnable").GetValue<bool>() &&
+                !ObjectManager.Player.IsDead)
             {
                 LastHitWithQ();
             }
@@ -145,26 +125,26 @@ namespace ChewyMoonsIrelia
                 {
                     if (_menu.Item("useQWCKillable").GetValue<bool>())
                     {
-                        var damage = Q.GetDamage(minion);
+                        var damage = _q.GetDamage(minion);
 
                         if (damage >= minion.Health)
-                            Q.Cast(minion, _packetCast);
+                            _q.Cast(minion, _packetCast);
                     }
                     else
                     {
-                        Q.Cast(minion, _packetCast);
+                        _q.Cast(minion, _packetCast);
                     }
                 }
 
-                if (useW) W.Cast();
-                if (useR) R.Cast(minion, _packetCast);
+                if (useW) _w.Cast();
+                if (useR) _r.Cast(minion, _packetCast);
             }
         }
 
         private static void LastHitWithQ()
         {
-            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
-            foreach (var minion in minions.Where(minion => Q.GetDamage(minion) >= minion.Health))
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range);
+            foreach (var minion in minions.Where(minion => _q.GetDamage(minion) >= minion.Health))
             {
                 var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
                 // If do not farm under tower
@@ -172,14 +152,13 @@ namespace ChewyMoonsIrelia
                 {
                     if (!Utility.UnderTurret(minion))
                     {
-                        Q.Cast(minion, _packetCast);
+                        _q.Cast(minion, _packetCast);
                     }
                 }
                 else
                 {
-                    Q.Cast(minion, _packetCast);
+                    _q.Cast(minion, _packetCast);
                 }
-                
             }
         }
 
@@ -187,7 +166,7 @@ namespace ChewyMoonsIrelia
         {
             if (!_hasToFire) return;
 
-            R.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical), _packetCast); //Dunnno
+            _r.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical), _packetCast); //Dunnno
             _charges -= 1;
             _hasToFire = _charges != 0;
         }
@@ -200,8 +179,8 @@ namespace ChewyMoonsIrelia
             var useE = _menu.Item("useE").GetValue<bool>();
             var useR = _menu.Item("useR").GetValue<bool>();
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
-            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Physical);
-            
+            var target = SimpleTs.GetTarget(_q.Range, SimpleTs.DamageType.Physical);
+
             if (target == null || !target.IsValid) return;
 
             var isUnderTower = Utility.UnderTurret(target);
@@ -216,53 +195,52 @@ namespace ChewyMoonsIrelia
                 var overridePercent = _menu.Item("diveTowerPercent").GetValue<Slider>().Value;
 
                 if (percent > overridePercent) doNotCombo = true;
-
             }
 
             if (doNotCombo) return;
 
-            if (useW && W.IsReady())
+            if (useW && _w.IsReady())
             {
-                W.Cast();
+                _w.Cast();
             }
 
             // follow up with q
-            if (useQ && Q.IsReady())
+            if (useQ && _q.IsReady())
             {
                 if (_menu.Item("dontQ").GetValue<bool>())
                 {
-                    var distance = ObjectManager.Player.Distance(target);
+                    float distance = ObjectManager.Player.Distance(target);
 
                     if (distance > _menu.Item("dontQRange").GetValue<Slider>().Value)
                     {
-                        Q.Cast(target, _packetCast);
+                        _q.Cast(target, _packetCast);
                     }
                 }
                 else
                 {
-                    Q.Cast(target, _packetCast);
+                    _q.Cast(target, _packetCast);
                 }
             }
 
             // stunerino
-            if (useE && E.IsReady())
+            if (useE && _e.IsReady())
             {
                 if (useEStun)
                 {
                     if (CanStunTarget(target))
                     {
-                        E.Cast(target, _packetCast);
+                        _e.Cast(target, _packetCast);
                     }
                 }
                 else
                 {
-                    E.Cast(target, _packetCast);
+                    _e.Cast(target, _packetCast);
                 }
             }
-            
+
             // Resharper did this, IDK if it works.
             // Original code:  if (useR && R.IsReady() && !hasToFire)
-            if (!useR || !R.IsReady() || _hasToFire) return;
+            if (!useR || !_r.IsReady() || _hasToFire) return;
             _hasToFire = true;
             _charges = 4;
         }
@@ -286,7 +264,7 @@ namespace ChewyMoonsIrelia
 
             // Orbwalker
             var orbwalkerMenu = new Menu("[ChewyMoon's Irelia] - Orbwalker", "cmIreliaOW");
-            _orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
+            Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
             _menu.AddSubMenu(orbwalkerMenu);
 
             // Combo
@@ -297,7 +275,7 @@ namespace ChewyMoonsIrelia
             comboMenu.AddItem(new MenuItem("useEStun", "Use e only if target can be stunned").SetValue(false));
             comboMenu.AddItem(new MenuItem("useR", "Use R in combo").SetValue(true));
             _menu.AddSubMenu(comboMenu);
-            
+
             // Lasthiting
             var farmingMenu = new Menu("[ChewyMoon's Irelia] - Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
