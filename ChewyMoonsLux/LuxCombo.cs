@@ -124,13 +124,6 @@ namespace ChewyMoonsLux
                 var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
                 if (output.AoeTargetsHitCount > 2) return;
 
-                var noEnemiesHit = true;
-                foreach (var @object in output.CollisionObjects.Where(@object => !@object.IsMinion))
-                {
-                    noEnemiesHit = false;
-                }
-
-                if (noEnemiesHit) return;
                 ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
 
                 if (aaAfterSpell)
