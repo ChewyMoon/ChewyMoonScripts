@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using System;
@@ -7,25 +8,28 @@ namespace ChewyMoonsLux
 {
     internal class LuxCombo
     {
-        private static bool _haveToAa;
+        private static readonly Dictionary<Obj_AI_Base, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Base, bool>(); 
 
         public static void OnGameUpdate(EventArgs args)
         {
             ChewyMoonsLux.PacketCast = ChewyMoonsLux.Menu.Item("packetCast").GetValue<bool>();
+
+            UpdateDictionary();
 
             if (ChewyMoonsLux.Menu.Item("ultKS").GetValue<bool>())
             {
                 KillSecure();
             }
 
-            if (ChewyMoonsLux.Menu.Item("combo").GetValue<KeyBind>().Active)
+            // should be reversed but w/e
+            if (Orbwalking.OrbwalkingMode.Combo == ChewyMoonsLux.Orbwalker.ActiveMode)
             {
                 Combo();
             }
 
             if (ChewyMoonsLux.Menu.Item("harass").GetValue<KeyBind>().Active)
             {
-                Harass();
+               // Harass();
             }
 
             if (ChewyMoonsLux.Menu.Item("autoShield").GetValue<KeyBind>().Active)
@@ -35,10 +39,13 @@ namespace ChewyMoonsLux
 
         }
 
-        internal static void AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private static void UpdateDictionary()
         {
-            if (!unit.IsMe) return;
-            _haveToAa = false;
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Base>())
+            {
+                AutoAttackDictionary.Clear();
+                AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
+            }
         }
 
         private static void AutoShield()
@@ -59,6 +66,7 @@ namespace ChewyMoonsLux
             }
         }
 
+        /*
         private static void Harass()
         {
             var useQ = ChewyMoonsLux.Menu.Item("useQHarass").GetValue<bool>();
@@ -85,7 +93,7 @@ namespace ChewyMoonsLux
             _haveToAa = true;
             ChewyMoonsLux.Orbwalker.ForceTarget(target);
         }
-
+        */
         private static void Combo()
         {
             var useQ = ChewyMoonsLux.Menu.Item("useQ").GetValue<bool>();
@@ -98,34 +106,43 @@ namespace ChewyMoonsLux
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (!target.IsValid || _haveToAa) return;
+            if (AutoAttackDictionary.Any(pair => pair.Key.Equals(target) && pair.Value && !aaAfterSpell))
+            {
+                ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, target);
+                return;
+            }
+            
+            if (!target.IsValid) return;
 
             if (useDfg)
             {
                 if(Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
             }
 
-            if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
+            if (ChewyMoonsLux.Q.IsReady() && useQ)
             {
-                // Add option to change hitchance? Idkkk;
-                var castedQ = ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
-                if (castedQ)
+                var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
+                if (output.AoeTargetsHitCount > 2) return;
+
+                var noEnemiesHit = true;
+                foreach (var @object in output.CollisionObjects.Where(@object => !@object.IsMinion))
                 {
-                    if (aaAfterSpell)
-                    {
-                        _haveToAa = true;
-                        ChewyMoonsLux.Orbwalker.ForceTarget(target);
-                    }
+                    noEnemiesHit = false;
                 }
+
+                if (noEnemiesHit) return;
+                ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
+
+                if (aaAfterSpell)
+                    return;
             }
 
-            if (ChewyMoonsLux.E.IsReady() && useE && !_haveToAa)
+            if (ChewyMoonsLux.E.IsReady() && useE)
             {
                 ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
                 if (aaAfterSpell)
                 {
-                    _haveToAa = true;
-                    ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                    return;
                 }
             }
 
@@ -135,7 +152,7 @@ namespace ChewyMoonsLux
             }
 
             if (target.IsDead) return;
-            if (!ChewyMoonsLux.R.IsReady() || !useR || _haveToAa) return;
+            if (!ChewyMoonsLux.R.IsReady() || !useR) return;
 
             if (ChewyMoonsLux.Menu.Item("onlyRIfKill").GetValue<bool>())
             {

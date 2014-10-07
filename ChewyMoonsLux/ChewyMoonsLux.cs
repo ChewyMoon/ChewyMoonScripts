@@ -28,7 +28,7 @@ namespace ChewyMoonsLux
             SetupMenu();
 
             // Checkerino for updates
-            LuxUpdater.CheckForUpdates();
+           // LuxUpdater.CheckForUpdates();
 
             // Draw
             Drawing.OnDraw += OnDraw;
@@ -37,10 +37,11 @@ namespace ChewyMoonsLux
             AntiGapcloser.OnEnemyGapcloser += QGapCloser.OnEnemyGapCloser;
 
             // Orbwalker
-            Orbwalking.AfterAttack += LuxCombo.AfterAttack;
+           // Orbwalking.AfterAttack += LuxCombo.AfterAttack;
 
             // Updaterino
             Game.OnGameUpdate += LuxCombo.OnGameUpdate;
+            Utilities.PrintChat("Loaded.");
         }
 
         private static void OnDraw(EventArgs args)
@@ -93,6 +94,7 @@ namespace ChewyMoonsLux
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
             comboMenu.AddItem(new MenuItem("aaAfterSpell", "AA after spell").SetValue(true));
             comboMenu.AddItem(new MenuItem("onlyRIfKill", "Use R to kill only").SetValue(false));
+            comboMenu.AddItem(new MenuItem("useIgnite", "Use ignite in combo").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             // Harass Settings
@@ -100,6 +102,7 @@ namespace ChewyMoonsLux
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             harassMenu.AddItem(new MenuItem("aaHarass", "Auto attack after harass").SetValue(true));
+            harassMenu.AddItem(new MenuItem("info", "Harass not implemented."));
             Menu.AddSubMenu(harassMenu);
 
             // KS / Finisher Settings
@@ -134,7 +137,7 @@ namespace ChewyMoonsLux
             Menu.AddSubMenu(miscMenu);
 
             // Combo / Harass
-            Menu.AddItem(new MenuItem("combo", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
+            //Menu.AddItem(new MenuItem("combo", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
             //Menu.AddItem(new MenuItem("harass", "Harass!").SetValue(new KeyBind('v', KeyBindType.Press)));
 
             // Finalize
