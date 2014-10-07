@@ -27,6 +27,7 @@ namespace ChewyMoonsIrelia
 
         private static void Main()
         {
+           
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
@@ -46,10 +47,11 @@ namespace ChewyMoonsIrelia
 
             SetupMenu();
 
-            IreliaUpdater.CheckForUpdates();
+           // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
+            Utilities.PrintChat("Loaded.");
         }
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
