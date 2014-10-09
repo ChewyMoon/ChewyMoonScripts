@@ -49,7 +49,7 @@ namespace ChewyMoonsLux
             }
 
             // Debug information
-            Console.Clear();
+            //Console.Clear();
             foreach (var pair in AutoAttackDictionary)
             {
                 Console.WriteLine("{0}: {1}", pair.Key.BaseSkinName, pair.Value);
