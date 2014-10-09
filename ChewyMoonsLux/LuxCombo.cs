@@ -41,9 +41,9 @@ namespace ChewyMoonsLux
 
         private static void UpdateDictionary()
         {
+            AutoAttackDictionary.Clear()
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
-                AutoAttackDictionary.Clear();
                 AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
             }
         }
