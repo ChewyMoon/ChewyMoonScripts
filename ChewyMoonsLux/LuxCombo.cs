@@ -43,16 +43,8 @@ namespace ChewyMoonsLux
         {
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
-                Console.WriteLine(enemy.BaseSkinName);
                 AutoAttackDictionary.Clear();
                 AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
-            }
-
-            // Debug information
-            //Console.Clear();
-            foreach (var pair in AutoAttackDictionary)
-            {
-                Console.WriteLine("{0}: {1}", pair.Key.BaseSkinName, pair.Value);
             }
         }
 
@@ -114,7 +106,7 @@ namespace ChewyMoonsLux
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (AutoAttackDictionary.Any(pair => pair.Key.Equals(target) && pair.Value && !aaAfterSpell))
+            if (AutoAttackDictionary.Any(pair => pair.Key.BaseSkinName == target.BaseSkinName && pair.Value && aaAfterSpell))
             {
                 ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, target);
                 return;
