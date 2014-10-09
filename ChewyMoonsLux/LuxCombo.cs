@@ -46,6 +46,13 @@ namespace ChewyMoonsLux
                 AutoAttackDictionary.Clear();
                 AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
             }
+
+            // Debug information
+            Console.Clear();
+            foreach (var pair in AutoAttackDictionary)
+            {
+                Console.WriteLine("{0}: {1}", pair.Key.BaseSkinName, pair.Value);
+            }
         }
 
         private static void AutoShield()
