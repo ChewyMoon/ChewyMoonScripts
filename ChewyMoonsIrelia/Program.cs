@@ -25,9 +25,8 @@ namespace ChewyMoonsIrelia
 
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
 
-        private static void Main()
+        private static void Main(string[] args)
         {
-           Console.WriteLine(ObjectManager.Player.BaseSkinName);
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
