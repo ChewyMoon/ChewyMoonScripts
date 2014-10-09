@@ -27,7 +27,7 @@ namespace ChewyMoonsIrelia
 
         private static void Main()
         {
-           
+           Console.WriteLine(ObjectManager.Player.BaseSkinName);
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
