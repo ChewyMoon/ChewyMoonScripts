@@ -8,7 +8,7 @@ namespace ChewyMoonsLux
 {
     internal class LuxCombo
     {
-        private static readonly Dictionary<Obj_AI_Base, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Base, bool>(); 
+        private static readonly Dictionary<Obj_AI_Hero, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Hero, bool>(); 
 
         public static void OnGameUpdate(EventArgs args)
         {
