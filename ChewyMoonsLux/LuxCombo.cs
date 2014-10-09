@@ -43,6 +43,7 @@ namespace ChewyMoonsLux
         {
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
+                Console.WriteLine(enemy.BaseSkinName);
                 AutoAttackDictionary.Clear();
                 AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
             }
