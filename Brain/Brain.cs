@@ -44,7 +44,7 @@ namespace Brain
             // Temp TS
             var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical);
             var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).GetEnumerator() as IEnumerable<SpellSlot>;
-
+            Console.WriteLine("wtff");
             if (ienumSpellslot == null) return;
             var spellCombo = ienumSpellslot as SpellSlot[] ?? ienumSpellslot.ToArray();
 
