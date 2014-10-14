@@ -41,16 +41,23 @@ namespace Brain
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
+            try
+            {
+                var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical);
+                var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).GetEnumerator() as IEnumerable<SpellSlot>;
+
+                var myDamage = Player.GetComboDamage(target, ienumSpellslot);
+
+                _myDamage = myDamage;
+                _target = target;
+
+                Console.Write("Update {0}", myDamage);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             // Temp TS
-            var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical);
-            var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).GetEnumerator() as IEnumerable<SpellSlot>;
-
-            var myDamage = Player.GetComboDamage(target, ienumSpellslot);
-
-            _myDamage = myDamage;
-            _target = target;
-
-            Console.Write("Update {0}", myDamage);
         }
     }
 
