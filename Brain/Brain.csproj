@@ -38,6 +38,14 @@
     <Reference Include="LeagueSharp.Common">
       <HintPath>..\..\..\..\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\LeagueSharp\System\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
