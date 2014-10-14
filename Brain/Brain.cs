@@ -44,7 +44,7 @@ namespace Brain
             try
             {
                 var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical);
-                var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).GetEnumerator() as IEnumerable<SpellSlot>;
+                var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).Cast<SpellSlot>();
 
                 var myDamage = Player.GetComboDamage(target, ienumSpellslot);
 
