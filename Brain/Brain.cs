@@ -37,7 +37,6 @@ namespace Brain
         {
             //Utility.PrintFloatText(ObjectManager.Player, _myDamage.ToString(CultureInfo.InvariantCulture), Packet.FloatTextPacket.Special);
             Drawing.DrawText(Player.Position.X, Player.Position.Y, Color.Crimson, _myDamage.ToString(CultureInfo.InvariantCulture));
-            Console.WriteLine("drawingdsssss");
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
