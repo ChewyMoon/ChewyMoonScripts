@@ -53,6 +53,8 @@ namespace Brain
 
             _myDamage = myDamage;
             _target = target;
+
+            Console.Write("Update {0}", myDamage);
         }
     }
 
