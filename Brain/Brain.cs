@@ -44,6 +44,8 @@ namespace Brain
             try
             {
                 var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical);
+                if (!target.IsValidTarget()) return;
+
                 var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).Cast<SpellSlot>();
 
                 var myDamage = Player.GetComboDamage(target, ienumSpellslot);
@@ -51,7 +53,7 @@ namespace Brain
                 _myDamage = myDamage;
                 _target = target;
 
-                Console.Write("Update {0}", myDamage);
+                Console.WriteLine("Update {0}", myDamage);
             }
             catch (Exception e)
             {
