@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using LeagueSharp;
+﻿using LeagueSharp;
 using LeagueSharp.Common;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChewyMoonsLux
 {
     internal class LuxCombo
     {
-        private static readonly Dictionary<Obj_AI_Hero, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Hero, bool>(); 
+        private static readonly Dictionary<Obj_AI_Hero, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Hero, bool>();
 
         public static void OnGameUpdate(EventArgs args)
         {
@@ -29,14 +29,13 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Menu.Item("harass").GetValue<KeyBind>().Active)
             {
-               // Harass();
+                // Harass();
             }
 
             if (ChewyMoonsLux.Menu.Item("autoShield").GetValue<KeyBind>().Active)
             {
                 AutoShield();
             }
-
         }
 
         private static void UpdateDictionary()
@@ -51,7 +50,7 @@ namespace ChewyMoonsLux
         private static void AutoShield()
         {
             // linq op babbyyy
-            foreach (var teamMate in from teamMate in ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid) let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>() let ourPercent = teamMate.Health/teamMate.MaxHealth*100 where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady() select teamMate)
+            foreach (var teamMate in from teamMate in ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid) let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>() let ourPercent = teamMate.Health / teamMate.MaxHealth * 100 where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady() select teamMate)
             {
                 ChewyMoonsLux.W.Cast(teamMate, ChewyMoonsLux.PacketCast);
             }
@@ -60,7 +59,7 @@ namespace ChewyMoonsLux
         private static void KillSecure()
         {
             // KILL SECURE MY ASS LOOL
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()).Where(hero => ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range && ChewyMoonsLux.R.GetDamage(hero) >= hero.Health && ChewyMoonsLux.R.IsReady()))
+            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()).Where(hero => ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range && ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) >= hero.Health && ChewyMoonsLux.R.IsReady()))
             {
                 ChewyMoonsLux.R.Cast(hero, ChewyMoonsLux.PacketCast);
             }
@@ -94,6 +93,7 @@ namespace ChewyMoonsLux
             ChewyMoonsLux.Orbwalker.ForceTarget(target);
         }
         */
+
         private static void Combo()
         {
             var useQ = ChewyMoonsLux.Menu.Item("useQ").GetValue<bool>();
@@ -111,12 +111,12 @@ namespace ChewyMoonsLux
                 ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, target);
                 return;
             }
-            
+
             if (!target.IsValid) return;
 
             if (useDfg)
             {
-                if(Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
+                if (Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
             }
 
             if (ChewyMoonsLux.Q.IsReady() && useQ)
@@ -149,7 +149,7 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Menu.Item("onlyRIfKill").GetValue<bool>())
             {
-                if (ChewyMoonsLux.R.GetDamage(target) >= target.Health)
+                if (ObjectManager.Player.GetSpellDamage(target, SpellSlot.Q) >= target.Health)
                 {
                     ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
                 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using LeagueSharp;
+﻿using LeagueSharp;
 using LeagueSharp.Common;
+using System;
+using System.Linq;
 using Color = System.Drawing.Color;
 
 namespace ChewyMoonsIrelia
@@ -19,12 +19,14 @@ namespace ChewyMoonsIrelia
 
         // Irelia Ultimate stuff.
         private static bool _hasToFire;
+
         private static int _charges;
 
         private static bool _packetCast;
 
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
 
+        // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -32,7 +34,7 @@ namespace ChewyMoonsIrelia
 
         private static void Game_OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.BaseSkinName != ChampName)
+            if (ObjectManager.Player.ChampionName != ChampName)
                 return;
 
             _q = new Spell(SpellSlot.Q, 650);
@@ -46,7 +48,7 @@ namespace ChewyMoonsIrelia
 
             SetupMenu();
 
-           // IreliaUpdater.CheckForUpdates();
+            // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -126,7 +128,7 @@ namespace ChewyMoonsIrelia
                 {
                     if (_menu.Item("useQWCKillable").GetValue<bool>())
                     {
-                        var damage = _q.GetDamage(minion);
+                        var damage = ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q);
 
                         if (damage >= minion.Health)
                             _q.Cast(minion, _packetCast);
@@ -145,7 +147,7 @@ namespace ChewyMoonsIrelia
         private static void LastHitWithQ()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range);
-            foreach (var minion in minions.Where(minion => _q.GetDamage(minion) >= minion.Health))
+            foreach (var minion in minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health))
             {
                 var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
                 // If do not farm under tower
@@ -192,7 +194,7 @@ namespace ChewyMoonsIrelia
             if (isUnderTower && !diveTower)
             {
                 // Calculate percent hp
-                var percent = (int) target.Health/target.MaxHealth*100;
+                var percent = (int)target.Health / target.MaxHealth * 100;
                 var overridePercent = _menu.Item("diveTowerPercent").GetValue<Slider>().Value;
 
                 if (percent > overridePercent) doNotCombo = true;
@@ -210,7 +212,7 @@ namespace ChewyMoonsIrelia
             {
                 if (_menu.Item("dontQ").GetValue<bool>())
                 {
-                    float distance = ObjectManager.Player.Distance(target);
+                    var distance = ObjectManager.Player.Distance(target);
 
                     if (distance > _menu.Item("dontQRange").GetValue<Slider>().Value)
                     {
@@ -248,8 +250,8 @@ namespace ChewyMoonsIrelia
 
         private static bool CanStunTarget(AttackableUnit target)
         {
-            var enemyHealthPercent = target.Health/target.MaxHealth*100;
-            var myHealthPercent = ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
+            var enemyHealthPercent = target.Health / target.MaxHealth * 100;
+            var myHealthPercent = ObjectManager.Player.Health / ObjectManager.Player.MaxHealth * 100;
 
             return enemyHealthPercent > myHealthPercent;
         }
