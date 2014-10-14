@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -17,18 +18,25 @@ namespace Brain
         private static bool _killable;
         private static Obj_AI_Hero _target;
 
+        private static double _myDamage;
+        private double enemyDamage;
+
         public static Obj_AI_Hero Player = ObjectManager.Player;
 
         public static void OnGameLoad(EventArgs args)
         {
             Config.CreateMenu();
+
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
+
             Util.PrintFancy("Loaded. Created by ChewyMoon & TheFieryTaco");
         }
 
         private static void DrawingOnOnDraw(EventArgs args)
         {
+            //Utility.PrintFloatText(ObjectManager.Player, _myDamage.ToString(CultureInfo.InvariantCulture), Packet.FloatTextPacket.Special);
+            Drawing.DrawText(Player.Position.X, Player.Position.Y, Color.Crimson, _myDamage.ToString(CultureInfo.InvariantCulture));
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
@@ -42,6 +50,9 @@ namespace Brain
 
             var myDamage = Player.GetComboDamage(target, spellCombo);
             var enemyDamage = target.GetComboDamage(Player, spellCombo);
+
+            _myDamage = myDamage;
+            _target = target;
         }
     }
 
