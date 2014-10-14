@@ -35,8 +35,7 @@ namespace Brain
 
         private static void DrawingOnOnDraw(EventArgs args)
         {
-            //Utility.PrintFloatText(ObjectManager.Player, _myDamage.ToString(CultureInfo.InvariantCulture), Packet.FloatTextPacket.Special);
-            Drawing.DrawText(Player.Position.To2D().X, Player.Position.To2D().Y, Color.Crimson, _myDamage.ToString(CultureInfo.InvariantCulture));
+            Utility.PrintFloatText(ObjectManager.Player, _myDamage.ToString(CultureInfo.InvariantCulture), Packet.FloatTextPacket.Special);
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
