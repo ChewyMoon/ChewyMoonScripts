@@ -1,5 +1,6 @@
 ﻿using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,7 +36,6 @@ namespace Brain
 
         private static void DrawingOnOnDraw(EventArgs args)
         {
-            Utility.PrintFloatText(ObjectManager.Player, _myDamage.ToString(CultureInfo.InvariantCulture), Packet.FloatTextPacket.Special);
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
