@@ -5,14 +5,17 @@ using Color = System.Drawing.Color;
 
 namespace ChewyMoonsLux
 {
-    class ChewyMoonsLux
+    internal class ChewyMoonsLux
     {
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
         public static Spell Q, W, E, R;
         public static bool PacketCast = false;
+
         public static void OnGameLoad(EventArgs args)
         {
+            if (ObjectManager.Player.BaseSkinName != "Lux") return;
+
             Q = new Spell(SpellSlot.Q, 1175);
             W = new Spell(SpellSlot.W, 1075);
             E = new Spell(SpellSlot.E, 1100);
@@ -28,7 +31,7 @@ namespace ChewyMoonsLux
             SetupMenu();
 
             // Checkerino for updates
-           // LuxUpdater.CheckForUpdates();
+            // LuxUpdater.CheckForUpdates();
 
             // Draw
             Drawing.OnDraw += OnDraw;
@@ -37,7 +40,7 @@ namespace ChewyMoonsLux
             AntiGapcloser.OnEnemyGapcloser += QGapCloser.OnEnemyGapCloser;
 
             // Orbwalker
-           // Orbwalking.AfterAttack += LuxCombo.AfterAttack;
+            // Orbwalking.AfterAttack += LuxCombo.AfterAttack;
 
             // Updaterino
             Game.OnGameUpdate += LuxCombo.OnGameUpdate;
@@ -58,18 +61,17 @@ namespace ChewyMoonsLux
 
             var position = ObjectManager.Player.Position;
 
-            if(drawQ)
+            if (drawQ)
                 Utility.DrawCircle(position, Q.Range, qColor);
 
             if (drawW)
-                Utility.DrawCircle(position, W.Range, wColor);                
+                Utility.DrawCircle(position, W.Range, wColor);
 
             if (drawE)
                 Utility.DrawCircle(position, E.Range, eColor);
 
             if (drawR)
                 Utility.DrawCircle(position, R.Range, rColor);
-
         }
 
         private static void SetupMenu()

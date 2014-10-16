@@ -33,16 +33,6 @@ namespace Brain
             get { return Item("cmBrainESpells"); }
         }
 
-        public static bool CalcItems
-        {
-            get { return Item("cmBrainMItems"); }
-        }
-
-        public static bool CalcEnemyItems
-        {
-            get { return Item("cmBrainEItems"); }
-        }
-
         public static bool CalcSummonerSpells
         {
             get { return Item("cmBrainMSumSpells"); }
@@ -64,25 +54,23 @@ namespace Brain
             SimpleTs.AddToMenu(tsMenu);
             _menu.AddSubMenu(tsMenu);
 
-            // Seperator
-            _menu.AddItem(new MenuItem("", "cmBrainSeperator"));
+            // SubMenu
+            _menu.AddSubMenu(new Menu("Calculate", "cmCalculate"));
 
             // Options
-            _menu.AddItem(new MenuItem("cmBrainMDMG", "Calc. Minion Damage").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainMPercent", "Calc. Percents").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainPSpells", "Calc. My Spells").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainESpells", "Calc. Enemy Spells").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainMItems", "Calc. My Items").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainEItems", "Calc. Enemy Items").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainMSumSpells", "Calc. My Summoner Spells").SetValue(true));
-            _menu.AddItem(new MenuItem("cmBrainESumSpells", "Calc. Enemy Summoner Spells").SetValue(true));
+            _menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainMDMG", "Minion Damage").SetValue(true));
+            //_menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainMPercent", "Percents").SetValue(true));
+            _menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainPSpells", "My Spells").SetValue(true));
+            _menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainESpells", "Enemy Spells").SetValue(true));
+            _menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainMSumSpells", "My Summoner Spells").SetValue(true));
+            _menu.SubMenu("cmCalculate").AddItem(new MenuItem("cmBrainESumSpells", "Enemy Summoner Spells").SetValue(true));
 
             _menu.AddToMainMenu();
         }
 
         private static bool Item(string name)
         {
-            return _menu.Item(name).GetValue<bool>();
+            return _menu.SubMenu("cmCalculate").Item(name).GetValue<bool>();
         }
     }
 }

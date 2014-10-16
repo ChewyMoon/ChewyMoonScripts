@@ -1,15 +1,20 @@
-﻿using System;
+﻿using LeagueSharp;
+using LeagueSharp.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ChewyMoonsShaco
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            if (ObjectManager.Player.ChampionName != "Shaco") return;
+            CustomEvents.Game.OnGameLoad += ChewyMoonShaco.OnGameLoad;
         }
     }
 }

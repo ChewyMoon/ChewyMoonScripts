@@ -34,7 +34,7 @@ namespace ChewyMoonsIrelia
 
         private static void Game_OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.ChampionName != ChampName)
+            if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
             _q = new Spell(SpellSlot.Q, 650);

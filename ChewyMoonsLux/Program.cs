@@ -3,12 +3,10 @@ using LeagueSharp.Common;
 
 namespace ChewyMoonsLux
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            if (ObjectManager.Player.ChampionName != "Lux") return;
-
             CustomEvents.Game.OnGameLoad += ChewyMoonsLux.OnGameLoad;
         }
     }

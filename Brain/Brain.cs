@@ -20,7 +20,10 @@ namespace Brain
         private static Obj_AI_Hero _target;
 
         private static double _myDamage;
-        private double enemyDamage;
+        private static double _enemyDamage;
+
+        private static int _myPercent;
+        private static int _enemyPercent;
 
         public static Obj_AI_Hero Player = ObjectManager.Player;
 
@@ -46,10 +49,23 @@ namespace Brain
                 if (!target.IsValidTarget()) return;
 
                 var ienumSpellslot = Enum.GetValues(typeof(SpellSlot)).Cast<SpellSlot>();
+                var spellCombo = ienumSpellslot as SpellSlot[] ?? ienumSpellslot.ToArray();
 
-                var myDamage = Player.GetComboDamage(target, ienumSpellslot);
+                double myDamage = 0;
+                double enemyDamage = 0;
+
+                var myPercent = 0;
+                var enemyPercent = 0;
+
+                if (Config.CalcSpells) myDamage += Player.GetComboDamage(target, spellCombo);
+                if (Config.CalcEnemySpells) enemyDamage += target.GetComboDamage(Player, spellCombo);
 
                 _myDamage = myDamage;
+                _enemyDamage = enemyDamage;
+
+                _myPercent = myPercent;
+                _enemyPercent = enemyPercent;
+
                 _target = target;
 
                 Console.WriteLine("Update {0}", myDamage);
@@ -58,7 +74,6 @@ namespace Brain
             {
                 Console.WriteLine(e.Message);
             }
-            // Temp TS
         }
     }
 
