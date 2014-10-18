@@ -104,7 +104,6 @@ namespace ChewyMoonsLux
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             harassMenu.AddItem(new MenuItem("aaHarass", "Auto attack after harass").SetValue(true));
-            harassMenu.AddItem(new MenuItem("info", "Harass not implemented."));
             Menu.AddSubMenu(harassMenu);
 
             // KS / Finisher Settings

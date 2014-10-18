@@ -27,9 +27,9 @@ namespace ChewyMoonsLux
                 Combo();
             }
 
-            if (ChewyMoonsLux.Menu.Item("harass").GetValue<KeyBind>().Active)
+            if (ChewyMoonsLux.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
             {
-                // Harass();
+                Harass();
             }
 
             if (ChewyMoonsLux.Menu.Item("autoShield").GetValue<KeyBind>().Active)
@@ -65,7 +65,6 @@ namespace ChewyMoonsLux
             }
         }
 
-        /*
         private static void Harass()
         {
             var useQ = ChewyMoonsLux.Menu.Item("useQHarass").GetValue<bool>();
@@ -73,26 +72,32 @@ namespace ChewyMoonsLux
             var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaHarass").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
-            if (!target.IsValid || _haveToAa) return;
+            if (!target.IsValidTarget() || target == null) return;
 
-            if (ChewyMoonsLux.Q.IsReady() && useQ && !_haveToAa)
+            if (AutoAttackDictionary.Any(pair => pair.Key.BaseSkinName == target.BaseSkinName && pair.Value && aaAfterSpell))
             {
-                ChewyMoonsLux.Q.CastIfHitchanceEquals(target, HitChance.High, ChewyMoonsLux.PacketCast);
-                if (aaAfterSpell)
-                {
-                    _haveToAa = true;
-                    ChewyMoonsLux.Orbwalker.ForceTarget(target);
-                }
+                ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                return;
             }
 
-            if (!ChewyMoonsLux.E.IsReady() || !useE || _haveToAa) return;
-            ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
+            if (useQ && ChewyMoonsLux.Q.IsReady())
+            {
+                var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
+                if (output.AoeTargetsHitCount > 2) return;
 
-            if (!aaAfterSpell) return;
-            _haveToAa = true;
-            ChewyMoonsLux.Orbwalker.ForceTarget(target);
+                ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
+
+                if (aaAfterSpell)
+                    return;
+            }
+
+            if (!useE || !ChewyMoonsLux.E.IsReady()) return;
+            ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
+            if (aaAfterSpell)
+            {
+                return;
+            }
         }
-        */
 
         private static void Combo()
         {
@@ -108,7 +113,7 @@ namespace ChewyMoonsLux
 
             if (AutoAttackDictionary.Any(pair => pair.Key.BaseSkinName == target.BaseSkinName && pair.Value && aaAfterSpell))
             {
-                ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, target);
+                ChewyMoonsLux.Orbwalker.ForceTarget(target);
                 return;
             }
 
