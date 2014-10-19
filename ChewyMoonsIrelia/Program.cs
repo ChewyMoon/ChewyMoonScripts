@@ -276,7 +276,7 @@ namespace ChewyMoonsIrelia
             if (!target.IsValidTarget() || target == null) return;
 
             foreach (var minion in MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range).Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
-                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget()))
+                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget(_q.Range * 3)))
             {
                 _q.Cast(minion);
                 Combo();
