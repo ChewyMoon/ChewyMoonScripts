@@ -262,12 +262,12 @@ namespace ChewyMoonsIrelia
             _menu = new Menu("[ChewyMoon's Irelia]", "cmIrelia", true);
 
             // Target Selector
-            var targetSelectorMenu = new Menu("[ChewyMoon's Irelia] - TS", "cmIreliaTS");
+            var targetSelectorMenu = new Menu("[Chewy's Irelia] - TS", "cmIreliaTS");
             SimpleTs.AddToMenu(targetSelectorMenu);
             _menu.AddSubMenu(targetSelectorMenu);
 
             // Orbwalker
-            var orbwalkerMenu = new Menu("[ChewyMoon's Irelia] - Orbwalker", "cmIreliaOW");
+            var orbwalkerMenu = new Menu("[Chewy's Irelia] - Orbwalker", "cmIreliaOW");
             Orbwalker = new LXOrbwalker();
             LXOrbwalker.AddToMenu(orbwalkerMenu);
             _menu.AddSubMenu(orbwalkerMenu);
