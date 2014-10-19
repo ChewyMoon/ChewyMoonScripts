@@ -279,8 +279,8 @@ namespace ChewyMoonsIrelia
                                                                                                                            minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget(_q.Range * 3)))
             {
                 _q.Cast(minion);
-                Combo();
-                return;
+                // Combo();
+                break;
             }
         }
 
