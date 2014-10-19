@@ -41,6 +41,7 @@ namespace ChewyMoonsLux
         private static void UpdateDictionary()
         {
             AutoAttackDictionary.Clear();
+
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
                 AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
@@ -83,7 +84,7 @@ namespace ChewyMoonsLux
             if (useQ && ChewyMoonsLux.Q.IsReady())
             {
                 var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
-                if (output.AoeTargetsHitCount > 2) return;
+                if (SpellCombo.AnalyzeQ(output)) return;
 
                 ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
 
@@ -127,7 +128,7 @@ namespace ChewyMoonsLux
             if (ChewyMoonsLux.Q.IsReady() && useQ)
             {
                 var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
-                if (output.AoeTargetsHitCount > 2) return;
+                if (SpellCombo.AnalyzeQ(output)) return;
 
                 ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
 
