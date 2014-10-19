@@ -1,5 +1,6 @@
 ﻿using LeagueSharp;
 using LeagueSharp.Common;
+using LX_Orbwalker;
 using System;
 using System.Linq;
 using Color = System.Drawing.Color;
@@ -24,7 +25,7 @@ namespace ChewyMoonsIrelia
 
         private static bool _packetCast;
 
-        public static Orbwalking.Orbwalker Orbwalker { get; set; }
+        public static LXOrbwalker Orbwalker { get; set; }
 
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
@@ -37,13 +38,13 @@ namespace ChewyMoonsIrelia
             if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
+            Utilities.PrintChat("If assembly isn't orbwalking, please install LX-Orbwalker!");
+
             _q = new Spell(SpellSlot.Q, 650);
             _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)); // So confused.
             _e = new Spell(SpellSlot.E, 425);
             _r = new Spell(SpellSlot.R, 1000);
 
-            //Q.SetSkillshot(0.25f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotLine);
-            //E.SetSkillshot(0.15f, 75f, 1500f, false, Prediction.SkillshotType.SkillshotCircle);
             _r.SetSkillshot(0.15f, 80f, 1500f, false, SkillshotType.SkillshotLine); // fix new prediction
 
             SetupMenu();
@@ -267,7 +268,8 @@ namespace ChewyMoonsIrelia
 
             // Orbwalker
             var orbwalkerMenu = new Menu("[ChewyMoon's Irelia] - Orbwalker", "cmIreliaOW");
-            Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
+            Orbwalker = new LXOrbwalker();
+            LXOrbwalker.AddToMenu(orbwalkerMenu);
             _menu.AddSubMenu(orbwalkerMenu);
 
             // Combo

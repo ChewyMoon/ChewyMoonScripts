@@ -45,6 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\Justin\Desktop\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
+    <Reference Include="LX-Orbwalker">
+      <HintPath>..\..\..\..\LeagueSharp\System\LX-Orbwalker.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\Justin\Desktop\LeagueSharp\System\SharpDX.dll</HintPath>
