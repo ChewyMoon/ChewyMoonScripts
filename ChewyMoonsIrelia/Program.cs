@@ -131,7 +131,7 @@ namespace ChewyMoonsIrelia
                     {
                         var damage = ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q);
 
-                        if (damage >= minion.Health)
+                        if (damage > minion.Health)
                             _q.Cast(minion, _packetCast);
                     }
                     else
@@ -148,7 +148,7 @@ namespace ChewyMoonsIrelia
         private static void LastHitWithQ()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range);
-            foreach (var minion in minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health))
+            foreach (var minion in minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health))
             {
                 var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
                 // If do not farm under tower
@@ -259,7 +259,7 @@ namespace ChewyMoonsIrelia
 
         private static void SetupMenu()
         {
-            _menu = new Menu("--[ChewyMoon's Irelia]--", "cmIrelia", true);
+            _menu = new Menu("[ChewyMoon's Irelia]", "cmIrelia", true);
 
             // Target Selector
             var targetSelectorMenu = new Menu("[ChewyMoon's Irelia] - TS", "cmIreliaTS");
@@ -273,7 +273,7 @@ namespace ChewyMoonsIrelia
             _menu.AddSubMenu(orbwalkerMenu);
 
             // Combo
-            var comboMenu = new Menu("[ChewyMoon's Irelia] - Combo", "cmIreliaCombo");
+            var comboMenu = new Menu("[Chewy's Irelia] - Combo", "cmIreliaCombo");
             comboMenu.AddItem(new MenuItem("useQ", "Use Q in combo").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W in combo").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E in combo").SetValue(true));
@@ -282,7 +282,7 @@ namespace ChewyMoonsIrelia
             _menu.AddSubMenu(comboMenu);
 
             // Lasthiting
-            var farmingMenu = new Menu("[ChewyMoon's Irelia] - Farming", "cmIreliaFarming");
+            var farmingMenu = new Menu("[Chewy's Irelia] - Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
             farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind(88, KeyBindType.Press)));
             farmingMenu.AddItem(new MenuItem("qNoFarmTower", "Don't Q minions under tower").SetValue(false));
@@ -297,14 +297,14 @@ namespace ChewyMoonsIrelia
             _menu.AddSubMenu(farmingMenu);
 
             //Drawing menu
-            var drawingMenu = new Menu("[ChewyMoon's Irelia] - Drawing", "cmIreliaDraw");
+            var drawingMenu = new Menu("[Chewy's Irelia] - Drawing", "cmIreliaDraw");
             drawingMenu.AddItem(new MenuItem("qDraw", "Draw Q").SetValue(true));
             drawingMenu.AddItem(new MenuItem("eDraw", "Draw E").SetValue(false));
             drawingMenu.AddItem(new MenuItem("rDraw", "Draw R").SetValue(true));
             _menu.AddSubMenu(drawingMenu);
 
             //Misc
-            var miscMenu = new Menu("[ChewyMoon's Irelia - Misc", "cmIreliaMisc");
+            var miscMenu = new Menu("[Chewy's Irelia - Misc", "cmIreliaMisc");
             miscMenu.AddItem(new MenuItem("interruptUlts", "Interrupt ults with E").SetValue(true));
             miscMenu.AddItem(new MenuItem("interruptQE", "Q + E to interrupt if not in range").SetValue(true));
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));
