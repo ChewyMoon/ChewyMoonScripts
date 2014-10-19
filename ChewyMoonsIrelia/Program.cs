@@ -342,7 +342,7 @@ namespace ChewyMoonsIrelia
             miscMenu.AddItem(new MenuItem("diveTowerPercent", "Override dive tower").SetValue(new Slider(10)));
             miscMenu.AddItem(new MenuItem("dontQ", "Dont Q if range is small").SetValue(false));
             miscMenu.AddItem(new MenuItem("dontQRange", "Q Range").SetValue(new Slider(200, 0, 650)));
-            miscMenu.AddItem(new MenuItem("eOnGapclose", "E on Gapcloser").SetValue(true))
+            miscMenu.AddItem(new MenuItem("eOnGapclose", "E on Gapcloser").SetValue(true));
             _menu.AddSubMenu(miscMenu);
 
             // Use combo, last hit, c
