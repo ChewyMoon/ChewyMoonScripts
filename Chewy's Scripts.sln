@@ -7,11 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsIrelia", "ChewyMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsLux", "ChewyMoonsLux\ChewyMoonsLux.csproj", "{8B0C967E-913C-4C1E-BB51-E818227109BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsShen(WIP)", "ChewyMoonsShen\ChewyMoonsShen(WIP).csproj", "{2DAAE90A-8780-4AA4-995C-D722B9A50A45}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brain(WIP)", "Brain\Brain(WIP).csproj", "{5E8F897F-33CF-4E00-9239-D0C66A8D6BA5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsShaco(WIP)", "ChewyMoonsShaco\ChewyMoonsShaco(WIP).csproj", "{0B92A1BA-5086-46EE-81FD-21830CB10E54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsShaco", "ChewyMoonsShaco\ChewyMoonsShaco.csproj", "{0B92A1BA-5086-46EE-81FD-21830CB10E54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,14 +23,6 @@ Global
 		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DAAE90A-8780-4AA4-995C-D722B9A50A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DAAE90A-8780-4AA4-995C-D722B9A50A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DAAE90A-8780-4AA4-995C-D722B9A50A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DAAE90A-8780-4AA4-995C-D722B9A50A45}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E8F897F-33CF-4E00-9239-D0C66A8D6BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E8F897F-33CF-4E00-9239-D0C66A8D6BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E8F897F-33CF-4E00-9239-D0C66A8D6BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E8F897F-33CF-4E00-9239-D0C66A8D6BA5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
