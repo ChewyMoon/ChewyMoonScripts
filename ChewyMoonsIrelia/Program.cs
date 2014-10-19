@@ -52,8 +52,17 @@ namespace ChewyMoonsIrelia
             // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;
             Utilities.PrintChat("Loaded.");
+        }
+
+        private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (_menu.Item("eOnGapclose").GetValue<bool>())
+            {
+                _e.Cast(gapcloser.Sender);
+            }
         }
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
@@ -185,6 +194,10 @@ namespace ChewyMoonsIrelia
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
             var target = SimpleTs.GetTarget(_q.Range, SimpleTs.DamageType.Physical);
 
+            if (target == null)
+            {
+                GapCloseCombo();
+            }
             if (target == null || !target.IsValid) return;
 
             var isUnderTower = Utility.UnderTurret(target);
@@ -249,6 +262,22 @@ namespace ChewyMoonsIrelia
             _charges = 4;
         }
 
+        private static void GapCloseCombo()
+        {
+            if (!_menu.Item("useMinionGapclose").GetValue<bool>()) return;
+
+            var target = SimpleTs.GetTarget(_q.Range * 3, SimpleTs.DamageType.Physical);
+            if (!target.IsValidTarget() || target == null) return;
+
+            foreach (var minion in MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range).Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
+                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget()))
+            {
+                _q.Cast(minion);
+                Combo();
+                return;
+            }
+        }
+
         private static bool CanStunTarget(AttackableUnit target)
         {
             var enemyHealthPercent = target.Health / target.MaxHealth * 100;
@@ -279,6 +308,7 @@ namespace ChewyMoonsIrelia
             comboMenu.AddItem(new MenuItem("useE", "Use E in combo").SetValue(true));
             comboMenu.AddItem(new MenuItem("useEStun", "Use e only if target can be stunned").SetValue(false));
             comboMenu.AddItem(new MenuItem("useR", "Use R in combo").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useMinionGapclose", "Q minion gap closer").SetValue(true));
             _menu.AddSubMenu(comboMenu);
 
             // Lasthiting
@@ -312,6 +342,7 @@ namespace ChewyMoonsIrelia
             miscMenu.AddItem(new MenuItem("diveTowerPercent", "Override dive tower").SetValue(new Slider(10)));
             miscMenu.AddItem(new MenuItem("dontQ", "Dont Q if range is small").SetValue(false));
             miscMenu.AddItem(new MenuItem("dontQRange", "Q Range").SetValue(new Slider(200, 0, 650)));
+            miscMenu.AddItem(new MenuItem("eOnGapclose", "E on Gapcloser").SetValue(true))
             _menu.AddSubMenu(miscMenu);
 
             // Use combo, last hit, c
