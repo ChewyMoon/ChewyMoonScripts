@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChewyMoonsLux
 {
-    internal class SpellCombo
+    public class SpellCombo
     {
         public static bool ContainsPassive(Dictionary<Obj_AI_Hero, bool> dictionary, string baseSkinName)
         {
