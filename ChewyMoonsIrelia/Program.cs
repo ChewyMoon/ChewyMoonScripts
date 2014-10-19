@@ -31,6 +31,12 @@ namespace ChewyMoonsIrelia
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+            AppDomain.CurrentDomain.UnhandledException +=
+                delegate(object sender, UnhandledExceptionEventArgs eventArgs)
+                {
+                    var exception = eventArgs.ExceptionObject as Exception;
+                    if (exception != null) Console.WriteLine(exception.Message);
+                };
         }
 
         private static void Game_OnGameLoad(EventArgs args)
