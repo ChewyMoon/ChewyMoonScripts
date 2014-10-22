@@ -18,6 +18,7 @@ namespace ChewyMoonsLux
         public static bool AnalyzeQ(PredictionOutput output)
         {
             var minions = output.CollisionObjects.Count(@object => @object.IsMinion);
+            Console.WriteLine("Minions: {0}", minions);
             return minions > 1;
         }
     }
