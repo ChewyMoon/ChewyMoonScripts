@@ -136,8 +136,17 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Q.IsReady() && useQ)
             {
-                var output = Prediction.GetPrediction(target, ChewyMoonsLux.Q.Delay, ChewyMoonsLux.Q.Range, ChewyMoonsLux.Q.Speed);
-                if (SpellCombo.AnalyzeQ(output)) return;
+                var input = new PredictionInput()
+                {
+                    Unit = target,
+                    Delay = ChewyMoonsLux.Q.Delay,
+                    Range = ChewyMoonsLux.Q.Range,
+                    Speed = ChewyMoonsLux.Q.Speed
+                };
+
+                var output = Prediction.GetPrediction(input);
+
+                if (SpellCombo.AnalyzeQ(new PredictionInput(), output)) return;
 
                 ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
 
