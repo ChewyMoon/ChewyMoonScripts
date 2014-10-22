@@ -30,20 +30,11 @@ namespace ChewyMoonsLux
             // Setup Main Menu
             SetupMenu();
 
-            // Checkerino for updates
-            // LuxUpdater.CheckForUpdates();
-
-            // Draw
             Drawing.OnDraw += OnDraw;
-
-            //AntiGapCloser
             AntiGapcloser.OnEnemyGapcloser += QGapCloser.OnEnemyGapCloser;
-
-            // Orbwalker
-            // Orbwalking.AfterAttack += LuxCombo.AfterAttack;
-
-            // Updaterino
             Game.OnGameUpdate += LuxCombo.OnGameUpdate;
+            Game.OnGameProcessPacket += LuxCombo.OnGameProcessPacket;
+
             Utilities.PrintChat("Loaded.");
         }
 

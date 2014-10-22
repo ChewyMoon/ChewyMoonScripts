@@ -146,5 +146,18 @@ namespace ChewyMoonsLux
                 ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
             }
         }
+
+        public static void OnGameProcessPacket(GamePacketEventArgs args)
+        {
+            if (args.PacketData[0] != 0xD8) return; // Not a recall
+
+            var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
+            if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
+            if (decoded.Type != Packet.S2C.Recall.ObjectType.Player) return;
+
+            var personBacking = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
+            if (ObjectManager.Player.GetSpellDamage(personBacking, SpellSlot.R) > personBacking.Health)
+                ChewyMoonsLux.R.Cast(personBacking.ServerPosition, ChewyMoonsLux.PacketCast);
+        }
     }
 }
