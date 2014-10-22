@@ -26,6 +26,8 @@ namespace ChewyMoonsLux
 
         public static void CastQ(Obj_AI_Hero target)
         {
+            Console.Clear();
+
             var prediction = ChewyMoonsLux.Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
