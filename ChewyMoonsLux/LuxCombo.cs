@@ -75,7 +75,7 @@ namespace ChewyMoonsLux
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
             if (!target.IsValidTarget() || target == null) return;
 
-            if (!SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
+            if (SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
 
             if (useQ && ChewyMoonsLux.Q.IsReady())
             {
@@ -101,7 +101,7 @@ namespace ChewyMoonsLux
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (!SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
+            if (SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
             if (!target.IsValid) return;
 
             if (useDfg)

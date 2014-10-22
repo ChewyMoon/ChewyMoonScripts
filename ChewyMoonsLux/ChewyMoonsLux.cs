@@ -22,7 +22,7 @@ namespace ChewyMoonsLux
             R = new Spell(SpellSlot.R, 3340);
 
             // Refine skillshots
-            Q.SetSkillshot(0.25f, 80f, 1200f, true, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.25f, 80f, 1200f, false, SkillshotType.SkillshotLine); // to get collision objects
             W.SetSkillshot(0.25f, 150f, 1200f, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.25f, 275f, 1300f, false, SkillshotType.SkillshotCircle);
             R.SetSkillshot(1.35f, 190f, float.MaxValue, false, SkillshotType.SkillshotLine);
