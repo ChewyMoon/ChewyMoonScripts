@@ -21,11 +21,11 @@ namespace ChewyMoonsShaco
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
+            Console.Clear();
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy))
             {
                 Console.WriteLine("{0}: {1}", enemy.BaseSkinName, enemy.Orientation);
             }
-            Console.Clear();
         }
     }
 }
