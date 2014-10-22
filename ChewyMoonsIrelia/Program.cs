@@ -1,6 +1,7 @@
 ﻿using LeagueSharp;
 using LeagueSharp.Common;
 using LX_Orbwalker;
+using SharpDX;
 using System;
 using System.Linq;
 using Color = System.Drawing.Color;
@@ -65,10 +66,10 @@ namespace ChewyMoonsIrelia
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if (_menu.Item("eOnGapclose").GetValue<bool>())
-            {
-                _e.Cast(gapcloser.Sender);
-            }
+            if (!_menu.Item("eOnGapclose").GetValue<bool>()) return;
+            if (!_e.IsReady()) return;
+
+            _e.Cast(gapcloser.Sender, _packetCast);
         }
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
@@ -79,10 +80,14 @@ namespace ChewyMoonsIrelia
             var range = unit.Distance(ObjectManager.Player);
             if (range <= _e.Range)
             {
-                _e.Cast(unit, _packetCast);
+                if (_e.IsReady())
+                {
+                    _e.Cast(unit, _packetCast);
+                }
             }
             else if (range <= _q.Range)
             {
+                if (!_q.IsReady() || !_e.IsReady()) return;
                 _q.Cast(unit, _packetCast);
                 _e.Cast(unit, _packetCast);
             }
@@ -146,7 +151,7 @@ namespace ChewyMoonsIrelia
                     {
                         var damage = ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q);
 
-                        if (damage > minion.Health)
+                        if (damage > minion.Health && _q.IsReady())
                             _q.Cast(minion, _packetCast);
                     }
                     else
@@ -155,8 +160,8 @@ namespace ChewyMoonsIrelia
                     }
                 }
 
-                if (useW) _w.Cast();
-                if (useR) _r.Cast(minion, _packetCast);
+                if (useW && _w.IsReady()) _w.Cast();
+                if (useR && _r.IsReady()) _r.Cast(minion, _packetCast);
             }
         }
 
@@ -169,14 +174,14 @@ namespace ChewyMoonsIrelia
                 // If do not farm under tower
                 if (noFarmDangerous)
                 {
-                    if (!Utility.UnderTurret(minion))
-                    {
+                    if (Utility.UnderTurret(minion)) continue;
+                    if (_q.IsReady())
                         _q.Cast(minion, _packetCast);
-                    }
                 }
                 else
                 {
-                    _q.Cast(minion, _packetCast);
+                    if (_q.IsReady())
+                        _q.Cast(minion, _packetCast);
                 }
             }
         }
@@ -276,10 +281,9 @@ namespace ChewyMoonsIrelia
             if (!target.IsValidTarget() || target == null) return;
 
             foreach (var minion in MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range).Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
-                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget(_q.Range * 3)))
+                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget(_q.Range * 3)).Where(minion => _q.IsReady()))
             {
-                _q.Cast(minion);
-                // Combo();
+                _q.Cast(minion, _packetCast);
                 break;
             }
         }
