@@ -23,5 +23,18 @@ namespace ChewyMoonsLux
             Console.WriteLine("Minions: {0}", minions);
             return minions > 1;
         }
+
+        public static void CastQ(Obj_AI_Hero target)
+        {
+            var prediction = ChewyMoonsLux.Q.GetPrediction(target, true);
+            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+
+            Console.WriteLine("[{0}] Minions: {1}", DateTime.Now, minions);
+
+            if (minions > 1) return;
+            Console.WriteLine("[{0}] Too many minions!", DateTime.Now);
+
+            ChewyMoonsLux.Q.Cast(prediction.CastPosition, ChewyMoonsLux.PacketCast);
+        }
     }
 }

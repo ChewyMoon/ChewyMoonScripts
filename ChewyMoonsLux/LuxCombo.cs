@@ -75,27 +75,11 @@ namespace ChewyMoonsLux
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
             if (!target.IsValidTarget() || target == null) return;
 
-            if (AutoAttackDictionary.Any(pair => pair.Key.BaseSkinName == target.BaseSkinName && pair.Value && aaAfterSpell))
-            {
-                ChewyMoonsLux.Orbwalker.ForceTarget(target);
-                return;
-            }
+            if (!SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
 
             if (useQ && ChewyMoonsLux.Q.IsReady())
             {
-                var input = new PredictionInput()
-                {
-                    Unit = target,
-                    Delay = ChewyMoonsLux.Q.Delay,
-                    Range = ChewyMoonsLux.Q.Range,
-                    Speed = ChewyMoonsLux.Q.Speed
-                };
-
-                var output = Prediction.GetPrediction(input);
-
-                if (SpellCombo.AnalyzeQ(new PredictionInput(), output)) return;
-
-                ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
+                SpellCombo.CastQ(target);
 
                 if (aaAfterSpell)
                     return;
@@ -103,10 +87,6 @@ namespace ChewyMoonsLux
 
             if (!useE || !ChewyMoonsLux.E.IsReady()) return;
             ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
-            if (aaAfterSpell)
-            {
-                return;
-            }
         }
 
         private static void Combo()
@@ -121,12 +101,7 @@ namespace ChewyMoonsLux
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (AutoAttackDictionary.Any(pair => pair.Key.BaseSkinName == target.BaseSkinName && pair.Value && aaAfterSpell))
-            {
-                ChewyMoonsLux.Orbwalker.ForceTarget(target);
-                return;
-            }
-
+            if (!SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
             if (!target.IsValid) return;
 
             if (useDfg)
@@ -136,19 +111,7 @@ namespace ChewyMoonsLux
 
             if (ChewyMoonsLux.Q.IsReady() && useQ)
             {
-                var input = new PredictionInput()
-                {
-                    Unit = target,
-                    Delay = ChewyMoonsLux.Q.Delay,
-                    Range = ChewyMoonsLux.Q.Range,
-                    Speed = ChewyMoonsLux.Q.Speed
-                };
-
-                var output = Prediction.GetPrediction(input);
-
-                if (SpellCombo.AnalyzeQ(new PredictionInput(), output)) return;
-
-                ChewyMoonsLux.Q.Cast(output.CastPosition, ChewyMoonsLux.PacketCast);
+                SpellCombo.CastQ(target);
 
                 if (aaAfterSpell)
                     return;
