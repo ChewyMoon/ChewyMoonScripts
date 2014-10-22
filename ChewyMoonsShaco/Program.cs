@@ -13,7 +13,6 @@ namespace ChewyMoonsShaco
     {
         private static void Main(string[] args)
         {
-            if (ObjectManager.Player.ChampionName != "Shaco") return;
             CustomEvents.Game.OnGameLoad += ChewyMoonShaco.OnGameLoad;
         }
     }
