@@ -15,14 +15,11 @@ namespace ChewyMoonsLux
             return dictionary.Any(pair => pair.Key.BaseSkinName == baseSkinName && pair.Value);
         }
 
-        public static bool AnalyzeQ(PredictionOutput output)
+        public static bool AnalyzeQ(PredictionInput input, PredictionOutput output)
         {
-            var minions = output.CollisionObjects.Count(@object => @object.IsMinion);
-            foreach (var thingy in output.CollisionObjects)
-            {
-                Console.WriteLine(thingy.BaseSkinName);
-            }
-            //Console.WriteLine("Minions: {0}", minions);
+            var posList = new List<SharpDX.Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
+            var collision = Collision.GetCollision(posList, input);
+            var minions = collision.Count(collisionObj => collisionObj.IsMinion);
             return minions > 1;
         }
     }
