@@ -21,7 +21,7 @@ namespace ChewyMoonsShaco
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
-            Game.PrintChat(ObjectManager.Player.Orientation.ToString());
+            Game.PrintChat(ObjectManager.Player.Orientation.To2D().ToString());
         }
     }
 }
