@@ -32,7 +32,7 @@ namespace ChewyMoonsLux
             Console.WriteLine("[{0}] Minions: {1}", DateTime.Now, minions);
 
             if (minions > 1) return;
-            Console.WriteLine("[{0}] Too many minions!", DateTime.Now);
+            Console.WriteLine("[{0}] Can cast Q", DateTime.Now);
 
             ChewyMoonsLux.Q.Cast(prediction.CastPosition, ChewyMoonsLux.PacketCast);
         }
