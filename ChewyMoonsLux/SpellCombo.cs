@@ -20,6 +20,7 @@ namespace ChewyMoonsLux
             var posList = new List<SharpDX.Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
             var collision = Collision.GetCollision(posList, input);
             var minions = collision.Count(collisionObj => collisionObj.IsMinion);
+            Console.WriteLine("Minions: {0}", minions);
             return minions > 1;
         }
     }
