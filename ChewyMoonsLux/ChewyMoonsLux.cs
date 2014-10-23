@@ -1,7 +1,11 @@
-﻿using LeagueSharp;
+﻿#region
+
+using LeagueSharp;
 using LeagueSharp.Common;
 using System;
-using Color = System.Drawing.Color;
+using System.Drawing;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
@@ -124,7 +128,8 @@ namespace ChewyMoonsLux
             var miscMenu = new Menu("[Chewy's Lux] - Misc", "cmLuxMisc");
             miscMenu.AddItem(new MenuItem("antiGapCloserQ", "Stun all gap closers").SetValue(true));
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets for spells").SetValue(false));
-            miscMenu.AddItem(new MenuItem("autoShield", "Auto-shield allies").SetValue(new KeyBind('c', KeyBindType.Toggle)));
+            miscMenu.AddItem(
+                new MenuItem("autoShield", "Auto-shield allies").SetValue(new KeyBind('c', KeyBindType.Toggle)));
             miscMenu.AddItem(new MenuItem("autoShieldPercent", "Auto Shield %").SetValue(new Slider(20)));
             Menu.AddSubMenu(miscMenu);
 

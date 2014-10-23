@@ -1,10 +1,14 @@
-﻿using LeagueSharp;
+﻿#region
+
+using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Collision = LeagueSharp.Common.Collision;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
@@ -17,7 +21,7 @@ namespace ChewyMoonsLux
 
         public static bool AnalyzeQ(PredictionInput input, PredictionOutput output)
         {
-            var posList = new List<SharpDX.Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
+            var posList = new List<Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
             var collision = Collision.GetCollision(posList, input);
             var minions = collision.Count(collisionObj => collisionObj.IsMinion);
             Console.WriteLine("Minions: {0}", minions);

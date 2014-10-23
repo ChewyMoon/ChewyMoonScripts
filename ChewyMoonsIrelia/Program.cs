@@ -1,10 +1,13 @@
-﻿using LeagueSharp;
+﻿#region
+
+using System;
+using System.Drawing;
+using System.Linq;
+using LeagueSharp;
 using LeagueSharp.Common;
 using LX_Orbwalker;
-using SharpDX;
-using System;
-using System.Linq;
-using Color = System.Drawing.Color;
+
+#endregion
 
 namespace ChewyMoonsIrelia
 {
@@ -168,7 +171,9 @@ namespace ChewyMoonsIrelia
         private static void LastHitWithQ()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range);
-            foreach (var minion in minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health))
+            foreach (
+                var minion in
+                    minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health))
             {
                 var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
                 // If do not farm under tower
@@ -219,7 +224,7 @@ namespace ChewyMoonsIrelia
             if (isUnderTower && !diveTower)
             {
                 // Calculate percent hp
-                var percent = (int)target.Health / target.MaxHealth * 100;
+                var percent = (int) target.Health/target.MaxHealth*100;
                 var overridePercent = _menu.Item("diveTowerPercent").GetValue<Slider>().Value;
 
                 if (percent > overridePercent) doNotCombo = true;
@@ -277,11 +282,16 @@ namespace ChewyMoonsIrelia
         {
             if (!_menu.Item("useMinionGapclose").GetValue<bool>()) return;
 
-            var target = SimpleTs.GetTarget(_q.Range * 3, SimpleTs.DamageType.Physical);
+            var target = SimpleTs.GetTarget(_q.Range*3, SimpleTs.DamageType.Physical);
             if (!target.IsValidTarget() || target == null) return;
 
-            foreach (var minion in MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range).Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
-                                                                                                                           minion.ServerPosition.Distance(target.ServerPosition) < _q.Range).Where(minion => minion.IsValidTarget(_q.Range * 3)).Where(minion => _q.IsReady()))
+            foreach (
+                var minion in
+                    MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range)
+                        .Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
+                                         minion.ServerPosition.Distance(target.ServerPosition) < _q.Range)
+                        .Where(minion => minion.IsValidTarget(_q.Range*3))
+                        .Where(minion => _q.IsReady()))
             {
                 _q.Cast(minion, _packetCast);
                 break;
@@ -290,8 +300,8 @@ namespace ChewyMoonsIrelia
 
         private static bool CanStunTarget(AttackableUnit target)
         {
-            var enemyHealthPercent = target.Health / target.MaxHealth * 100;
-            var myHealthPercent = ObjectManager.Player.Health / ObjectManager.Player.MaxHealth * 100;
+            var enemyHealthPercent = target.Health/target.MaxHealth*100;
+            var myHealthPercent = ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
 
             return enemyHealthPercent > myHealthPercent;
         }

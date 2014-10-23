@@ -1,12 +1,17 @@
-﻿using LeagueSharp;
+﻿#region
+
+using LeagueSharp;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
-    class Utilities
+    internal class Utilities
     {
         public static void PrintChat(string msg)
         {
-            Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Lux:</b></font> <font color=\"#FFFFFF\">" + msg + "</font>");
+            Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Lux:</b></font> <font color=\"#FFFFFF\">" + msg +
+                           "</font>");
         }
     }
 }

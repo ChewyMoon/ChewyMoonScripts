@@ -1,11 +1,11 @@
-﻿using LeagueSharp;
+﻿#region
+
+using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+#endregion
 
 namespace ChewyMoonsShaco
 {
@@ -18,7 +18,6 @@ namespace ChewyMoonsShaco
             if (ObjectManager.Player.BaseSkinName != "Shaco") return;
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
-            //new Vector2(0, 0).
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)

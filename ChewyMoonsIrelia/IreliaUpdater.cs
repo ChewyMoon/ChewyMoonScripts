@@ -1,17 +1,24 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.ComponentModel;
-using System.Net;
 using System.IO;
+using System.Net;
 using System.Reflection;
-using LeagueSharp;
+
+#endregion
 
 namespace ChewyMoonsIrelia
 {
-    class IreliaUpdater
+    internal class IreliaUpdater
     {
-        public static readonly string VersionUrl = "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsIrelia/Version/version.txt";
+        public static readonly string VersionUrl =
+            "https://raw.githubusercontent.com/ChewyMoon/ChewyMoonScripts/master/ChewyMoonsIrelia/Version/version.txt";
+
         public static readonly string Version = "1.5.1";
-        public static readonly string UpdateUrl = "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsIrelia.exe";
+
+        public static readonly string UpdateUrl =
+            "https://github.com/ChewyMoon/ChewyMoonScripts/raw/master/Releases/ChewyMoonsIrelia.exe";
 
         public static void CheckForUpdates()
         {
@@ -36,7 +43,6 @@ namespace ChewyMoonsIrelia
                 {
                     Utilities.PrintChat("You have the lastest version (" + Version + ")");
                 }
-
             };
             bgWorker.RunWorkerAsync();
         }
@@ -49,7 +55,7 @@ namespace ChewyMoonsIrelia
     {
         private readonly string _updatelink;
 
-        private readonly WebClient _wc = new WebClient { Proxy = null };
+        private readonly WebClient _wc = new WebClient {Proxy = null};
         public bool NeedUpdate = false;
         public string UpdateVersion;
 
@@ -70,8 +76,9 @@ namespace ChewyMoonsIrelia
                     File.Delete(Path.Combine(Assembly.GetExecutingAssembly().Location) + ".bak");
                 }
 
-                File.Move(Assembly.GetExecutingAssembly().Location, Path.Combine(Assembly.GetExecutingAssembly().Location) + ".bak");
-                _wc.DownloadFile(_updatelink,Path.Combine(Assembly.GetExecutingAssembly().Location));
+                File.Move(Assembly.GetExecutingAssembly().Location,
+                    Path.Combine(Assembly.GetExecutingAssembly().Location) + ".bak");
+                _wc.DownloadFile(_updatelink, Path.Combine(Assembly.GetExecutingAssembly().Location));
 // ReSharper restore PossiblyMistakenUseOfParamsMethod
                 return true;
             }

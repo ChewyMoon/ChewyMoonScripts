@@ -1,8 +1,12 @@
-﻿using LeagueSharp;
+﻿#region
+
+using LeagueSharp;
 using LeagueSharp.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
@@ -51,7 +55,14 @@ namespace ChewyMoonsLux
         private static void AutoShield()
         {
             // linq op babbyyy
-            foreach (var teamMate in from teamMate in ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid) let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>() let ourPercent = teamMate.Health / teamMate.MaxHealth * 100 where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady() select teamMate)
+            foreach (
+                var teamMate in
+                    from teamMate in
+                        ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid)
+                    let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>()
+                    let ourPercent = teamMate.Health / teamMate.MaxHealth * 100
+                    where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady()
+                    select teamMate)
             {
                 ChewyMoonsLux.W.Cast(teamMate, ChewyMoonsLux.PacketCast);
             }
@@ -60,7 +71,15 @@ namespace ChewyMoonsLux
         private static void KillSecure()
         {
             // KILL SECURE MY ASS LOOL
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget()).Where(hero => ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range && ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) >= hero.Health && ChewyMoonsLux.R.IsReady()))
+            foreach (
+                var hero in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(hero => hero.IsValidTarget())
+                        .Where(
+                            hero =>
+                                ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range &&
+                                ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) >= hero.Health &&
+                                ChewyMoonsLux.R.IsReady()))
             {
                 ChewyMoonsLux.R.Cast(hero, ChewyMoonsLux.PacketCast);
             }

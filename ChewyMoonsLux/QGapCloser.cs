@@ -1,8 +1,12 @@
-﻿using LeagueSharp.Common;
+﻿#region
+
+using LeagueSharp.Common;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
-    class QGapCloser
+    internal class QGapCloser
     {
         internal static void OnEnemyGapCloser(ActiveGapcloser gapcloser)
         {

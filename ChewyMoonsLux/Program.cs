@@ -1,5 +1,8 @@
-﻿using LeagueSharp;
+﻿#region
+
 using LeagueSharp.Common;
+
+#endregion
 
 namespace ChewyMoonsLux
 {
