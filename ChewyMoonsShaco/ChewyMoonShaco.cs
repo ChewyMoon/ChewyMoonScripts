@@ -3,8 +3,10 @@
 using LeagueSharp;
 using LeagueSharp.Common;
 using LX_Orbwalker;
+using SharpDX;
 using System;
-using System.Drawing;
+using System.Linq;
+using Color = System.Drawing.Color;
 
 #endregion
 
@@ -63,6 +65,7 @@ namespace ChewyMoonsShaco
             // Drawing
             var drawingMenu = new Menu("Drawings", "cmShacoDrawing");
             drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(new Circle(true, Color.Khaki)));
+            drawingMenu.AddItem(new MenuItem("drawQPos", "Draw Q Pos").SetValue(new Circle(true, Color.Magenta)));
             drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(new Circle(true, Color.Khaki)));
             drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(new Circle(true, Color.Khaki)));
             Menu.AddSubMenu(drawingMenu);
@@ -80,6 +83,7 @@ namespace ChewyMoonsShaco
             var qCircle = Menu.Item("drawQ").GetValue<Circle>();
             var wCircle = Menu.Item("drawW").GetValue<Circle>();
             var eCircle = Menu.Item("drawE").GetValue<Circle>();
+            var qPosCircle = Menu.Item("drawQPos").GetValue<Circle>();
 
             var pos = ObjectManager.Player.Position;
 
@@ -97,9 +101,37 @@ namespace ChewyMoonsShaco
             {
                 Utility.DrawCircle(pos, E.Range, eCircle.Color);
             }
+
+            if (qPosCircle.Active)
+            {
+                foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
+                {
+                    var qPos = enemy.Position +
+                               Vector3.Normalize(ObjectManager.Player.Position - enemy.Position) * Q.Range;
+                    Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(qPos), 5, qPosCircle.Color);
+                }
+            }
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
+        {
+            switch (LXOrbwalker.CurrentMode)
+            {
+                case LXOrbwalker.Mode.Combo:
+                    Combo();
+                    break;
+
+                case LXOrbwalker.Mode.Harass:
+                    Harass();
+                    break;
+            }
+        }
+
+        private static void Combo()
+        {
+        }
+
+        private static void Harass()
         {
         }
     }
