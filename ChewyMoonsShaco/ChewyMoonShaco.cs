@@ -108,7 +108,7 @@ namespace ChewyMoonsShaco
                 {
                     var position = enemy.Position - ObjectManager.Player.Position;
                     var castBehind = Q.GetPrediction(enemy).CastPosition + Vector3.Normalize(position) * 75;
-                    Drawing.DrawLine(enemy.ServerPosition.To2D(), castBehind.To2D(), 3, qPosCircle.Color);
+                    Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(castBehind), 3, qPosCircle.Color);
                 }
             }
         }
