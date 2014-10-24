@@ -106,8 +106,8 @@ namespace ChewyMoonsShaco
             {
                 foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
                 {
-                    var qPos = enemy.Position +
-                               Vector3.Normalize(ObjectManager.Player.Position + enemy.Position) * Q.Range;
+                    var qPos = enemy.Position -
+                               Vector3.Normalize(ObjectManager.Player.Position - enemy.Position) * Q.Range;
                     Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(qPos), 2, qPosCircle.Color);
                 }
             }
