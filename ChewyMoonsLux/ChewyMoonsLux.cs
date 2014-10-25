@@ -3,7 +3,9 @@
 using LeagueSharp;
 using LeagueSharp.Common;
 using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Dynamic;
 
 #endregion
 
@@ -15,6 +17,11 @@ namespace ChewyMoonsLux
         public static Orbwalking.Orbwalker Orbwalker;
         public static Spell Q, W, E, R;
         public static bool PacketCast = false;
+
+        public static bool Debug
+        {
+            get { return Menu.Item("debug").GetValue<bool>(); }
+        }
 
         public static void OnGameLoad(EventArgs args)
         {
@@ -131,6 +138,7 @@ namespace ChewyMoonsLux
             miscMenu.AddItem(
                 new MenuItem("autoShield", "Auto-shield allies").SetValue(new KeyBind('c', KeyBindType.Toggle)));
             miscMenu.AddItem(new MenuItem("autoShieldPercent", "Auto Shield %").SetValue(new Slider(20)));
+            miscMenu.AddItem(new MenuItem("debug", "Debug").SetValue(false));
             Menu.AddSubMenu(miscMenu);
 
             // Combo / Harass
