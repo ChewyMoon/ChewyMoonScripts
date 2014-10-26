@@ -11,6 +11,8 @@ namespace ChewyMoonsLux
 {
     internal class LuxCombo
     {
+        private static GameObject _eGameObject;
+
         public static void OnGameUpdate(EventArgs args)
         {
             ChewyMoonsLux.PacketCast = ChewyMoonsLux.Menu.Item("packetCast").GetValue<bool>();
@@ -76,7 +78,7 @@ namespace ChewyMoonsLux
             var useE = ChewyMoonsLux.Menu.Item("useEHarass").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
-            if (!target.IsValidTarget() || target == null) return;
+            if (!target.IsValidTarget()) return;
 
             if (HasPassive(target)) return;
 
@@ -85,7 +87,7 @@ namespace ChewyMoonsLux
                 SpellCombo.CastQ(target);
             }
 
-            if (!useE || !ChewyMoonsLux.E.IsReady() || HasPassive(target)) return;
+            if (!useE || !ChewyMoonsLux.E.IsReady() || HasPassive(target) || _eGameObject != null) return;
             ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
         }
 
@@ -100,7 +102,15 @@ namespace ChewyMoonsLux
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (!target.IsValid) return;
+            // Pop e
+            if (_eGameObject != null)
+            {
+                var targetsInE = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(_eGameObject.BoundingRadius)).ToList();
+                if (targetsInE.Any(leTarget => !HasPassive(leTarget)))
+                    ChewyMoonsLux.E.Cast(ChewyMoonsLux.PacketCast);
+            }
+
+            if (!target.IsValidTarget()) return;
             if (HasPassive(target)) return;
 
             if (useDfg)
@@ -113,7 +123,7 @@ namespace ChewyMoonsLux
                 SpellCombo.CastQ(target);
             }
 
-            if (ChewyMoonsLux.E.IsReady() && useE && !HasPassive(target))
+            if (ChewyMoonsLux.E.IsReady() && useE && !HasPassive(target) && _eGameObject == null)
             {
                 ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
             }
@@ -144,17 +154,16 @@ namespace ChewyMoonsLux
             return target.HasBuff("luxilluminatingfraulein");
         }
 
-        public static void OnGameProcessPacket(GamePacketEventArgs args)
+        public static void OnGameObjectCreate(GameObject sender, EventArgs args)
         {
-            if (args.PacketData[0] != 0xD8) return; // Not a recall
+            if (!sender.Name.Contains("LuxLightstrike_tar_green")) return;
+            _eGameObject = sender;
+        }
 
-            var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
-            if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
-            if (decoded.Type != Packet.S2C.Recall.ObjectType.Player) return;
-
-            var personBacking = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
-            if (ObjectManager.Player.GetSpellDamage(personBacking, SpellSlot.R) > personBacking.Health)
-                ChewyMoonsLux.R.Cast(personBacking.ServerPosition, ChewyMoonsLux.PacketCast);
+        public static void OnGameObjectDelete(GameObject sender, EventArgs args)
+        {
+            if (!sender.Name.Contains("LuxLightstrike_tar_green")) return;
+            _eGameObject = null; //rip e Kappa
         }
     }
 }
