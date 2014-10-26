@@ -44,7 +44,7 @@ namespace ChewyMoonsLux
             Drawing.OnDraw += OnDraw;
             AntiGapcloser.OnEnemyGapcloser += QGapCloser.OnEnemyGapCloser;
             Game.OnGameUpdate += LuxCombo.OnGameUpdate;
-            Game.OnGameProcessPacket += LuxCombo.OnGameProcessPacket;
+            // Game.OnGameProcessPacket += LuxCombo.OnGameProcessPacket;
 
             Utilities.PrintChat("Loaded.");
         }
