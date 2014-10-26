@@ -23,6 +23,9 @@ namespace ChewyMoonsShaco
 
         public static List<Spell> SpellList;
 
+        public static int TiamatId = 3077;
+        public static int HydraId = 3074;
+
         public static void OnGameLoad(EventArgs args)
         {
             if (ObjectManager.Player.BaseSkinName != "Shaco") return;
@@ -37,10 +40,28 @@ namespace ChewyMoonsShaco
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
+            LXOrbwalker.AfterAttack += LxOrbwalkerOnAfterAttack;
 
             Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" +
                            "loaded!" +
                            "</font>");
+        }
+
+        private static void LxOrbwalkerOnAfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        {
+            if (!unit.IsMe) return;
+            if (!target.IsValidTarget() || target.IsMinion) return;
+
+            if (Items.HasItem(HydraId) && Items.CanUseItem(HydraId))
+            {
+                Items.UseItem(TiamatId);
+                LXOrbwalker.ResetAutoAttackTimer();
+            }
+            else if (Items.HasItem(TiamatId) && Items.CanUseItem(TiamatId))
+            {
+                Items.UseItem(TiamatId);
+                LXOrbwalker.ResetAutoAttackTimer();
+            }
         }
 
         private static void CreateMenu()
@@ -63,6 +84,7 @@ namespace ChewyMoonsShaco
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useItems", "Use items").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             // Harass
