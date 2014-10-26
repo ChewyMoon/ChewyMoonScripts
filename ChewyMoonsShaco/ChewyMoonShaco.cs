@@ -3,10 +3,10 @@
 using LeagueSharp;
 using LeagueSharp.Common;
 using LX_Orbwalker;
-using SharpDX;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using Color = System.Drawing.Color;
 
 #endregion
 
@@ -21,18 +21,26 @@ namespace ChewyMoonsShaco
         public static Menu Menu;
         public static LXOrbwalker Orbwalker;
 
+        public static List<Spell> SpellList;
+
         public static void OnGameLoad(EventArgs args)
         {
             if (ObjectManager.Player.BaseSkinName != "Shaco") return;
 
-            Q = new Spell(SpellSlot.Q, ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q).SData.CastRadius[0]);
-            W = new Spell(SpellSlot.W, ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).SData.CastRadius[0]);
-            E = new Spell(SpellSlot.E, ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).SData.CastRadius[0]);
+            Q = new Spell(SpellSlot.Q, 400);
+            W = new Spell(SpellSlot.W, 425);
+            E = new Spell(SpellSlot.E, 625);
+
+            SpellList = new List<Spell> { Q, E, W };
 
             CreateMenu();
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
+
+            Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" +
+                           "loaded!" +
+                           "</font>");
         }
 
         private static void CreateMenu()
@@ -72,6 +80,7 @@ namespace ChewyMoonsShaco
 
             // Misc
             var miscMenu = new Menu("Misc", "cmShacoMisc");
+            miscMenu.AddItem(new MenuItem("usePackets", "Use packets").SetValue(true));
             miscMenu.AddItem(new MenuItem("stuff", "Let me know of any"));
             miscMenu.AddItem(new MenuItem("stuff2", "other misc features you want"));
             miscMenu.AddItem(new MenuItem("stuff3", "on the thead or IRC"));
@@ -106,8 +115,8 @@ namespace ChewyMoonsShaco
             {
                 foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
                 {
-                    var position = enemy.Position + Vector3.Normalize(enemy.Position - ObjectManager.Player.Position) * 150;
-                    Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(position), 3, qPosCircle.Color);
+                    Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position),
+                        Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2, qPosCircle.Color);
                 }
             }
         }
@@ -128,10 +137,49 @@ namespace ChewyMoonsShaco
 
         private static void Combo()
         {
+            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
+
+            var useQ = Menu.Item("useQ").GetValue<bool>();
+            var useW = Menu.Item("useW").GetValue<bool>();
+            var useE = Menu.Item("useE").GetValue<bool>();
+            var packets = Menu.Item("usePackets").GetValue<bool>();
+
+            foreach (var spell in SpellList.Where(x => x.IsReady()))
+            {
+                if (spell.Slot == SpellSlot.Q && useQ)
+                {
+                    if (!target.IsValidTarget(Q.Range)) continue;
+
+                    var pos = ShacoUtil.GetQPos(target, true);
+                    Q.Cast(pos, packets);
+                }
+
+                if (spell.Slot == SpellSlot.W && useW)
+                {
+                    if (!target.IsValidTarget(W.Range)) continue;
+
+                    var pos = ShacoUtil.GetShortestWayPoint(target.GetWaypoints());
+                    W.Cast(pos, packets);
+                }
+
+                if (spell.Slot != SpellSlot.E || !useE) continue;
+                if (!target.IsValidTarget(E.Range)) continue;
+
+                E.CastOnUnit(target);
+            }
         }
 
         private static void Harass()
         {
+            var useE = Menu.Item("useEHarass").GetValue<bool>();
+            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
+
+            if (!target.IsValidTarget(E.Range)) return;
+
+            if (useE && E.IsReady())
+            {
+                E.CastOnUnit(target);
+            }
         }
     }
 }
