@@ -3,7 +3,6 @@
 using LeagueSharp;
 using LeagueSharp.Common;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 #endregion
@@ -12,13 +11,9 @@ namespace ChewyMoonsLux
 {
     internal class LuxCombo
     {
-        private static readonly Dictionary<Obj_AI_Hero, bool> AutoAttackDictionary = new Dictionary<Obj_AI_Hero, bool>();
-
         public static void OnGameUpdate(EventArgs args)
         {
             ChewyMoonsLux.PacketCast = ChewyMoonsLux.Menu.Item("packetCast").GetValue<bool>();
-
-            UpdateDictionary();
 
             if (ChewyMoonsLux.Menu.Item("ultKS").GetValue<bool>())
             {
@@ -39,16 +34,6 @@ namespace ChewyMoonsLux
             if (ChewyMoonsLux.Menu.Item("autoShield").GetValue<KeyBind>().Active)
             {
                 AutoShield();
-            }
-        }
-
-        private static void UpdateDictionary()
-        {
-            AutoAttackDictionary.Clear();
-
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
-            {
-                AutoAttackDictionary.Add(enemy, enemy.HasBuff("luxilluminatingfraulein"));
             }
         }
 
@@ -89,22 +74,18 @@ namespace ChewyMoonsLux
         {
             var useQ = ChewyMoonsLux.Menu.Item("useQHarass").GetValue<bool>();
             var useE = ChewyMoonsLux.Menu.Item("useEHarass").GetValue<bool>();
-            var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaHarass").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
             if (!target.IsValidTarget() || target == null) return;
 
-            if (SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
+            if (HasPassive(target)) return;
 
-            if (useQ && ChewyMoonsLux.Q.IsReady())
+            if (useQ & ChewyMoonsLux.Q.IsReady() && !HasPassive(target))
             {
                 SpellCombo.CastQ(target);
-
-                if (aaAfterSpell)
-                    return;
             }
 
-            if (!useE || !ChewyMoonsLux.E.IsReady()) return;
+            if (!useE || !ChewyMoonsLux.E.IsReady() || HasPassive(target)) return;
             ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
         }
 
@@ -116,33 +97,25 @@ namespace ChewyMoonsLux
             var useR = ChewyMoonsLux.Menu.Item("useR").GetValue<bool>();
 
             var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
-            var aaAfterSpell = ChewyMoonsLux.Menu.Item("aaAfterSpell").GetValue<bool>();
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 
-            if (SpellCombo.ContainsPassive(AutoAttackDictionary, target.BaseSkinName)) return;
             if (!target.IsValid) return;
+            if (HasPassive(target)) return;
 
             if (useDfg)
             {
                 if (Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
             }
 
-            if (ChewyMoonsLux.Q.IsReady() && useQ)
+            if (ChewyMoonsLux.Q.IsReady() && useQ && !HasPassive(target))
             {
                 SpellCombo.CastQ(target);
-
-                if (aaAfterSpell)
-                    return;
             }
 
-            if (ChewyMoonsLux.E.IsReady() && useE)
+            if (ChewyMoonsLux.E.IsReady() && useE && !HasPassive(target))
             {
                 ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
-                if (aaAfterSpell)
-                {
-                    return;
-                }
             }
 
             if (ChewyMoonsLux.W.IsReady() && useW)
@@ -151,7 +124,7 @@ namespace ChewyMoonsLux
             }
 
             if (target.IsDead) return;
-            if (!ChewyMoonsLux.R.IsReady() || !useR) return;
+            if (!ChewyMoonsLux.R.IsReady() || !useR || HasPassive(target)) return;
 
             if (ChewyMoonsLux.Menu.Item("onlyRIfKill").GetValue<bool>())
             {
@@ -164,6 +137,11 @@ namespace ChewyMoonsLux
             {
                 ChewyMoonsLux.R.Cast(target, ChewyMoonsLux.PacketCast);
             }
+        }
+
+        private static bool HasPassive(Obj_AI_Base target)
+        {
+            return target.HasBuff("luxilluminatingfraulein");
         }
 
         public static void OnGameProcessPacket(GamePacketEventArgs args)

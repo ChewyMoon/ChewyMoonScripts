@@ -14,22 +14,11 @@ namespace ChewyMoonsLux
 {
     public class SpellCombo
     {
-        public static bool ContainsPassive(Dictionary<Obj_AI_Hero, bool> dictionary, string baseSkinName)
-        {
-            var contains = dictionary.Any(pair => pair.Key.BaseSkinName == baseSkinName && pair.Value);
-            if (contains && ChewyMoonsLux.Debug)
-            {
-                Console.WriteLine("{0} has passive, not combo'ing", baseSkinName);
-            }
-            return contains;
-        }
-
         public static bool AnalyzeQ(PredictionInput input, PredictionOutput output)
         {
             var posList = new List<Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
             var collision = Collision.GetCollision(posList, input);
             var minions = collision.Count(collisionObj => collisionObj.IsMinion);
-            Console.WriteLine("old_Minions: {0}", minions);
             return minions > 1;
         }
 

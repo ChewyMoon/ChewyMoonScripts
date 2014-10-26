@@ -96,7 +96,6 @@ namespace ChewyMoonsLux
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
-            comboMenu.AddItem(new MenuItem("aaAfterSpell", "AA after spell").SetValue(true));
             comboMenu.AddItem(new MenuItem("onlyRIfKill", "Use R to kill only").SetValue(false));
             comboMenu.AddItem(new MenuItem("useIgnite", "Use ignite in combo").SetValue(true));
             Menu.AddSubMenu(comboMenu);
@@ -105,7 +104,6 @@ namespace ChewyMoonsLux
             var harassMenu = new Menu("[Chewy's Lux] - Harass", "cmLuxHarass");
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
-            harassMenu.AddItem(new MenuItem("aaHarass", "Auto attack after harass").SetValue(true));
             Menu.AddSubMenu(harassMenu);
 
             // KS / Finisher Settings
