@@ -186,12 +186,7 @@ namespace Sophies_Soraka
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             Menu.AddSubMenu(comboMenu);
-           
-            // Exploit
-            var harassMenu = new Menu("Exploit", "ssExploit");
-            exploitMenu.AddItem(new MenuItem("exploit", "Exploit").SetValue(true));
-            Menu.AddSubMenu(exploitMenu);
-            
+        
             // Misc
             var miscMenu = new Menu("Misc", "ssMisc");
             miscMenu.AddItem(new MenuItem("packets", "Use Packets").SetValue(true));
