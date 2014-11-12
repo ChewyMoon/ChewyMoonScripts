@@ -191,7 +191,7 @@ namespace Sophies_Soraka
             var harassMenu = new Menu("Harass", "ssHarass");
             comboMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
-            Menu.AddSubMenu(harassCombo);
+            Menu.AddSubMenu(harassMenu);
 
             // Misc
             var miscMenu = new Menu("Misc", "ssMisc");
