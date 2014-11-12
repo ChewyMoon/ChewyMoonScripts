@@ -190,7 +190,7 @@ namespace Sophies_Soraka
             // Exploit
             var harassMenu = new Menu("Exploit", "ssExploit");
             exploitMenu.AddItem(new MenuItem("exploit", "Exploit").SetValue(true));
-            Menu.AddSubMenu(harassMenu);
+            Menu.AddSubMenu(exploitMenu);
             
             // Misc
             var miscMenu = new Menu("Misc", "ssMisc");
