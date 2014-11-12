@@ -150,7 +150,7 @@ namespace Sophies_Soraka
             Menu = new Menu("Sophies's Soraka", "sSoraka", true);
 
             // Target Selector
-            var tsMenu = new Menu("TS", "ssTS");
+            var tsMenu = new Menu("Target Selector", "ssTS");
             SimpleTs.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
