@@ -34,7 +34,7 @@ namespace Sophies_Soraka
             E = new Spell(SpellSlot.E, 925);
             R = new Spell(SpellSlot.R);
 
-            Q.SetSkillshot(0.5f, 300, 1750, false, SkillshotType.SkillshotCone);
+            Q.SetSkillshot(0.5f, 300, 1750, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(0.5f, 70f, 1750, false, SkillshotType.SkillshotCircle);
 
             CreateMenu();
