@@ -1,15 +1,16 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Linq;
-using System.Threading;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
+
+#endregion
 
 namespace Sophies_Soraka
 {
-    class SophiesSoraka
+    internal class SophiesSoraka
     {
-
         public static Spell Q;
         public static Spell W;
         public static Spell E;
@@ -18,7 +19,10 @@ namespace Sophies_Soraka
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
 
-        public static bool Packets { get { return Menu.Item("packets").GetValue<bool>();  } }
+        public static bool Packets
+        {
+            get { return Menu.Item("packets").GetValue<bool>(); }
+        }
 
         public static void OnGameLoad(EventArgs args)
         {
@@ -66,7 +70,12 @@ namespace Sophies_Soraka
         {
             if (!R.IsReady()) return;
 
-            foreach (var friendHealth in from friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy) select friend.Health/friend.MaxHealth*100 into friendHealth let healthPercent = Menu.Item("autoRPercent").GetValue<Slider>().Value where friendHealth <= healthPercent select friendHealth)
+            foreach (var friendHealth in from friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy)
+                select friend.Health/friend.MaxHealth*100
+                into friendHealth
+                let healthPercent = Menu.Item("autoRPercent").GetValue<Slider>().Value
+                where friendHealth <= healthPercent
+                select friendHealth)
             {
                 R.CastOnUnit(ObjectManager.Player, Packets);
             }
@@ -74,9 +83,19 @@ namespace Sophies_Soraka
 
         private static void AutoW()
         {
-            if(!W.IsReady()) return;
+            if (!W.IsReady()) return;
 
-            foreach (var friend in from friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy).Where(x => !x.IsMe).Where(friend => W.InRange(friend.ServerPosition)) let friendHealth = friend.Health/friend.MaxHealth*100 let healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value where friendHealth <= healthPercent select friend)
+            foreach (
+                var friend in
+                    from friend in
+                        ObjectManager.Get<Obj_AI_Hero>()
+                            .Where(x => !x.IsEnemy)
+                            .Where(x => !x.IsMe)
+                            .Where(friend => W.InRange(friend.ServerPosition))
+                    let friendHealth = friend.Health/friend.MaxHealth*100
+                    let healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value
+                    where friendHealth <= healthPercent
+                    select friend)
             {
                 W.CastOnUnit(friend, Packets);
             }
@@ -118,7 +137,6 @@ namespace Sophies_Soraka
             {
                 E.Cast(target, Packets);
             }
-            
         }
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -138,7 +156,8 @@ namespace Sophies_Soraka
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
-            if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != InterruptableDangerLevel.High) return;
+            if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != InterruptableDangerLevel.High)
+                return;
             if (!unit.IsValidTarget(E.Range)) return;
             if (!E.IsReady()) return;
 

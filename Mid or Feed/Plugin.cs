@@ -77,7 +77,7 @@ namespace Mid_or_Feed
             Menu.AddToMainMenu();
         }
 
-        public void PrintChat(string msg)
+        public static void PrintChat(string msg)
         {
             Game.PrintChat("<font color='#3492EB'>Mid or Feed:</font> <font color='#FFFFFF'>" + msg + "</font>");
         }

@@ -24,7 +24,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-
+            
             PrintChat("Akali loaded!");
         }
 

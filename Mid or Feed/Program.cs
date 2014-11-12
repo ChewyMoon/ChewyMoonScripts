@@ -19,7 +19,12 @@ namespace Mid_or_Feed
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             var plugin = Type.GetType("Mid_or_Feed.Champions." + ObjectManager.Player.ChampionName);
-            if (plugin == null) return;
+
+            if (plugin == null)
+            {
+                Plugin.PrintChat(ObjectManager.Player.ChampionName + " not supported!");
+                return;
+            }
 
             Activator.CreateInstance(plugin);
         }
@@ -27,6 +32,7 @@ namespace Mid_or_Feed
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             Console.WriteLine(((Exception)unhandledExceptionEventArgs.ExceptionObject).Message);
+            Plugin.PrintChat("encountered an error! ChewyMoon dun goofed again gg");
         }
     }
 }

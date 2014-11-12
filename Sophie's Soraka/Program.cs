@@ -1,10 +1,14 @@
-﻿using LeagueSharp.Common;
+﻿#region
+
+using LeagueSharp.Common;
+
+#endregion
 
 namespace Sophies_Soraka
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += SophiesSoraka.OnGameLoad;
         }
