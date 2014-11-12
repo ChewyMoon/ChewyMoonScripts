@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -44,6 +45,31 @@ namespace Sophies_Soraka
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Game.OnGameUpdate += GameOnOnGameUpdate;
+            Drawing.OnDraw += DrawingOnOnDraw;
+        }
+
+        private static void DrawingOnOnDraw(EventArgs args)
+        {
+            var drawQ = Menu.Item("drawQ").GetValue<bool>();
+            var drawW = Menu.Item("drawW").GetValue<bool>();
+            var drawE = Menu.Item("drawE").GetValue<bool>();
+
+            var p = ObjectManager.Player.Position;
+
+            if (drawQ)
+            {
+                Utility.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawW)
+            {
+                Utility.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawE)
+            {
+                Utility.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+            }
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
@@ -161,6 +187,7 @@ namespace Sophies_Soraka
         {
             if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != InterruptableDangerLevel.High)
                 return;
+
             if (!unit.IsValidTarget(E.Range)) return;
             if (!E.IsReady()) return;
 
@@ -187,6 +214,19 @@ namespace Sophies_Soraka
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             Menu.AddSubMenu(comboMenu);
         
+            // Harass
+            var harassMenu = new Menu("Harass", "ssHarass");
+            comboMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
+            Menu.AddSubMenu(harassMenu);
+
+            // Drawing
+            var drawingMenu = new Menu("Drawing", "ssDrawing");
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
+            Menu.AddSubMenu(drawingMenu);
+
             // Misc
             var miscMenu = new Menu("Misc", "ssMisc");
             miscMenu.AddItem(new MenuItem("packets", "Use Packets").SetValue(true));
