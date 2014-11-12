@@ -39,7 +39,7 @@ namespace Sophies_Soraka
 
             CreateMenu();
 
-            PrintChat("Loaded !. Definitely created by Sophie AND NOT CHEWYMOON :3");
+            PrintChat("Loaded ! Definitely created by Sophie AND NOT CHEWYMOON :3");
 
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
