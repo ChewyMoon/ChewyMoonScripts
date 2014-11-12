@@ -26,6 +26,9 @@ namespace Sophies_Soraka
 
         public static void OnGameLoad(EventArgs args)
         {
+            if (ObjectManager.Player.ChampionName != "Soraka")
+                return;
+
             Q = new Spell(SpellSlot.Q, 950);
             W = new Spell(SpellSlot.W, 450);
             E = new Spell(SpellSlot.E, 925);
@@ -36,11 +39,11 @@ namespace Sophies_Soraka
 
             CreateMenu();
 
+            PrintChat("Loaded ! ♥. Definitely created by Sophie AND NOT CHEWYMOON :3");
+
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Game.OnGameUpdate += GameOnOnGameUpdate;
-
-            PrintChat("Loaded ! ♥. Definitely created by Sophie AND NOT CHEWYMOON :3");
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
