@@ -217,8 +217,8 @@ namespace Sophies_Soraka
         
             // Harass
             var harassMenu = new Menu("Harass", "ssHarass");
-            comboMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             Menu.AddSubMenu(harassMenu);
 
             // Drawing
