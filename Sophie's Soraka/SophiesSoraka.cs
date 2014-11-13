@@ -234,9 +234,9 @@ namespace Sophies_Soraka
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoWPercent", "^ Percent").SetValue(new Slider(50)));
+            miscMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50)));
             miscMenu.AddItem(new MenuItem("autoR", "Auto use R").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoRPercent", "^ Percent").SetValue(new Slider(15)));
+            miscMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15)));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
