@@ -100,14 +100,16 @@ namespace Sophies_Soraka
         {
             if (!R.IsReady()) return;
 
-            foreach (var friendHealth in from friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy)
-                select friend.Health/friend.MaxHealth*100
-                into friendHealth
-                let healthPercent = Menu.Item("autoRPercent").GetValue<Slider>().Value
-                where friendHealth <= healthPercent
-                select friendHealth)
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach (var friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x=> !x.IsZombie))
             {
-                R.CastOnUnit(ObjectManager.Player, Packets);
+                var friendHealth = (int) friend.Health/friend.MaxHealth*100;
+                var health = Menu.Item("autoRPercent").GetValue<Slider>().Value;
+
+                if (friendHealth <= health)
+                {
+                    R.CastOnUnit(ObjectManager.Player, Packets);
+                }
             }
         }
 
