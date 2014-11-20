@@ -31,7 +31,7 @@ namespace Sophies_Soraka
                 return;
 
             Q = new Spell(SpellSlot.Q, 950);
-            W = new Spell(SpellSlot.W, 450);
+            W = new Spell(SpellSlot.W, 550);
             E = new Spell(SpellSlot.E, 925);
             R = new Spell(SpellSlot.R);
 
