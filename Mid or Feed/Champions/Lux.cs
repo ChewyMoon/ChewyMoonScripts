@@ -183,7 +183,7 @@ namespace Mid_or_Feed.Champions
                     return;
 
                 var value = args.GetNewValue<bool>();
-                Menu.Item("useRKillable").SetValue(!value)
+                Menu.Item("useRKillable").SetValue(!value);
             };
         }
 
