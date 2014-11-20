@@ -1,10 +1,10 @@
-﻿using LeagueSharp;
-using LeagueSharp.Common;
+﻿#region
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LeagueSharp;
+using LeagueSharp.Common;
+
+#endregion
 
 namespace Mid_or_Feed
 {
@@ -29,9 +29,10 @@ namespace Mid_or_Feed
             Activator.CreateInstance(plugin);
         }
 
-        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        private static void CurrentDomainOnUnhandledException(object sender,
+            UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
-            Console.WriteLine(((Exception)unhandledExceptionEventArgs.ExceptionObject).Message);
+            Console.WriteLine(((Exception) unhandledExceptionEventArgs.ExceptionObject).Message);
             Plugin.PrintChat("encountered an error! ChewyMoon dun goofed again gg");
         }
     }

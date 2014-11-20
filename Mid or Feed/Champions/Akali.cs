@@ -1,9 +1,13 @@
-﻿using LeagueSharp;
-using LeagueSharp.Common;
+﻿#region
+
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using Color = System.Drawing.Color;
+using LeagueSharp;
+using LeagueSharp.Common;
+
+#endregion
 
 namespace Mid_or_Feed.Champions
 {
@@ -24,7 +28,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-            
+
             PrintChat("Akali loaded!");
         }
 
@@ -61,7 +65,8 @@ namespace Mid_or_Feed.Champions
 
         private void DoCombo()
         {
-            var target = SimpleTs.GetTarget(_spellList.First(x => x.Slot == SpellSlot.R).Range + 50, SimpleTs.DamageType.Magical);
+            var target = SimpleTs.GetTarget(_spellList.First(x => x.Slot == SpellSlot.R).Range + 50,
+                SimpleTs.DamageType.Magical);
 
             if (target == null && GetValue<bool>("gapcloseR"))
             {
@@ -95,7 +100,8 @@ namespace Mid_or_Feed.Champions
                     spell.CastOnUnit(Player, Packets);
                 }
 
-                if (spell.Slot == SpellSlot.R && useR && Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Player))
+                if (spell.Slot == SpellSlot.R && useR &&
+                    Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Player))
                 {
                     spell.CastOnUnit(target, Packets);
                 }
@@ -112,10 +118,14 @@ namespace Mid_or_Feed.Champions
             var r = GetSpell(_spellList, SpellSlot.R);
             if (!r.IsReady()) return;
 
-            var target = SimpleTs.GetTarget(r.Range * 3, SimpleTs.DamageType.Magical);
+            var target = SimpleTs.GetTarget(r.Range*3, SimpleTs.DamageType.Magical);
             if (!target.IsValidTarget()) return;
 
-            foreach (var minion in MinionManager.GetMinions(Player.ServerPosition, r.Range).Where(x => x.IsValidTarget()).Where(minion => minion.Distance(target) < r.Range))
+            foreach (
+                var minion in
+                    MinionManager.GetMinions(Player.ServerPosition, r.Range)
+                        .Where(x => x.IsValidTarget())
+                        .Where(minion => minion.Distance(target) < r.Range))
             {
                 r.CastOnUnit(minion, Packets);
                 break;
@@ -134,7 +144,9 @@ namespace Mid_or_Feed.Champions
 
         public override float GetComboDamage(Obj_AI_Hero target)
         {
-            var damage = _spellList.Where(spell => spell.Level > 0 && spell.IsReady()).Sum(spell => Player.GetDamageSpell(target, spell.Slot).CalculatedDamage);
+            var damage =
+                _spellList.Where(spell => spell.Level > 0 && spell.IsReady())
+                    .Sum(spell => Player.GetDamageSpell(target, spell.Slot).CalculatedDamage);
 
             if (LeagueSharp.Common.Items.CanUseItem(GunbladeId))
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
@@ -142,7 +154,7 @@ namespace Mid_or_Feed.Champions
             if (LeagueSharp.Common.Items.CanUseItem(CutlassId))
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
 
-            return (float)damage;
+            return (float) damage;
         }
 
         public override void Combo(Menu comboMenu)
@@ -166,7 +178,7 @@ namespace Mid_or_Feed.Champions
         public override void Misc(Menu miscMenu)
         {
             miscMenu.AddItem(new MenuItem("gapcloseR", "Gapclose with R").SetValue(true));
-            miscMenu.AddItem(new MenuItem("gapcloseAmmo", "^ Charges").SetValue(new StringList(new[] { "2", "3" })));
+            miscMenu.AddItem(new MenuItem("gapcloseAmmo", "^ Charges").SetValue(new StringList(new[] {"2", "3"})));
         }
 
         public override void Drawings(Menu drawingMenu)

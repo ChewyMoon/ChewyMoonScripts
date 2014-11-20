@@ -1,32 +1,40 @@
-﻿using LeagueSharp;
-using LeagueSharp.Common;
-using System;
+﻿#region
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using LeagueSharp;
+using LeagueSharp.Common;
+
+#endregion
 
 namespace Mid_or_Feed
 {
     public abstract class Plugin
     {
-        public Menu Menu { get; internal set; }
-
-        public Orbwalking.Orbwalker Orbwalker { get; internal set; }
-
-        public Orbwalking.OrbwalkingMode OrbwalkerMode { get { return Orbwalker.ActiveMode; } }
-
-        public bool Packets { get { return GetValue<bool>("packets"); } }
-
-        public Obj_AI_Hero Player { get { return ObjectManager.Player; } }
-
         protected Plugin()
         {
             CreateMenu();
             Utility.HpBarDamageIndicator.DamageToUnit = DamageToUnit;
             Utility.HpBarDamageIndicator.Enabled = true;
             PrintChat("loading. Created by ChewyMoon :3");
+        }
+
+        public Menu Menu { get; internal set; }
+        public Orbwalking.Orbwalker Orbwalker { get; internal set; }
+
+        public Orbwalking.OrbwalkingMode OrbwalkerMode
+        {
+            get { return Orbwalker.ActiveMode; }
+        }
+
+        public bool Packets
+        {
+            get { return GetValue<bool>("packets"); }
+        }
+
+        public Obj_AI_Hero Player
+        {
+            get { return ObjectManager.Player; }
         }
 
         private float DamageToUnit(Obj_AI_Hero hero)
@@ -85,6 +93,11 @@ namespace Mid_or_Feed
         public T GetValue<T>(string name)
         {
             return Menu.Item(name).GetValue<T>();
+        }
+
+        public bool GetBool(string name)
+        {
+            return Menu.Item(name).GetValue<bool>();
         }
 
         public virtual float GetComboDamage(Obj_AI_Hero target)
