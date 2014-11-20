@@ -82,7 +82,7 @@ namespace Mid_or_Feed.Champions
                 Q.Cast(input.CastPosition, Packets);
         }
 
-        private void CastE(Obj_AI_Base target)
+        private void CastE(Obj_AI_Hero target)
         {
             if (EActivated)
             {
@@ -91,7 +91,15 @@ namespace Mid_or_Feed.Champions
                         .Where(x => x.IsEnemy)
                         .Where(x => !x.IsDead)
                         .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Range)) return;
-                E.Cast(Player, Packets);
+
+                var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
+
+                if(isInAaRange && !HasPassive(target))
+                    E.Cast(Player, Packets);
+
+                // Pop E if the target is out of AA range
+                if (!isInAaRange)
+                    E.Cast(Player, Packets);
             }
             else
             {
