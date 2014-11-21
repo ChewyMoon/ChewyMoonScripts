@@ -6,6 +6,7 @@ using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using Color = System.Drawing.Color;
 
 #endregion
 
@@ -46,6 +47,36 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
+            Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
+            AntiGapcloser.OnEnemyGapcloser +=AntiGapcloserOnOnEnemyGapcloser;
+        }
+
+        private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (!GetBool("qGapcloser"))
+                return;
+
+            Q.Cast(gapcloser.Sender, Packets);
+        }
+
+        private void GameOnOnGameProcessPacket(GamePacketEventArgs args)
+        {
+            if (!GetBool("rKSRecall"))
+                return;
+
+            if (args.PacketData[0] != Packet.S2C.Recall.Header) return;
+
+            var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
+            var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
+
+            if(!target.IsValidTarget())
+                return;
+
+            if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
+
+            var rdmg = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
+            if (rdmg > target.Health)
+                R.Cast(target, Packets);
         }
 
         public static bool EActivated
@@ -68,7 +99,30 @@ namespace Mid_or_Feed.Champions
                 case Orbwalking.OrbwalkingMode.Combo:
                     DoCombo();
                     break;
-                    ;
+            }
+
+            if (GetBool("autoW"))
+                AutoW();
+
+            if (GetBool("rKS"))
+                ItsKillSecure();
+        }
+
+        private void ItsKillSecure()
+        {
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()).Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
+            {
+                R.Cast(enemy, Packets);
+                return;
+            }
+        }
+
+        private void AutoW()
+        {
+            foreach (var ally in from ally in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead) let allyPercent = ally.Health/ally.MaxHealth*100 let healthPercent = GetValue<Slider>("autoWPercent").Value where healthPercent >= allyPercent select ally)
+            {
+                W.Cast(ally, Packets);
+                return;
             }
         }
 
@@ -90,7 +144,7 @@ namespace Mid_or_Feed.Champions
                     !ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsEnemy)
                         .Where(x => !x.IsDead)
-                        .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Range)) return;
+                        .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width)) return;
 
                 var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
 
@@ -165,7 +219,51 @@ namespace Mid_or_Feed.Champions
 
         private void DrawingOnOnDraw(EventArgs args)
         {
-            //throw new NotImplementedException();
+            var drawQ = GetBool("drawQ");
+            var drawW = GetBool("drawW");
+            var drawE = GetBool("drawE");
+            var drawR = GetBool("drawR");
+            var drawRMinimap = GetBool("drawRMinimap");
+
+            var p = Player.Position;
+
+            if (drawQ)
+            {
+                Utility.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawW)
+            {
+                Utility.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawE)
+            {
+                Utility.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawR)
+            {
+                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red, 5, 30, drawRMinimap);
+            }
+        }
+
+        public override float GetComboDamage(Obj_AI_Hero target)
+        {
+            double dmg = 0;
+            var p = Player;
+
+            if (Q.IsReady())
+               dmg += p.GetDamageSpell(target, SpellSlot.Q).CalculatedDamage;
+
+            if (E.IsReady())
+                dmg += p.GetDamageSpell(target, SpellSlot.E).CalculatedDamage;
+
+            if (R.IsReady())
+                dmg += p.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
+
+            return (float) dmg;
+
         }
 
         public override void Combo(Menu comboMenu)
@@ -203,17 +301,17 @@ namespace Mid_or_Feed.Champions
 
         public override void Items(Menu itemsMenu)
         {
-            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
+            //itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }
 
         public override void Misc(Menu miscMenu)
         {
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
             miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider()));
-            miscMenu.AddItem(new MenuItem("seperator", " "));
+            //miscMenu.AddItem(new MenuItem("seperator", " "));
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true)); // Might be patched..
-            miscMenu.AddItem(new MenuItem("seperator", " "));
+           // miscMenu.AddItem(new MenuItem("seperator", " "));
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
         }
 
