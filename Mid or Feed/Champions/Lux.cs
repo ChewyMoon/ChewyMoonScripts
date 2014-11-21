@@ -72,7 +72,7 @@ namespace Mid_or_Feed.Champions
             if(target.IsAlly)
                 return;
 
-            if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
+            if (decoded.Status == Packet.S2C.Recall.RecallStatus.Unknown) return;
 
             var rdmg = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
             Console.WriteLine("Target: {0} | R DMG: {1} | ENEMY HEALTH: {2}", target.ChampionName, rdmg, target.Health);
