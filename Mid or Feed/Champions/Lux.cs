@@ -69,7 +69,7 @@ namespace Mid_or_Feed.Champions
             var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
             var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
-            if(!target.IsValidTarget())
+            if(!target.IsEnemy)
                 return;
 
             if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
