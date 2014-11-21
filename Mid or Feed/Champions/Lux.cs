@@ -65,7 +65,7 @@ namespace Mid_or_Feed.Champions
                 return;
 
             if (args.PacketData[0] != Packet.S2C.Recall.Header) return;
-
+            Console.WriteLine("Got recall packet");
             var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
             var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
@@ -291,9 +291,7 @@ namespace Mid_or_Feed.Champions
 
             comboMenu.Item("useR").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
             {
-                if (!GetBool("useRKillable"))
-                    return;
-
+                if (!GetBool("useRKillable")) return;
                 var value = args.GetNewValue<bool>();
                 Menu.Item("useRKillable").SetValue(!value);
             };
