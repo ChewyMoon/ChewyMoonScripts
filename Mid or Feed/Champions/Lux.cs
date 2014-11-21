@@ -69,7 +69,13 @@ namespace Mid_or_Feed.Champions
             var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
             var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
-            if(target.IsAlly)
+            var team = false;
+            foreach (var teammate in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(teammate => teammate.NetworkId == decoded.UnitNetworkId))
+            {
+                team = true;
+            }
+
+            if (team)
                 return;
 
             if (decoded.Status == Packet.S2C.Recall.RecallStatus.Unknown) return;
