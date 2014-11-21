@@ -69,19 +69,20 @@ namespace Mid_or_Feed.Champions
             var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
             var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
-            if(!target.IsEnemy)
+            if(target.IsAlly)
                 return;
 
             if (decoded.Status != Packet.S2C.Recall.RecallStatus.RecallStarted) return;
 
             var rdmg = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
+            Console.WriteLine("Target: {0} | R DMG: {1} | ENEMY HEALTH: {2}", target.ChampionName, rdmg, target.Health);
             if (rdmg > target.Health)
                 R.Cast(target, Packets);
         }
 
         public static bool EActivated
         {
-            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1; }
+            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1 || EGameObject != null; }
         }
 
         public static bool HasPassive(Obj_AI_Hero hero)
