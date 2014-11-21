@@ -245,7 +245,12 @@ namespace Mid_or_Feed.Champions
 
             if (drawR)
             {
-                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red, 5, 30, drawRMinimap);
+                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawRMinimap)
+            {
+                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red, 2, 30, true);
             }
         }
 
