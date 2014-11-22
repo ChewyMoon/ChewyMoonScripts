@@ -78,8 +78,8 @@ namespace Mid_or_Feed.Champions
 
             Console.WriteLine("TARGET: {0} | ULT DMG: {1} | HERO HEALTH: {2}", hero.ChampionName, dmg, hero.Health);
 
-            if (dmg > hero.Health)
-                R.Cast(hero, Packets);
+            if (dmg > hero.Health && hero.Distance(Player) <= R.Range)
+                R.Cast(hero.ServerPosition, Packets);
 
         }
 
@@ -305,11 +305,12 @@ namespace Mid_or_Feed.Champions
 
         public override void Combo(Menu comboMenu)
         {
+            
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false));
-            comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false).DontSave());
+            comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true).DontSave());
 
             comboMenu.Item("useRKillable").ValueChanged += delegate
             {
