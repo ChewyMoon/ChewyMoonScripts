@@ -73,13 +73,13 @@ namespace Mid_or_Feed.Champions
 
             if (hero.IsAlly)
                 return;
-
+            
             var dmg = Player.GetSpellDamage(hero, SpellSlot.R);
 
-            Console.WriteLine("TARGET: {0} | ULT DMG: {1} | HERO HEALTH: {2}", hero.ChampionName, dmg, hero.Health);
+            Console.WriteLine("TARGET: {0} | ULT DMG: {1} | HERO HEALTH: {2} | STATUS: {3}", hero.ChampionName, (int) dmg, (int) hero.Health, decoded.Status);
 
-            if (dmg > hero.Health && hero.Distance(Player) <= R.Range)
-                R.Cast(hero.ServerPosition, Packets);
+            if (dmg > hero.Health)
+                R.Cast(hero, Packets);
 
         }
 
