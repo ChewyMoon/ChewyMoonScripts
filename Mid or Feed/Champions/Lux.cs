@@ -61,29 +61,26 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameProcessPacket(GamePacketEventArgs args)
         {
+            // Broken ATM rip(OR NAW)
             if (!GetBool("rKSRecall"))
                 return;
 
-            if (args.PacketData[0] != Packet.S2C.Recall.Header) return;
-            Console.WriteLine("Got recall packet");
-            var decoded = Packet.S2C.Recall.Decoded(args.PacketData);
-            var target = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
+            var data = args.PacketData;
+            if (data[0] != Packet.S2C.Recall.Header) return;
 
-            var team = false;
-            foreach (var teammate in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(teammate => teammate.NetworkId == decoded.UnitNetworkId))
-            {
-                team = true;
-            }
+            var decoded = Packet.S2C.Recall.Decoded(data);
+            var hero = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
-            if (team)
+            if (hero.IsAlly)
                 return;
 
-            if (decoded.Status == Packet.S2C.Recall.RecallStatus.Unknown) return;
+            var dmg = Player.GetSpellDamage(hero, SpellSlot.R);
 
-            var rdmg = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
-            Console.WriteLine("Target: {0} | R DMG: {1} | ENEMY HEALTH: {2}", target.ChampionName, rdmg, target.Health);
-            if (rdmg > target.Health)
-                R.Cast(target, Packets);
+            Console.WriteLine("TARGET: {0} | ULT DMG: {1} | HERO HEALTH: {2}", hero.ChampionName, dmg, hero.Health);
+
+            if (dmg > hero.Health)
+                R.Cast(hero, Packets);
+
         }
 
         public static bool EActivated
@@ -113,6 +110,34 @@ namespace Mid_or_Feed.Champions
 
             if (GetBool("rKS"))
                 ItsKillSecure();
+
+            if (GetBool("stealBlue"))
+                StealBlue();
+
+            if (GetBool("stealRed"))
+                StealRed();
+        }
+
+        private void StealBlue()
+        {
+            if (!R.IsReady()) return;
+
+            var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Contains("SRU_BLUE"));
+            foreach (var blueBuff in blueBuffs.Where(blueBuff => Player.GetDamageSpell(blueBuff, SpellSlot.R).CalculatedDamage > blueBuff.Health))
+            {
+                R.Cast(blueBuff, Packets);
+            }
+        }
+
+        private void StealRed()
+        {
+            if (!R.IsReady()) return;
+
+            var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Contains("SRU_RED"));
+            foreach (var redBuff in redBuffs.Where(redBuff => Player.GetDamageSpell(redBuff, SpellSlot.R).CalculatedDamage > redBuff.Health))
+            {
+                R.Cast(redBuff, Packets);
+            }
         }
 
         private void ItsKillSecure()
@@ -286,20 +311,16 @@ namespace Mid_or_Feed.Champions
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false));
             comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true));
 
-            comboMenu.Item("useRKillable").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
+            comboMenu.Item("useRKillable").ValueChanged += delegate
             {
-                if (!GetBool("useR"))
-                    return;
-
-                var value = args.GetNewValue<bool>();
-                Menu.Item("useR").SetValue(!value);
+                if (GetBool("useR"))
+                    Menu.Item("useR").SetValue(false);
             };
 
-            comboMenu.Item("useR").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
+            comboMenu.Item("useR").ValueChanged += delegate
             {
-                if (!GetBool("useRKillable")) return;
-                var value = args.GetNewValue<bool>();
-                Menu.Item("useRKillable").SetValue(!value);
+                if (GetBool("useRKillable"))
+                    Menu.Item("useRKillable").SetValue(false);
             };
         }
 
@@ -318,11 +339,11 @@ namespace Mid_or_Feed.Champions
         {
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
             miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider()));
-            //miscMenu.AddItem(new MenuItem("seperator", " "));
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true)); // Might be patched..
-           // miscMenu.AddItem(new MenuItem("seperator", " "));
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
+            miscMenu.AddItem(new MenuItem("stealBlue", "Steal Blue buff").SetValue(true));
+            miscMenu.AddItem(new MenuItem("stealRed", "Steal Red Buff").SetValue(false));
         }
 
         public override void Drawings(Menu drawingMenu)
