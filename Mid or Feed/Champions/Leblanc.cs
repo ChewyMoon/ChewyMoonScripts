@@ -88,7 +88,7 @@ namespace Mid_or_Feed.Champions
             // Use position instead of server position for drawing
             var p = Player.Position;
 
-            foreach (var spell in SpellList.Where(spell => !GetBool("draw" + spell.Slot)))
+            foreach (var spell in SpellList.Where(spell => GetBool("draw" + spell.Slot)))
             {
                 Utility.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
             }
