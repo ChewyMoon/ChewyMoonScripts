@@ -38,8 +38,6 @@ namespace Golderino
             greenBar.Add();
             
 
-            Game.OnGameUpdate += GameOnOnGameUpdate;
-
             Drawing.OnEndScene += delegate
             { redBar.OnEndScene(); greenBar.OnEndScene(); };
 
@@ -49,24 +47,18 @@ namespace Golderino
             Drawing.OnPreReset += delegate
             { redBar.OnPreReset(); greenBar.OnPreReset(); };
 
+            UpdateGold();
+
             Game.PrintChat("Golderino by ChewyMoon loaded.");
         }
 
-        private static void ResetVariables()
+        private static void UpdateGold()
         {
-            _myTeamGold = 0;
-            _enemyTeamGold = 0;
-            _goldAdvantage = 0;
-        }
-
-        private static void GameOnOnGameUpdate(EventArgs args)
-        {
-            
             greenBar.Reset();
             ResetVariables();
             Console.Clear();
-            
-            foreach(var friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly))
+
+            foreach (var friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly))
             {
                 _myTeamGold += friend.GoldEarned;
                 Console.WriteLine(@"{0}: {1}", friend.ChampionName, friend.GoldEarned);
@@ -79,14 +71,19 @@ namespace Golderino
             }
 
             var total = _myTeamGold + _enemyTeamGold;
-            _goldAdvantage = (float) Math.Round(_myTeamGold/total*100, 1);
+            _goldAdvantage = (float)Math.Round(_myTeamGold / total * 100, 1);
 
-            var width = (_goldAdvantage/100)*ImgWidth;
-            greenBar.Crop(new Rectangle(greenBar.X, greenBar.Y, (int) width, greenBar.Height), true);
+            var width = (_goldAdvantage / 100) * ImgWidth;
+            greenBar.Crop(new Rectangle(greenBar.X, greenBar.Y, (int)width, greenBar.Height), true);
 
-            GC.Collect();
-            
+            Utility.DelayAction.Add(1000, UpdateGold);
         }
 
+        private static void ResetVariables()
+        {
+            _myTeamGold = 0;
+            _enemyTeamGold = 0;
+            _goldAdvantage = 0;
+        }
     }
 }
