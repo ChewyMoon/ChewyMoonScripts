@@ -127,6 +127,12 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameUpdate(EventArgs args)
         {
+            Console.Clear();
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy))
+            {
+                Console.WriteLine("Enemy: {0} | Buffs: {1}", enemy.ChampionName, enemy.Buffs);
+            }
+
             switch (RStatus)
             {
                 case RSpell.Q:
