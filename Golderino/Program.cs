@@ -61,6 +61,8 @@ namespace Golderino
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
+            GC.Collect();
+
             greenBar.Reset();
             ResetVariables();
             Console.Clear();
