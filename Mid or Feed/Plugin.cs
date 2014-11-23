@@ -97,7 +97,7 @@ namespace Mid_or_Feed
 
         public bool GetBool(string name)
         {
-            return Menu.Item(name).GetValue<bool>();
+            return GetValue<bool>(name);
         }
 
         public virtual float GetComboDamage(Obj_AI_Hero target)

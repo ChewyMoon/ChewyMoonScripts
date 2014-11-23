@@ -15,6 +15,39 @@ namespace Mid_or_Feed.Champions
         public static Spell E;
         public static Spell R;
 
+        public static List<Spell> SpellList;
+        public static Items.Item Dfg;
+
+        public enum RSpell
+        {
+            Q, W, E, NotLearned ,Unknown
+        }
+
+        public RSpell RStatus
+        {
+            get
+            {
+                var name = Player.Spellbook.GetSpell(SpellSlot.R).Name;
+
+                switch (name)
+                {
+                    case "LeblancChaosOrbM":
+                        return RSpell.Q;
+                    case "LeblancSlideM":
+                        return RSpell.W;
+                    case "LeblancSoulShackleM":
+                        return RSpell.E;
+                }
+
+                return Player.Spellbook.GetSpell(SpellSlot.R).Level < 5 ? RSpell.NotLearned : RSpell.Unknown;
+            }
+        }
+
+        public bool WActivated
+        {
+            get { return Player.Spellbook.GetSpell(SpellSlot.W).Name == "leblancslidereturn"; }
+        }
+
         public Leblanc()
         {
             Q = new Spell(SpellSlot.Q, 720);
@@ -25,33 +58,155 @@ namespace Mid_or_Feed.Champions
             W.SetSkillshot(0.5f, 200, 1200, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(0.25f, 100, 1750, true, SkillshotType.SkillshotLine);
 
-            // Detect spell, and set R to the last spell casted.
-            Game.OnGameSendPacket += delegate(GamePacketEventArgs args)
+            // Populate spell list
+            SpellList = new List<Spell> {Q, R, W, E};
+            // Create DFG item
+            Dfg = new Items.Item(3128, 750);
+
+
+            Game.OnGameUpdate += GameOnOnGameUpdate;
+            
+        }
+
+        private void GameOnOnGameUpdate(EventArgs args)
+        {
+            switch (RStatus)
             {
-                var pdata = args.PacketData;
+                case RSpell.Q:
+                    R = new Spell(SpellSlot.R, Q.Range);
+                    break;
+                case RSpell.W:
+                    R = new Spell(SpellSlot.R, W.Range);
+                    R.SetSkillshot(0.5f, 200, 1200, false, SkillshotType.SkillshotCircle);
+                    break;
+                case RSpell.E:
+                    R = new Spell(SpellSlot.R, E.Range);
+                    R.SetSkillshot(0.25f, 100, 1750, true, SkillshotType.SkillshotLine);
+                    break;
+            }
 
-                if (pdata[0] != Packet.C2S.Cast.Header)
-                    return;
+            switch (OrbwalkerMode)
+            {
+                case Orbwalking.OrbwalkingMode.Mixed:
+                    DoHarass();
+                    break;
+                case Orbwalking.OrbwalkingMode.Combo:
+                    DoCombo();
+                    break;
+            }
+        }
 
-                var decoded = Packet.C2S.Cast.Decoded(pdata);
+        private void DoCombo()
+        {
+            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
+            if (!target.IsValidTarget())
+                return;
 
-                if (!ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.SourceNetworkId).IsMe)
-                    return;
+            foreach (var buff in target.Buffs.Where(buff => buff.Name.ToUpper().Contains("leblanc")))
+            {
+                Console.WriteLine("[{0}] Enemy: {1} | Buff Name: {2}", DateTime.Now, target.ChampionName, buff.Name);
+            }
 
-                switch (decoded.Slot)
+            if (Dfg.IsReady())
+                Dfg.Cast(target);
+
+            foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
+            {
+                if (spell.Slot == SpellSlot.Q)
                 {
-                    case SpellSlot.Q:
-                        R = Q;
-                        break;
-                    case SpellSlot.W:
-                        R = W;
-                        break;
-                    case SpellSlot.E:
-                        R = E;
-                        break;
+                    Q.CastOnUnit(target, Packets);
                 }
-            };
 
+                {
+                if (spell.Slot == SpellSlot.W && !WActivated)
+                    W.Cast(target, Packets);
+                }
+
+                if (spell.Slot == SpellSlot.E)
+                {
+                    E.Cast(target, Packets);
+                }
+
+                if (spell.Slot != SpellSlot.R) continue;
+
+                if (RStatus == RSpell.Q)
+                    R.CastOnUnit(target, Packets);
+                else
+                    R.Cast(target, Packets);
+            }
+
+            if (GetBool("useWBack") && target.IsDead && WActivated)
+                W.CastOnUnit(Player, Packets);
+
+        }
+
+        private void DoHarass()
+        {
+            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+            if(!target.IsValidTarget())
+                return;
+
+            var useQ = GetBool("useQHarass");
+            var useW = GetBool("useWHarass");
+            var useWBack = GetBool("useWBackHarass");
+
+
+        }
+
+        public override float GetComboDamage(Obj_AI_Hero target)
+        {
+            double dmg = 0;
+
+            if (Dfg.IsReady())
+                dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
+
+            if (Q.IsReady())
+                dmg += Player.GetSpellDamage(target, SpellSlot.Q);
+
+            if (W.IsReady())
+                dmg += Player.GetSpellDamage(target, SpellSlot.W);
+
+            if (E.IsReady())
+                dmg += Player.GetSpellDamage(target, SpellSlot.E);
+
+            if (R.IsReady())
+                dmg += Player.GetSpellDamage(target, SpellSlot.R);
+
+            return (float) dmg;
+        }
+
+        public override void Combo(Menu comboMenu)
+        {
+            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useWBack", "W back when enemy ded").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
+        }
+
+        public override void Harass(Menu harassMenu)
+        {
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useWHarass", "Use W").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
+        }
+
+        public override void Items(Menu itemsMenu)
+        {
+            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
+        }
+
+        public override void Misc(Menu miscMenu)
+        {
+            miscMenu.AddItem(new MenuItem("eGapcloser", "E Gapcloser").SetValue(true));
+            miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
+        }
+
+        public override void Drawings(Menu drawingMenu)
+        {
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
         }
     }
 }

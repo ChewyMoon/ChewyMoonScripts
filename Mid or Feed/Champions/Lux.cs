@@ -27,11 +27,10 @@ namespace Mid_or_Feed.Champions
             E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 3340);
 
-            Q.SetSkillshot(0.5f, 80, 1200, false, SkillshotType.SkillshotLine);
-                // no collision, manual check for collision with minion
+            Q.SetSkillshot(0.25f, 85, 1175, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.5f, 150, 1200, false, SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.5f, 275, 1300, false, SkillshotType.SkillshotCircle);
-            R.SetSkillshot(1.75f, 190, 3000, false, SkillshotType.SkillshotLine);
+            E.SetSkillshot(0.15f, 275, 1300, false, SkillshotType.SkillshotCircle);
+            R.SetSkillshot(0.7f, 200, float.MaxValue, false, SkillshotType.SkillshotLine);
 
             GameObject.OnCreate += delegate(GameObject sender, EventArgs args)
             {
@@ -49,6 +48,8 @@ namespace Mid_or_Feed.Champions
             Drawing.OnDraw += DrawingOnOnDraw;
             Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
             AntiGapcloser.OnEnemyGapcloser +=AntiGapcloserOnOnEnemyGapcloser;
+
+            PrintChat("Lux loaded!");
         }
 
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -118,6 +119,7 @@ namespace Mid_or_Feed.Champions
                 StealRed();
         }
 
+        //TODO: Fix this
         private void StealBlue()
         {
             if (!R.IsReady()) return;
@@ -129,6 +131,7 @@ namespace Mid_or_Feed.Champions
             }
         }
 
+        //TODO: Fix this
         private void StealRed()
         {
             if (!R.IsReady()) return;
@@ -337,14 +340,14 @@ namespace Mid_or_Feed.Champions
         }
 
         public override void Misc(Menu miscMenu)
-        {
-            miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider()));
+        {          
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true)); // Might be patched..
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("stealBlue", "Steal Blue buff").SetValue(true));
             miscMenu.AddItem(new MenuItem("stealRed", "Steal Red Buff").SetValue(false));
+            miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
+            miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider()));
         }
 
         public override void Drawings(Menu drawingMenu)
