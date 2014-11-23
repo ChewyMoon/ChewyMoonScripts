@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,16 @@ namespace Mid_or_Feed.Champions
             get { return Player.Spellbook.GetSpell(SpellSlot.W).Name == "leblancslidereturn"; }
         }
 
+        public bool RActivated
+        {
+            get { return Player.Spellbook.GetSpell(SpellSlot.R).Name == "leblancslidereturnm"; }
+        }
+
+        public bool HasQBuff(Obj_AI_Hero target)
+        {
+            return target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancChaosOrbM");
+        }
+
         public Leblanc()
         {
             Q = new Spell(SpellSlot.Q, 720);
@@ -63,9 +74,55 @@ namespace Mid_or_Feed.Champions
             // Create DFG item
             Dfg = new Items.Item(3128, 750);
 
-
+            // Setup Events
             Game.OnGameUpdate += GameOnOnGameUpdate;
-            
+            AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
+            Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
+            Drawing.OnDraw += Drawing_OnDraw;
+
+            PrintChat("LeBlanc loaded!");
+        }
+
+        void Drawing_OnDraw(EventArgs args)
+        {
+            // Use position instead of server position for drawing
+            var p = Player.Position;
+
+            foreach (var spell in SpellList.Where(spell => !GetBool("draw" + spell.Slot)))
+            {
+                Utility.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
+            }
+        }
+
+        void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        {
+            if (!GetBool("eInterrupt") || spell.DangerLevel != InterruptableDangerLevel.High)
+                return;
+
+            if (E.IsReady())
+            {
+                E.Cast(unit, Packets);
+            }
+            else if(R.IsReady() && RStatus == RSpell.E)
+            {
+                R.Cast(unit, Packets);
+            }
+        }
+
+        void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if(!GetBool("eGapcloser"))
+                return;
+
+            if (E.IsReady())
+            {
+                E.Cast(gapcloser.Sender, Packets);
+            }
+            else if (RStatus == RSpell.E && R.IsReady())
+            {
+                R.Cast(gapcloser.Sender, Packets);
+            }
+                
         }
 
         private void GameOnOnGameUpdate(EventArgs args)
@@ -102,12 +159,7 @@ namespace Mid_or_Feed.Champions
             if (!target.IsValidTarget())
                 return;
 
-            foreach (var buff in target.Buffs.Where(buff => buff.Name.ToUpper().Contains("leblanc")))
-            {
-                Console.WriteLine("[{0}] Enemy: {1} | Buff Name: {2}", DateTime.Now, target.ChampionName, buff.Name);
-            }
-
-            if (Dfg.IsReady())
+            if (Dfg.IsReady() && GetBool("useDFG"))
                 Dfg.Cast(target);
 
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
@@ -131,13 +183,23 @@ namespace Mid_or_Feed.Champions
 
                 if (RStatus == RSpell.Q)
                     R.CastOnUnit(target, Packets);
+
+                if (RStatus == RSpell.W && !RActivated)
+                    R.Cast(target, Packets);
+
                 else
                     R.Cast(target, Packets);
             }
 
-            if (GetBool("useWBack") && target.IsDead && WActivated)
+            if (!GetBool("useWBack") || !target.IsDead) return;
+            if (WActivated)
+            {
                 W.CastOnUnit(Player, Packets);
-
+            }
+            else if (RActivated)
+            {
+                R.CastOnUnit(Player, Packets);
+            }
         }
 
         private void DoHarass()
@@ -150,6 +212,18 @@ namespace Mid_or_Feed.Champions
             var useW = GetBool("useWHarass");
             var useWBack = GetBool("useWBackHarass");
 
+            if (useQ)
+            {
+                Q.CastOnUnit(target, Packets);
+            }
+
+            if (useW && !WActivated && HasQBuff(target))
+            {
+                W.Cast(target, Packets);
+            }
+
+            if(useWBack && !HasQBuff(target) && WActivated)
+                W.CastOnUnit(Player, Packets);
 
         }
 
