@@ -61,8 +61,7 @@ namespace Golderino
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
-            GC.Collect();
-
+            
             greenBar.Reset();
             ResetVariables();
             Console.Clear();
@@ -84,6 +83,8 @@ namespace Golderino
 
             var width = (_goldAdvantage/100)*ImgWidth;
             greenBar.Crop(new Rectangle(greenBar.X, greenBar.Y, (int) width, greenBar.Height), true);
+
+            GC.Collect();
             
         }
 
