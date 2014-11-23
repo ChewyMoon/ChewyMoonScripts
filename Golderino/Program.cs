@@ -52,8 +52,8 @@ namespace Golderino
         private static void GameOnOnGameUpdate(EventArgs args)
         {
             greenBar.Reset();
-
             ResetVariables();
+            Console.Clear();
             
             foreach(var friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly))
             {
@@ -70,7 +70,7 @@ namespace Golderino
             var total = _myTeamGold + _enemyTeamGold;
             _goldAdvantage = (float) Math.Round(_myTeamGold/total*100, 1);
 
-            var width = (0.5)*ImgWidth;
+            var width = (_goldAdvantage/100)*ImgWidth;
             greenBar.Crop(new Rectangle(greenBar.X, greenBar.Y, (int) width, greenBar.Height), true);
             
         }
