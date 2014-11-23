@@ -39,6 +39,16 @@ namespace Golderino
             
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
+
+            Drawing.OnEndScene += delegate
+            { redBar.OnEndScene(); greenBar.OnEndScene(); };
+
+            Drawing.OnPostReset += delegate
+            { redBar.OnPostReset(); greenBar.OnPostReset(); };
+
+            Drawing.OnPreReset += delegate
+            { redBar.OnPreReset(); greenBar.OnPreReset(); };
+
             Game.PrintChat("Golderino by ChewyMoon loaded.");
         }
 
