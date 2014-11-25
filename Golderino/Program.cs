@@ -71,7 +71,7 @@ namespace Golderino
                            Drawing.GetTextExtent(_goldAdvantage.ToString(CultureInfo.InvariantCulture)).Width/2;
 
             _rightText.text = _enemyTeamGold.ToString(CultureInfo.InvariantCulture) + "g";
-            _rightText.X = _redBar.X + Drawing.GetTextExtent(_rightText.text).Width;
+            _rightText.X = _redBar.Width + Drawing.GetTextExtent(_rightText.text).Width;
 
             Utility.DelayAction.Add(1000, UpdateDrawings);
         }
@@ -83,6 +83,7 @@ namespace Golderino
                 return;
 
             var decoded = Packet.S2C.AddGold.Decoded(data);
+            Console.WriteLine(@"ReceivingUnit: {0} | SourceUnit {1}", decoded.ReceivingUnit.BaseSkinName, decoded.SourceUnit.BaseSkinName);
             if (decoded.ReceivingUnit.IsEnemy)
             {
                 _enemyTeamGold += decoded.Gold;
