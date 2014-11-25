@@ -71,7 +71,19 @@ namespace Cya_Nerds
 
         private static void GameObjectOnOnCreate(GameObject sender, EventArgs args)
         {
-            // Not sure if needed
+            if (!WardJump)
+                return;
+
+            if (!(sender is Obj_AI_Minion))
+                return;
+
+            if (!sender.Name.ToUpper().Contains("WARD"))
+                return;
+
+            var ward = (Obj_AI_Minion) sender;
+            if(sender.Position.Distance(ObjectManager.Player.ServerPosition) <= plugin.WardJumpSpell.Range)
+                plugin.WardJumpSpell.CastOnUnit(ward);
+
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
