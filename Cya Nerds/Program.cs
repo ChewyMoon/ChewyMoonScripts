@@ -115,7 +115,7 @@ namespace Cya_Nerds
 
             var placeAtMaxRange = _menu.Item("maxWardJump").GetValue<bool>();
             var pos = Game.CursorPos;
-            var range = plugin.WardJumpSpell.Range;
+            const int range = 600; // ward range
 
             if (!placeAtMaxRange)
             {
