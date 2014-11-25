@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
 
@@ -259,7 +257,7 @@ namespace Mid_or_Feed.Champions
         {
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useWBack", "W back when enemy ded").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
         }
