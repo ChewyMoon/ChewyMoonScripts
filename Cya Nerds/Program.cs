@@ -121,6 +121,9 @@ namespace Cya_Nerds
 
             //now we have to place ward :<
             //if (Environment.TickCount < lastWardPlacedT + 1000) return;
+            if (!plugin.WardJumpSpell.IsReady())
+                return;
+
             var wardSlot = Items.GetWardSlot();
             if (!Items.CanUseItem((int) wardSlot.Id))
                 return;
