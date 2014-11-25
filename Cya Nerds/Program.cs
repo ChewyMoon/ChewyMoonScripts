@@ -24,12 +24,12 @@ namespace Cya_Nerds
     {
         public static List<WardJumpChampion> WardJumpChampions;
         private static WardJumpChampion plugin;
-        private static int lastWardPlacedT;
-        private static Menu menu;
+        private static int _lastWardPlacedT;
+        private static Menu _menu;
 
         private static bool WardJump
         {
-            get { return menu.Item("wardJump").GetValue<bool>(); }
+            get { return _menu.Item("wardJump").GetValue<KeyBind>().Active; }
         }
 
         static void Main(string[] args)
@@ -57,11 +57,11 @@ namespace Cya_Nerds
             if (!loaded)
                 return;
 
-            menu = new Menu("Cya Nerds", "cmCyaNerds", true);
-            menu.AddItem(new MenuItem("maxWardJump", "Jump to max range").SetValue(true));
-            menu.AddItem(new MenuItem("jumpRange", "Existing Obj Range").SetValue(new Slider(250, 0, 700)));
-            menu.AddItem(new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind('t', KeyBindType.Press)));
-            menu.AddToMainMenu();
+            _menu = new Menu("Cya Nerds", "cmCyaNerds", true);
+            _menu.AddItem(new MenuItem("maxWardJump", "Jump to max range").SetValue(true));
+            _menu.AddItem(new MenuItem("jumpRange", "Existing Obj Range").SetValue(new Slider(250, 0, 700)));
+            _menu.AddItem(new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind('t', KeyBindType.Press)));
+            _menu.AddToMainMenu();
       
             GameObject.OnCreate += GameObjectOnOnCreate;
             Game.OnGameUpdate += GameOnOnGameUpdate;
@@ -81,7 +81,7 @@ namespace Cya_Nerds
             if(!plugin.WardJumpSpell.IsReady() || !WardJump)
                 return;
 
-            var jumpRange = menu.Item("jumpRange").GetValue<Slider>().Value;
+            var jumpRange = _menu.Item("jumpRange").GetValue<Slider>().Value;
 
             foreach (
                 var ward in
@@ -113,21 +113,21 @@ namespace Cya_Nerds
             if (!Items.CanUseItem((int) wardSlot.Id))
                 return;
 
-            var placeAtMaxRange = menu.Item("maxWardJump").GetValue<bool>();
+            var placeAtMaxRange = _menu.Item("maxWardJump").GetValue<bool>();
             var pos = Game.CursorPos;
             var range = plugin.WardJumpSpell.Range;
 
             if (!placeAtMaxRange)
             {
                 Items.UseItem((int) wardSlot.Id, Game.CursorPos);
-                lastWardPlacedT = Environment.TickCount;
+                _lastWardPlacedT = Environment.TickCount;
                 return;
             }
 
             // extend the mouse pos
             var placePos = ObjectManager.Player.ServerPosition.To2D().Extend(pos.To2D(), range);
             Items.UseItem((int) wardSlot.Id, placePos);
-            lastWardPlacedT = Environment.TickCount;
+            _lastWardPlacedT = Environment.TickCount;
         }
     }
 }
