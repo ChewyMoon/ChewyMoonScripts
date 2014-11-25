@@ -48,13 +48,13 @@ namespace Golderino
             _middleText.Add();
             _rightText.Add();
 
-            Game.OnGameProcessPacket += Game_OnGameProcessPacket;
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            UpdateDrawings();
 
+            Game.OnGameProcessPacket += Game_OnGameProcessPacket;
             Game.PrintChat("Golderino by ChewyMoon loaded.");
         }
 
-        private static void GameOnOnGameUpdate(EventArgs args)
+        private static void UpdateDrawings()
         {
             _greenBar.Reset();
 
@@ -72,6 +72,8 @@ namespace Golderino
 
             _rightText.text = _enemyTeamGold.ToString(CultureInfo.InvariantCulture) + "g";
             _rightText.X = _redBar.X + Drawing.GetTextExtent(_rightText.text).Width;
+
+            Utility.DelayAction.Add(1000, UpdateDrawings);
         }
 
         private static void Game_OnGameProcessPacket(GamePacketEventArgs args)
