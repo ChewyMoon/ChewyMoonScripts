@@ -60,6 +60,7 @@ namespace Cya_Nerds
             _menu = new Menu("Cya Nerds", "cmCyaNerds", true);
             _menu.AddItem(new MenuItem("maxWardJump", "Jump to max range").SetValue(true));
             _menu.AddItem(new MenuItem("jumpRange", "Existing Obj Range").SetValue(new Slider(250, 0, 700)));
+            _menu.AddItem(new MenuItem("wardDelay", "Ward Delay(MS)").SetValue(new Slider(3000, 0, 10*1000)));
             _menu.AddItem(new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind('t', KeyBindType.Press)));
             _menu.AddToMainMenu();
       
@@ -120,7 +121,7 @@ namespace Cya_Nerds
             }
 
             //now we have to place ward :<
-            //if (Environment.TickCount < lastWardPlacedT + 1000) return;
+            if (Environment.TickCount < _lastWardPlacedT + _menu.Item("wardDelay").GetValue<Slider>().Value) return;
             if (!plugin.WardJumpSpell.IsReady())
                 return;
 
