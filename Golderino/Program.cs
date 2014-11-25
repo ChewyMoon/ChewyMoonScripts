@@ -12,8 +12,8 @@ namespace Golderino
 {
     internal class Program
     {
-        private static float _myTeamGold;
-        private static float _enemyTeamGold;
+        private static float _myTeamGold = 475*5;
+        private static float _enemyTeamGold = 475*5;
         private static float _goldAdvantage;
 
         private static Render.Sprite _greenBar;
