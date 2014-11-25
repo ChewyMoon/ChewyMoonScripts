@@ -111,6 +111,7 @@ namespace Cya_Nerds
                 var hero in
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => !x.IsDead)
+                        .Where(x => !x.IsMe)
                         .Where(x => x.Distance(Game.CursorPos) < jumpRange))
             {
                 _plugin.WardJumpSpell.CastOnUnit(hero);
