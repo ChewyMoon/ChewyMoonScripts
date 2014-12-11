@@ -28,6 +28,7 @@ namespace ChewyMoonsIrelia
 
         private static bool _packetCast;
 
+        public static Items.Item BotRk;
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
 
         // ReSharper disable once UnusedParameter.Local
@@ -57,6 +58,7 @@ namespace ChewyMoonsIrelia
             _r.SetSkillshot(0.15f, 80f, 1500f, false, SkillshotType.SkillshotLine); // fix new prediction
 
             SetupMenu();
+            BotRk = new Items.Item(3153, 450);
 
             // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
@@ -215,7 +217,7 @@ namespace ChewyMoonsIrelia
             }
             if (target == null || !target.IsValid) return;
 
-            var isUnderTower = Utility.UnderTurret(target);
+            var isUnderTower = target.UnderTurret();
             var diveTower = _menu.Item("diveTower").GetValue<bool>();
             var doNotCombo = false;
 
@@ -253,6 +255,10 @@ namespace ChewyMoonsIrelia
                     _q.Cast(target, _packetCast);
                 }
             }
+
+            // Now that we q'd, lets cast BOTRK
+            if(BotRk.IsReady())
+                BotRk.Cast(target);
 
             // stunerino
             if (useE && _e.IsReady())
