@@ -133,7 +133,7 @@ namespace Cya_Nerds
                 return;
 
             var wardSlot = Items.GetWardSlot();
-            if (!Items.CanUseItem((int) wardSlot.Id))
+            if (!Items.CanUseItem((int) wardSlot.Id) || wardSlot.Stacks == 0)
                 return;
 
             var placeAtMaxRange = _menu.Item("maxWardJump").GetValue<bool>();
