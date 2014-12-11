@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LX_Orbwalker;
 
 #endregion
 
@@ -29,7 +28,7 @@ namespace ChewyMoonsIrelia
 
         private static bool _packetCast;
 
-        public static LXOrbwalker Orbwalker { get; set; }
+        public static Orbwalking.Orbwalker Orbwalker { get; set; }
 
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
@@ -317,8 +316,7 @@ namespace ChewyMoonsIrelia
 
             // Orbwalker
             var orbwalkerMenu = new Menu("[Chewy's Irelia] - Orbwalker", "cmIreliaOW");
-            Orbwalker = new LXOrbwalker();
-            LXOrbwalker.AddToMenu(orbwalkerMenu);
+            Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
             _menu.AddSubMenu(orbwalkerMenu);
 
             // Combo
