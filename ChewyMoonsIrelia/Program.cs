@@ -65,7 +65,31 @@ namespace ChewyMoonsIrelia
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;
+            Utility.HpBarDamageIndicator.DamageToUnit += DamageToUnit;
             Utilities.PrintChat("Loaded.");
+        }
+
+        private static float DamageToUnit(Obj_AI_Hero hero)
+        {
+            double dmg = 0;
+
+            if (BotRk.IsReady())
+                dmg += ObjectManager.Player.GetItemDamage(hero, Damage.DamageItems.Botrk);
+
+            if (_q.IsReady())
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q);
+
+            // Not really sure if this gets what i need..
+            if (_w.IsReady())
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.W);
+
+            if (_e.IsReady())
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.E);
+
+            if (_r.IsReady())
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R);
+
+            return (float) dmg;
         }
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -180,7 +204,7 @@ namespace ChewyMoonsIrelia
                 // If do not farm under tower
                 if (noFarmDangerous)
                 {
-                    if (Utility.UnderTurret(minion)) continue;
+                    if (minion.UnderTurret()) continue;
                     if (_q.IsReady())
                         _q.Cast(minion, _packetCast);
                 }
@@ -355,6 +379,9 @@ namespace ChewyMoonsIrelia
             drawingMenu.AddItem(new MenuItem("qDraw", "Draw Q").SetValue(true));
             drawingMenu.AddItem(new MenuItem("eDraw", "Draw E").SetValue(false));
             drawingMenu.AddItem(new MenuItem("rDraw", "Draw R").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("comboDraw", "Draw Combo Damage").SetValue(true));
+            drawingMenu.Item("comboDraw").ValueChanged +=
+                (sender, args) => Utility.HpBarDamageIndicator.Enabled = args.GetNewValue<bool>();
             _menu.AddSubMenu(drawingMenu);
 
             //Misc
