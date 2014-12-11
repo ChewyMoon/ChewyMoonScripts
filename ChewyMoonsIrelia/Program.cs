@@ -48,7 +48,7 @@ namespace ChewyMoonsIrelia
             if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
-            Utilities.PrintChat("If assembly isn't orbwalking, please install LX-Orbwalker!");
+            Utilities.PrintChat("We've switched from LX-Orbwalker to the common orbwalker. Sorry about that.");
 
             _q = new Spell(SpellSlot.Q, 650);
             _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)); // So confused.
