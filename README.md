@@ -1,26 +1,12 @@
 ChewyMoon's Scripts
 ===================
 
-Hi, Im ChewyMoon. These are my scripts, currently only Irelia & Lux. I will be releasing more content, just give me time(riven..?)!
-
-**DOWNLOADS AVAILABLE AT:** https://github.com/ChewyMoon/ChewyMoonScripts/releases
+Ayy lmao, I'm Chewymoon, above are the source code to my scripts. pls no snorflakerino
 
 ### Donations
 
-I glady accept donations. Leave a message and if you want I'll make a script of your choice(Will be free and public). Be sure to include your Reddit/IRC username.
-
+I glady accept donations. Leave a message and if you want I'll make a script of your choice(Will be free and public). Be sure to include your usename
 Donate to chewymoonleaguesharp@gmail.com
 
-(Donation button also availble on website)
-
-##Irelia
-
-A simple script for Irelia, top lane.
-
-Features:
-
-* SBTW Combo
-* Combo settings
-* Auto Q -> E to interrupt ults/tp's
-
-Anymore idea's PM me on reddit, /u/chewymoon, find me on irc, ChewyMoon, or leave an issue in the issue tracker. No promises, but I'll try!
+### Other
+If you have a script recommendaton/idea/bug fix, please shoot me PM on the forum.
