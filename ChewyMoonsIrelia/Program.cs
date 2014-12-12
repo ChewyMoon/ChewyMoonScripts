@@ -130,13 +130,13 @@ namespace ChewyMoonsIrelia
             var position = ObjectManager.Player.Position;
 
             if (drawQ)
-                Utility.DrawCircle(position, _q.Range, Color.Gray);
+                Utility.DrawCircle(position, _q.Range, _q.IsReady() ? Color.Aqua : Color.Red);
 
             if (drawE)
-                Utility.DrawCircle(position, _e.Range, Color.Gray);
+                Utility.DrawCircle(position, _e.Range, _e.IsReady() ? Color.Aqua : Color.Red);
 
             if (drawR)
-                Utility.DrawCircle(position, _r.Range, Color.Gray);
+                Utility.DrawCircle(position, _r.Range, _r.IsReady() ? Color.Aqua : Color.Red);
         }
 
         private static void Game_OnGameUpdate(EventArgs args)
