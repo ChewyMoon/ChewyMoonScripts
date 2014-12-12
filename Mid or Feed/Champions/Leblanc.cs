@@ -246,9 +246,6 @@ namespace Mid_or_Feed.Champions
         {
             double dmg = 0;
 
-            if (Dfg.IsReady())
-                dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-
             if (Q.IsReady())
                 dmg += Player.GetSpellDamage(target, SpellSlot.Q);
 
@@ -260,6 +257,10 @@ namespace Mid_or_Feed.Champions
 
             if (R.IsReady())
                 dmg += Player.GetSpellDamage(target, SpellSlot.R);
+
+            if (!Dfg.IsReady()) return (float) dmg;
+            dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
+            dmg += dmg*0.2;
 
             return (float) dmg;
         }
