@@ -183,11 +183,12 @@ namespace Mid_or_Feed.Champions
                     Q.CastOnUnit(target, Packets);
                 }
 
-                {
+
                 if (spell.Slot == SpellSlot.W && !WActivated)
+                {
                     W.Cast(target, Packets);
                 }
-
+                    
                 if (spell.Slot == SpellSlot.E)
                 {
                     E.Cast(target, Packets);
