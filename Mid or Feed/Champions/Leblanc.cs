@@ -166,6 +166,16 @@ namespace Mid_or_Feed.Champions
             if (Dfg.IsReady() && GetBool("useDFG"))
                 Dfg.Cast(target);
 
+            // Start combo off with r or q
+            if (Q.InRange(target.ServerPosition) && Q.IsReady())
+            {
+                Q.CastOnUnit(target, Packets);
+            }
+            else if (RStatus == RSpell.Q && R.InRange(target.ServerPosition) && R.IsReady())
+            {
+                R.CastOnUnit(target, Packets);
+            }
+
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
             {
                 if (spell.Slot == SpellSlot.Q)
