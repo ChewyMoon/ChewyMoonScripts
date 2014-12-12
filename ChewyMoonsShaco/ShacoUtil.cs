@@ -11,12 +11,12 @@ namespace ChewyMoonsShaco
 {
     internal class ShacoUtil
     {
-        public static Vector3 GetQPos(Obj_AI_Hero target, bool serverPos)
+        public static Vector3 GetQPos(Obj_AI_Hero target, bool serverPos, int distance = 150)
         {
             var enemyPos = serverPos ? target.ServerPosition : target.Position;
             var myPos = serverPos ? ObjectManager.Player.ServerPosition : ObjectManager.Player.Position;
 
-            return enemyPos + Vector3.Normalize(enemyPos - myPos) * 150;
+            return enemyPos + Vector3.Normalize(enemyPos - myPos) * distance;
         }
 
         public static Vector2 GetShortestWayPoint(List<Vector2> waypoints)

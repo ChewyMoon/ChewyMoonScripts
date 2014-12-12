@@ -133,13 +133,11 @@ namespace ChewyMoonsShaco
                 Utility.DrawCircle(pos, E.Range, eCircle.Color);
             }
 
-            if (qPosCircle.Active)
+            if (!qPosCircle.Active) return;
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
-                foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
-                {
-                    Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position),
-                        Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2, qPosCircle.Color);
-                }
+                Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position),
+                    Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2, qPosCircle.Color);
             }
         }
 
@@ -178,9 +176,10 @@ namespace ChewyMoonsShaco
 
                 if (spell.Slot == SpellSlot.W && useW)
                 {
+                    //TODO: Make W based on waypoints
                     if (!target.IsValidTarget(W.Range)) continue;
 
-                    var pos = ShacoUtil.GetShortestWayPoint(target.GetWaypoints());
+                    var pos = ShacoUtil.GetQPos(target, true, 100);
                     W.Cast(pos, packets);
                 }
 
