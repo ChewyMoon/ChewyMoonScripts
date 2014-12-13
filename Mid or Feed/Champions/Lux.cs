@@ -122,7 +122,6 @@ namespace Mid_or_Feed.Champions
                 StealRed();
         }
 
-        //TODO: Fix this
         private void StealBlue()
         {
             if (!R.IsReady()) return;
@@ -134,7 +133,6 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        //TODO: Fix this
         private void StealRed()
         {
             if (!R.IsReady()) return;
