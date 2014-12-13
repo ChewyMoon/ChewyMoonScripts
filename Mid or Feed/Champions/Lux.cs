@@ -62,25 +62,28 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameProcessPacket(GamePacketEventArgs args)
         {
-            // Broken ATM rip(OR NAW)
             if (!GetBool("rKSRecall"))
                 return;
 
             var data = args.PacketData;
-            if (data[0] != Packet.S2C.Recall.Header) return;
-
-            var decoded = Packet.S2C.Recall.Decoded(data);
-            var hero = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
-
-            if (hero.IsAlly)
+            if (data[0] != Packet.S2C.Teleport.Header)
                 return;
-            
-            var dmg = Player.GetSpellDamage(hero, SpellSlot.R);
 
-            Console.WriteLine("TARGET: {0} | ULT DMG: {1} | HERO HEALTH: {2} | STATUS: {3}", hero.ChampionName, (int) dmg, (int) hero.Health, decoded.Status);
+            var decoded = Packet.S2C.Teleport.Decoded(data);
 
-            if (dmg > hero.Health)
-                R.Cast(hero, Packets);
+            if (decoded.Type != Packet.S2C.Teleport.Type.Recall)
+                return;
+
+            if (decoded.Status != Packet.S2C.Teleport.Status.Start)
+                return;
+
+            var unit = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
+
+            if (unit.IsAlly)
+                return;
+
+            if (Player.GetSpellDamage(unit, SpellSlot.R) > unit.Health)
+                R.Cast(unit, Packets);
 
         }
 
@@ -124,7 +127,7 @@ namespace Mid_or_Feed.Champions
         {
             if (!R.IsReady()) return;
 
-            var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Contains("SRU_BLUE"));
+            var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_BLUE"));
             foreach (var blueBuff in blueBuffs.Where(blueBuff => Player.GetDamageSpell(blueBuff, SpellSlot.R).CalculatedDamage > blueBuff.Health))
             {
                 R.Cast(blueBuff, Packets);
@@ -136,7 +139,7 @@ namespace Mid_or_Feed.Champions
         {
             if (!R.IsReady()) return;
 
-            var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Contains("SRU_RED"));
+            var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_RED"));
             foreach (var redBuff in redBuffs.Where(redBuff => Player.GetDamageSpell(redBuff, SpellSlot.R).CalculatedDamage > redBuff.Health))
             {
                 R.Cast(redBuff, Packets);
