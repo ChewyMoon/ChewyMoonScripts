@@ -79,15 +79,15 @@ namespace ChewyMoonsIrelia
             if (_q.IsReady())
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q);
 
-            // Not really sure if this gets what i need..
             if (_w.IsReady())
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.W);
 
             if (_e.IsReady())
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.E);
 
+            // Damage calc per blade
             if (_r.IsReady())
-                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R);
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R) * 4;
 
             return (float) dmg;
         }
