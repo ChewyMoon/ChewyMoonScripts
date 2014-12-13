@@ -34,13 +34,15 @@ namespace Mid_or_Feed.Champions
 
             GameObject.OnCreate += delegate(GameObject sender, EventArgs args)
             {
-                if (sender.Name.Contains("LuxLightstrike_tar_green"))
+                //Noticed a different E game object name while looking through Kurisu's oracle, credits to him.
+                if (sender.Name.Contains("LuxLightstrike_tar_green") || sender.Name.Contains("LuxLightstrike_tar_red"))
                     EGameObject = sender;
             };
 
             GameObject.OnDelete += delegate(GameObject sender, EventArgs args)
             {
-                if (sender.Name.Contains("LuxLightstrike_tar_green"))
+                //Noticed a different E game object name while looking through Kurisu's oracle, credits to him.
+                if (sender.Name.Contains("LuxLightstrike_tar_green") || sender.Name.Contains("LuxLightstrike_tar_red"))
                     EGameObject = null;
             };
 
