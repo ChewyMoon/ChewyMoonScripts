@@ -68,7 +68,7 @@ namespace Mid_or_Feed
 
             // Items
             var itemsMenu = new Menu("Items", "mofItems");
-            Items(itemsMenu);
+            ItemMenu(itemsMenu);
             Menu.AddSubMenu(itemsMenu);
 
             // Misc
@@ -112,23 +112,23 @@ namespace Mid_or_Feed
 
         #region Virtuals
 
-        public virtual void Combo(Menu comboMenu)
+        public virtual void Combo(Menu config)
         {
         }
 
-        public virtual void Harass(Menu harassMenu)
+        public virtual void Harass(Menu config)
         {
         }
 
-        public virtual void Items(Menu itemsMenu)
+        public virtual void ItemMenu(Menu config)
         {
         }
 
-        public virtual void Misc(Menu miscMenu)
+        public virtual void Misc(Menu config)
         {
         }
 
-        public virtual void Drawings(Menu drawingMenu)
+        public virtual void Drawings(Menu config)
         {
         }
 

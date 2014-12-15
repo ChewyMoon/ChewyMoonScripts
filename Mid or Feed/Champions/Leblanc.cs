@@ -1,61 +1,32 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 
+#endregion
+
 namespace Mid_or_Feed.Champions
 {
-    class Leblanc : Plugin
+    internal class Leblanc : Plugin
     {
+        public enum RSpell
+        {
+            Q,
+            W,
+            E,
+            Unknown
+        }
+
         public static Spell Q;
         public static Spell W;
         public static Spell E;
         public static Spell R;
-
         public static List<Spell> SpellList;
         public static Items.Item Dfg;
-
-        public enum RSpell
-        {
-            Q, W, E, NotLearned ,Unknown
-        }
-
-        public RSpell RStatus
-        {
-            get
-            {
-                var name = Player.Spellbook.GetSpell(SpellSlot.R).Name;
-
-                switch (name)
-                {
-                    case "LeblancChaosOrbM":
-                        return RSpell.Q;
-                    case "LeblancSlideM":
-                        return RSpell.W;
-                    case "LeblancSoulShackleM":
-                        return RSpell.E;
-                }
-
-                return Player.Spellbook.GetSpell(SpellSlot.R).Level < 5 ? RSpell.NotLearned : RSpell.Unknown;
-            }
-        }
-
-        public bool WActivated
-        {
-            get { return Player.Spellbook.GetSpell(SpellSlot.W).Name == "leblancslidereturn"; }
-        }
-
-        public bool RActivated
-        {
-            get { return Player.Spellbook.GetSpell(SpellSlot.R).Name == "leblancslidereturnm"; }
-        }
-
-        public bool HasQBuff(Obj_AI_Hero target)
-        {
-            return target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancChaosOrbM");
-        }
 
         public Leblanc()
         {
@@ -81,7 +52,42 @@ namespace Mid_or_Feed.Champions
             PrintChat("LeBlanc loaded!");
         }
 
-        void Drawing_OnDraw(EventArgs args)
+        public RSpell RStatus
+        {
+            get
+            {
+                var name = Player.Spellbook.GetSpell(SpellSlot.R).Name;
+
+                switch (name)
+                {
+                    case "LeblancChaosOrbM":
+                        return RSpell.Q;
+                    case "LeblancSlideM":
+                        return RSpell.W;
+                    case "LeblancSoulShackleM":
+                        return RSpell.E;
+                }
+
+                return RSpell.Unknown;
+            }
+        }
+
+        public bool WActivated
+        {
+            get { return Player.Spellbook.GetSpell(SpellSlot.W).Name == "leblancslidereturn"; }
+        }
+
+        public bool RActivated
+        {
+            get { return Player.Spellbook.GetSpell(SpellSlot.R).Name == "leblancslidereturnm"; }
+        }
+
+        public bool HasQBuff(Obj_AI_Hero target)
+        {
+            return target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancChaosOrbM");
+        }
+
+        private void Drawing_OnDraw(EventArgs args)
         {
             // Use position instead of server position for drawing
             var p = Player.Position;
@@ -92,7 +98,7 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
             if (!GetBool("eInterrupt") || spell.DangerLevel != InterruptableDangerLevel.High)
                 return;
@@ -101,15 +107,15 @@ namespace Mid_or_Feed.Champions
             {
                 E.Cast(unit, Packets);
             }
-            else if(R.IsReady() && RStatus == RSpell.E)
+            else if (R.IsReady() && RStatus == RSpell.E)
             {
                 R.Cast(unit, Packets);
             }
         }
 
-        void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        private void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if(!GetBool("eGapcloser"))
+            if (!GetBool("eGapcloser"))
                 return;
 
             if (E.IsReady())
@@ -120,7 +126,6 @@ namespace Mid_or_Feed.Champions
             {
                 R.Cast(gapcloser.Sender, Packets);
             }
-                
         }
 
         private void GameOnOnGameUpdate(EventArgs args)
@@ -128,7 +133,8 @@ namespace Mid_or_Feed.Champions
             Console.Clear();
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy))
             {
-                Console.WriteLine("Enemy: {0} | Buffs: {1}", enemy.ChampionName, string.Join(", ", enemy.Buffs.Select(v => v.Name)));
+                Console.WriteLine("Enemy: {0} | Buffs: {1}", enemy.ChampionName,
+                    string.Join(", ", enemy.Buffs.Select(v => v.Name)));
             }
 
             switch (RStatus)
@@ -188,7 +194,7 @@ namespace Mid_or_Feed.Champions
                 {
                     W.Cast(target, Packets);
                 }
-                    
+
                 if (spell.Slot == SpellSlot.E)
                 {
                     E.Cast(target, Packets);
@@ -220,7 +226,7 @@ namespace Mid_or_Feed.Champions
         private void DoHarass()
         {
             var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
-            if(!target.IsValidTarget())
+            if (!target.IsValidTarget())
                 return;
 
             var useQ = GetBool("useQHarass");
@@ -237,9 +243,8 @@ namespace Mid_or_Feed.Champions
                 W.Cast(target, Packets);
             }
 
-            if(useWBack && !HasQBuff(target) && WActivated)
+            if (useWBack && !HasQBuff(target) && WActivated)
                 W.CastOnUnit(Player, Packets);
-
         }
 
         public override float GetComboDamage(Obj_AI_Hero target)
@@ -281,7 +286,7 @@ namespace Mid_or_Feed.Champions
             harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
         }
 
-        public override void Items(Menu itemsMenu)
+        public override void ItemMenu(Menu itemsMenu)
         {
             itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }

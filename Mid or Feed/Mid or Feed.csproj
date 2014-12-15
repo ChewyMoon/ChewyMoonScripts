@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Champions\Ahri.cs" />
     <Compile Include="Champions\Akali.cs" />
     <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />

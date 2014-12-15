@@ -79,11 +79,11 @@ namespace Mid_or_Feed.Champions
             var useE = GetValue<bool>("useE");
             var useR = GetValue<bool>("useR");
 
-            if (LeagueSharp.Common.Items.CanUseItem(GunbladeId))
-                LeagueSharp.Common.Items.UseItem(GunbladeId, target);
+            if (Items.CanUseItem(GunbladeId))
+                Items.UseItem(GunbladeId, target);
 
-            if (LeagueSharp.Common.Items.CanUseItem(CutlassId))
-                LeagueSharp.Common.Items.UseItem(CutlassId);
+            if (Items.CanUseItem(CutlassId))
+                Items.UseItem(CutlassId);
 
             foreach (var spell in _spellList.Where(x => x.IsReady()))
             {
@@ -148,10 +148,10 @@ namespace Mid_or_Feed.Champions
                 _spellList.Where(spell => spell.Level > 0 && spell.IsReady())
                     .Sum(spell => Player.GetDamageSpell(target, spell.Slot).CalculatedDamage);
 
-            if (LeagueSharp.Common.Items.CanUseItem(GunbladeId))
+            if (Items.CanUseItem(GunbladeId))
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
 
-            if (LeagueSharp.Common.Items.CanUseItem(CutlassId))
+            if (Items.CanUseItem(CutlassId))
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
 
             return (float) damage;
@@ -169,7 +169,7 @@ namespace Mid_or_Feed.Champions
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
         }
 
-        public override void Items(Menu itemsMenu)
+        public override void ItemMenu(Menu itemsMenu)
         {
             itemsMenu.AddItem(new MenuItem("useGunblade", "Gunblade").SetValue(true));
             itemsMenu.AddItem(new MenuItem("useCutlass", "Use Cutlass").SetValue(true));

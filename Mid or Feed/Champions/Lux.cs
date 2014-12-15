@@ -49,9 +49,14 @@ namespace Mid_or_Feed.Champions
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
-            AntiGapcloser.OnEnemyGapcloser +=AntiGapcloserOnOnEnemyGapcloser;
+            AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
+        }
+
+        public static bool EActivated
+        {
+            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1 || EGameObject != null; }
         }
 
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -86,12 +91,6 @@ namespace Mid_or_Feed.Champions
 
             if (Player.GetSpellDamage(unit, SpellSlot.R) > unit.Health)
                 R.Cast(unit, Packets);
-
-        }
-
-        public static bool EActivated
-        {
-            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1 || EGameObject != null; }
         }
 
         public static bool HasPassive(Obj_AI_Hero hero)
@@ -129,7 +128,10 @@ namespace Mid_or_Feed.Champions
             if (!R.IsReady()) return;
 
             var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_BLUE"));
-            foreach (var blueBuff in blueBuffs.Where(blueBuff => Player.GetDamageSpell(blueBuff, SpellSlot.R).CalculatedDamage > blueBuff.Health))
+            foreach (
+                var blueBuff in
+                    blueBuffs.Where(
+                        blueBuff => Player.GetDamageSpell(blueBuff, SpellSlot.R).CalculatedDamage > blueBuff.Health))
             {
                 R.Cast(blueBuff, Packets);
             }
@@ -140,7 +142,10 @@ namespace Mid_or_Feed.Champions
             if (!R.IsReady()) return;
 
             var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_RED"));
-            foreach (var redBuff in redBuffs.Where(redBuff => Player.GetDamageSpell(redBuff, SpellSlot.R).CalculatedDamage > redBuff.Health))
+            foreach (
+                var redBuff in
+                    redBuffs.Where(
+                        redBuff => Player.GetDamageSpell(redBuff, SpellSlot.R).CalculatedDamage > redBuff.Health))
             {
                 R.Cast(redBuff, Packets);
             }
@@ -148,7 +153,11 @@ namespace Mid_or_Feed.Champions
 
         private void ItsKillSecure()
         {
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()).Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
+            foreach (
+                var enemy in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.IsValidTarget())
+                        .Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
             {
                 R.Cast(enemy, Packets);
                 return;
@@ -157,7 +166,12 @@ namespace Mid_or_Feed.Champions
 
         private void AutoW()
         {
-            foreach (var ally in from ally in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead) let allyPercent = ally.Health/ally.MaxHealth*100 let healthPercent = GetValue<Slider>("autoWPercent").Value where healthPercent >= allyPercent select ally)
+            foreach (
+                var ally in from ally in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead)
+                    let allyPercent = ally.Health/ally.MaxHealth*100
+                    let healthPercent = GetValue<Slider>("autoWPercent").Value
+                    where healthPercent >= allyPercent
+                    select ally)
             {
                 W.Cast(ally, Packets);
                 return;
@@ -186,7 +200,7 @@ namespace Mid_or_Feed.Champions
 
                 var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
 
-                if(isInAaRange && !HasPassive(target))
+                if (isInAaRange && !HasPassive(target))
                     E.Cast(Player, Packets);
 
                 // Pop E if the target is out of AA range
@@ -297,7 +311,7 @@ namespace Mid_or_Feed.Champions
             var p = Player;
 
             if (Q.IsReady())
-               dmg += p.GetDamageSpell(target, SpellSlot.Q).CalculatedDamage;
+                dmg += p.GetDamageSpell(target, SpellSlot.Q).CalculatedDamage;
 
             if (E.IsReady())
                 dmg += p.GetDamageSpell(target, SpellSlot.E).CalculatedDamage;
@@ -306,12 +320,10 @@ namespace Mid_or_Feed.Champions
                 dmg += p.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
 
             return (float) dmg;
-
         }
 
         public override void Combo(Menu comboMenu)
         {
-            
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
@@ -337,13 +349,13 @@ namespace Mid_or_Feed.Champions
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
         }
 
-        public override void Items(Menu itemsMenu)
+        public override void ItemMenu(Menu itemsMenu)
         {
             //itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }
 
         public override void Misc(Menu miscMenu)
-        {          
+        {
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true)); // Might be patched..
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
