@@ -1,9 +1,9 @@
 ﻿#region
 
-using LeagueSharp;
-using LeagueSharp.Common;
 using System;
 using System.Linq;
+using LeagueSharp;
+using LeagueSharp.Common;
 
 #endregion
 
@@ -47,7 +47,7 @@ namespace ChewyMoonsLux
                     from teamMate in
                         ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid)
                     let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>()
-                    let ourPercent = teamMate.Health / teamMate.MaxHealth * 100
+                    let ourPercent = teamMate.Health/teamMate.MaxHealth*100
                     where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady()
                     select teamMate)
             {
@@ -105,7 +105,10 @@ namespace ChewyMoonsLux
             // Pop e
             if (_eGameObject != null)
             {
-                var targetsInE = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(_eGameObject.BoundingRadius)).ToList();
+                var targetsInE =
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(hero => hero.IsValidTarget(_eGameObject.BoundingRadius))
+                        .ToList();
                 if (targetsInE.Any(leTarget => !HasPassive(leTarget)))
                     ChewyMoonsLux.E.Cast(ChewyMoonsLux.PacketCast);
             }

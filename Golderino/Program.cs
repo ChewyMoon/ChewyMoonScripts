@@ -15,14 +15,11 @@ namespace Golderino
         private static float _myTeamGold = 475*5;
         private static float _enemyTeamGold = 475*5;
         private static float _goldAdvantage;
-
         private static Render.Sprite _greenBar;
         private static Render.Sprite _redBar;
-
         private static Render.Text _leftText;
         private static Render.Text _middleText;
         private static Render.Text _rightText;
-
         public static int ImgWidth = 437;
 
         private static void Main(string[] args)
@@ -68,7 +65,7 @@ namespace Golderino
 
             _middleText.text = _goldAdvantage + "%";
             _middleText.X = Drawing.Width/2 -
-                           Drawing.GetTextExtent(_goldAdvantage.ToString(CultureInfo.InvariantCulture)).Width/2;
+                            Drawing.GetTextExtent(_goldAdvantage.ToString(CultureInfo.InvariantCulture)).Width/2;
 
             _rightText.text = _enemyTeamGold.ToString(CultureInfo.InvariantCulture) + "g";
             _rightText.X = _redBar.Width + Drawing.GetTextExtent(_rightText.text).Width;
@@ -83,7 +80,8 @@ namespace Golderino
                 return;
 
             var decoded = Packet.S2C.AddGold.Decoded(data);
-            Console.WriteLine(@"ReceivingUnit: {0} | SourceUnit {1}", decoded.ReceivingUnit.BaseSkinName, decoded.SourceUnit.BaseSkinName);
+            Console.WriteLine(@"ReceivingUnit: {0} | SourceUnit {1}", decoded.ReceivingUnit.BaseSkinName,
+                decoded.SourceUnit.BaseSkinName);
             if (decoded.ReceivingUnit.IsEnemy)
             {
                 _enemyTeamGold += decoded.Gold;

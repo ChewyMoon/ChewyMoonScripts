@@ -50,11 +50,10 @@ namespace ChewyMoonsLux
 
     internal class Updater
     {
-        private readonly string _updatelink;
-
-        private readonly WebClient _wc = new WebClient {Proxy = null};
-        public bool NeedUpdate = false;
+        public bool NeedUpdate;
         public string UpdateVersion;
+        private readonly string _updatelink;
+        private readonly WebClient _wc = new WebClient {Proxy = null};
 
         public Updater(string versionlink, string updatelink, string localversion)
         {

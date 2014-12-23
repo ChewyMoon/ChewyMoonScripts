@@ -1,12 +1,12 @@
 ﻿#region
 
-using LeagueSharp;
-using LeagueSharp.Common;
-using LX_Orbwalker;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using LeagueSharp;
+using LeagueSharp.Common;
+using LX_Orbwalker;
 
 #endregion
 
@@ -17,12 +17,9 @@ namespace ChewyMoonsShaco
         public static Spell Q;
         public static Spell W;
         public static Spell E;
-
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
-
         public static List<Spell> SpellList;
-
         public static int TiamatId = 3077;
         public static int HydraId = 3074;
 
@@ -34,7 +31,7 @@ namespace ChewyMoonsShaco
             W = new Spell(SpellSlot.W, 425);
             E = new Spell(SpellSlot.E, 625);
 
-            SpellList = new List<Spell> { Q, E, W };
+            SpellList = new List<Spell> {Q, E, W};
 
             CreateMenu();
 

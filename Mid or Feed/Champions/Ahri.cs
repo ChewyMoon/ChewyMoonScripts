@@ -14,7 +14,6 @@ namespace Mid_or_Feed.Champions
         //TODO: Implment some type of Ult logic.
 
         public Items.Item Dfg;
-
         public Spell E;
         public Spell Q;
         public Spell W;

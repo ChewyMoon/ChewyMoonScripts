@@ -64,7 +64,8 @@ namespace Cya_Nerds
             _menu.AddItem(new MenuItem("maxWardJump", "Jump to max range").SetValue(true));
             _menu.AddItem(new MenuItem("jumpRange", "Existing Obj Range").SetValue(new Slider(250, 0, 700)));
             _menu.AddItem(new MenuItem("wardDelay", "Ward Delay(MS)").SetValue(new Slider(3000, 0, 10*1000)));
-            _menu.AddItem(new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind("t".ToCharArray()[0], KeyBindType.Press)));
+            _menu.AddItem(
+                new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind("t".ToCharArray()[0], KeyBindType.Press)));
             _menu.AddToMainMenu();
 
             GameObject.OnCreate += GameObjectOnOnCreate;

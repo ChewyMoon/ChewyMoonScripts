@@ -16,7 +16,6 @@ namespace Sophies_Soraka
         public static Spell W;
         public static Spell E;
         public static Spell R;
-
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
 
@@ -41,7 +40,7 @@ namespace Sophies_Soraka
             CreateMenu();
 
             PrintChat("Loaded ! Definitely created by Sophie AND NOT CHEWYMOON :3");
-            
+
 
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
@@ -101,7 +100,9 @@ namespace Sophies_Soraka
             if (!R.IsReady()) return;
 
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (var friend in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x=> !x.IsZombie))
+            foreach (
+                var friend in
+                    ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
             {
                 var friendHealth = (int) friend.Health/friend.MaxHealth*100;
                 var health = Menu.Item("autoRPercent").GetValue<Slider>().Value;
@@ -216,7 +217,7 @@ namespace Sophies_Soraka
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             Menu.AddSubMenu(comboMenu);
-        
+
             // Harass
             var harassMenu = new Menu("Harass", "ssHarass");
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));

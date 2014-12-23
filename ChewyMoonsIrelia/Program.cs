@@ -13,24 +13,17 @@ namespace ChewyMoonsIrelia
     internal class Program
     {
         private const string ChampName = "Irelia";
-
         private static Menu _menu;
-
         private static Spell _q;
         private static Spell _w;
         private static Spell _e;
         private static Spell _r;
-
         // Irelia Ultimate stuff.
         private static bool _hasToFire;
-
         private static int _charges;
-
         private static bool _packetCast;
-
         public static Items.Item BotRk;
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
-
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
@@ -87,7 +80,7 @@ namespace ChewyMoonsIrelia
 
             // Damage calc per blade
             if (_r.IsReady())
-                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R) * 4;
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R)*4;
 
             return (float) dmg;
         }
@@ -281,7 +274,7 @@ namespace ChewyMoonsIrelia
             }
 
             // Now that we q'd, lets cast BOTRK
-            if(BotRk.IsReady())
+            if (BotRk.IsReady())
                 BotRk.Cast(target);
 
             // stunerino

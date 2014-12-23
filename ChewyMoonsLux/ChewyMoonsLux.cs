@@ -1,11 +1,9 @@
 ﻿#region
 
+using System;
+using System.Drawing;
 using LeagueSharp;
 using LeagueSharp.Common;
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Dynamic;
 
 #endregion
 

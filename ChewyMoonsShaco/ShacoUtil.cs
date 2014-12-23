@@ -1,9 +1,9 @@
 ﻿#region
 
+using System.Collections.Generic;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using System.Collections.Generic;
 
 #endregion
 
@@ -16,7 +16,7 @@ namespace ChewyMoonsShaco
             var enemyPos = serverPos ? target.ServerPosition : target.Position;
             var myPos = serverPos ? ObjectManager.Player.ServerPosition : ObjectManager.Player.Position;
 
-            return enemyPos + Vector3.Normalize(enemyPos - myPos) * distance;
+            return enemyPos + Vector3.Normalize(enemyPos - myPos)*distance;
         }
 
         public static Vector2 GetShortestWayPoint(List<Vector2> waypoints)
