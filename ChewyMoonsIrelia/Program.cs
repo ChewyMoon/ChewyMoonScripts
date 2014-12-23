@@ -341,7 +341,7 @@ namespace ChewyMoonsIrelia
 
             // Target Selector
             var targetSelectorMenu = new Menu("[Chewy's Irelia] - TS", "cmIreliaTS");
-            SimpleTs.AddToMenu(targetSelectorMenu);
+            TargetSelector.AddToMenu(targetSelectorMenu);
             _menu.AddSubMenu(targetSelectorMenu);
 
             // Orbwalker

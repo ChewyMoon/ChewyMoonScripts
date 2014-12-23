@@ -83,7 +83,7 @@ namespace ChewyMoonsLux
 
             // Target Selector
             var tsMenu = new Menu("[Chewy's Lux] - TS", "cmLuxTs");
-            SimpleTs.AddToMenu(tsMenu);
+            TargetSelector.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
             // Orbwalker

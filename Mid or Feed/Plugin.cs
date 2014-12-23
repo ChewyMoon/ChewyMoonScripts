@@ -48,7 +48,7 @@ namespace Mid_or_Feed
 
             // Target Selector
             var tsMenu = new Menu("Target Selector", "mofTS");
-            SimpleTs.AddToMenu(tsMenu);
+            TargetSelector.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
             // Orbwalker

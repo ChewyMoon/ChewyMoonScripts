@@ -70,7 +70,7 @@ namespace ChewyMoonsShaco
 
             // Target Selector
             var tsMenu = new Menu("Target Selector", "cmShacoTS");
-            SimpleTs.AddToMenu(tsMenu);
+            TargetSelector.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
             // Orbwalking

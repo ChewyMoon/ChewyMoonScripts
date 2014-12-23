@@ -203,7 +203,7 @@ namespace Sophies_Soraka
 
             // Target Selector
             var tsMenu = new Menu("Target Selector", "ssTS");
-            SimpleTs.AddToMenu(tsMenu);
+            TargetSelector.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
             // Orbwalking
