@@ -65,8 +65,7 @@ namespace Mid_or_Feed.Champions
 
         private void DoCombo()
         {
-            var target = SimpleTs.GetTarget(_spellList.First(x => x.Slot == SpellSlot.R).Range + 50,
-                SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             if (target == null && GetValue<bool>("gapcloseR"))
             {
@@ -118,7 +117,7 @@ namespace Mid_or_Feed.Champions
             var r = GetSpell(_spellList, SpellSlot.R);
             if (!r.IsReady()) return;
 
-            var target = SimpleTs.GetTarget(r.Range*3, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget()) return;
 
             foreach (
@@ -136,7 +135,7 @@ namespace Mid_or_Feed.Champions
         {
             var q = GetSpell(_spellList, SpellSlot.Q);
 
-            var target = SimpleTs.GetTarget(q.Range, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget() || !q.IsReady() || !GetValue<bool>("useQHarass")) return;
 
             q.CastOnUnit(target, Packets);

@@ -19,7 +19,7 @@ namespace ChewyMoonsShaco
         public static Spell E;
 
         public static Menu Menu;
-        public static LXOrbwalker Orbwalker;
+        public static Orbwalking.Orbwalker Orbwalker;
 
         public static List<Spell> SpellList;
 
@@ -75,8 +75,7 @@ namespace ChewyMoonsShaco
 
             // Orbwalking
             var orbwalkingMenu = new Menu("Orbwalking", "cmShacoOrbwalkin");
-            Orbwalker = new LXOrbwalker();
-            LXOrbwalker.AddToMenu(orbwalkingMenu);
+            Orbwalker = new Orbwalking.Orbwalker(orbwalkingMenu);
             Menu.AddSubMenu(orbwalkingMenu);
 
             // Combo
@@ -157,7 +156,7 @@ namespace ChewyMoonsShaco
 
         private static void Combo()
         {
-            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             var useQ = Menu.Item("useQ").GetValue<bool>();
             var useW = Menu.Item("useW").GetValue<bool>();
@@ -193,7 +192,7 @@ namespace ChewyMoonsShaco
         private static void Harass()
         {
             var useE = Menu.Item("useEHarass").GetValue<bool>();
-            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             if (!target.IsValidTarget(E.Range)) return;
 

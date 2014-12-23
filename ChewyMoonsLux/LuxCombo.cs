@@ -77,7 +77,7 @@ namespace ChewyMoonsLux
             var useQ = ChewyMoonsLux.Menu.Item("useQHarass").GetValue<bool>();
             var useE = ChewyMoonsLux.Menu.Item("useEHarass").GetValue<bool>();
 
-            var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
+            var target = ChewyMoonsLux.Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget()) return;
 
             if (HasPassive(target)) return;
@@ -98,7 +98,7 @@ namespace ChewyMoonsLux
             var useE = ChewyMoonsLux.Menu.Item("useE").GetValue<bool>();
             var useR = ChewyMoonsLux.Menu.Item("useR").GetValue<bool>();
 
-            var target = SimpleTs.GetTarget(ChewyMoonsLux.Q.Range, SimpleTs.DamageType.Magical);
+            var target = ChewyMoonsLux.Orbwalker.GetTarget() as Obj_AI_Hero;
 
             var useDfg = ChewyMoonsLux.Menu.Item("useDFG").GetValue<bool>();
 

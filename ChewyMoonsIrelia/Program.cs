@@ -220,7 +220,7 @@ namespace ChewyMoonsIrelia
         {
             if (!_hasToFire) return;
 
-            _r.Cast(SimpleTs.GetTarget(1000, SimpleTs.DamageType.Physical), _packetCast); //Dunnno
+            _r.Cast(Orbwalker.GetTarget() as Obj_AI_Hero, _packetCast); //Dunnno
             _charges -= 1;
             _hasToFire = _charges != 0;
         }
@@ -233,7 +233,7 @@ namespace ChewyMoonsIrelia
             var useE = _menu.Item("useE").GetValue<bool>();
             var useR = _menu.Item("useR").GetValue<bool>();
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
-            var target = SimpleTs.GetTarget(_q.Range, SimpleTs.DamageType.Physical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             if (target == null)
             {
@@ -311,7 +311,7 @@ namespace ChewyMoonsIrelia
         {
             if (!_menu.Item("useMinionGapclose").GetValue<bool>()) return;
 
-            var target = SimpleTs.GetTarget(_q.Range*3, SimpleTs.DamageType.Physical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget() || target == null) return;
 
             foreach (

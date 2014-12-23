@@ -137,7 +137,7 @@ namespace Sophies_Soraka
         {
             var useQ = Menu.Item("useQ").GetValue<bool>();
             var useE = Menu.Item("useE").GetValue<bool>();
-            var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             if (!target.IsValidTarget()) return;
 
@@ -156,7 +156,7 @@ namespace Sophies_Soraka
         {
             var useQ = Menu.Item("useQHarass").GetValue<bool>();
             var useE = Menu.Item("useEHarass").GetValue<bool>();
-            var target = SimpleTs.GetTarget(1000, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
 
             if (!target.IsValidTarget()) return;
 

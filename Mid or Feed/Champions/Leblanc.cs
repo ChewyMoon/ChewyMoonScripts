@@ -165,7 +165,7 @@ namespace Mid_or_Feed.Champions
 
         private void DoCombo()
         {
-            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget())
                 return;
 
@@ -225,7 +225,7 @@ namespace Mid_or_Feed.Champions
 
         private void DoHarass()
         {
-            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
             if (!target.IsValidTarget())
                 return;
 
