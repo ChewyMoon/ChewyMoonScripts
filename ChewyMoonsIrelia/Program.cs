@@ -311,7 +311,7 @@ namespace ChewyMoonsIrelia
         {
             if (!_menu.Item("useMinionGapclose").GetValue<bool>()) return;
 
-            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
+            var target = TargetSelector.GetTarget(_q.Range*3, TargetSelector.DamageType.Physical);
             if (!target.IsValidTarget() || target == null) return;
 
             foreach (

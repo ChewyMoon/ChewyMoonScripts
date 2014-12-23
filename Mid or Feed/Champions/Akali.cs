@@ -117,7 +117,7 @@ namespace Mid_or_Feed.Champions
             var r = GetSpell(_spellList, SpellSlot.R);
             if (!r.IsReady()) return;
 
-            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
+            var target = TargetSelector.GetTarget(r.Range*3, TargetSelector.DamageType.Magical);
             if (!target.IsValidTarget()) return;
 
             foreach (
