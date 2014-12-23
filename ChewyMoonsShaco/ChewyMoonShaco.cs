@@ -153,7 +153,7 @@ namespace ChewyMoonsShaco
 
         private static void Combo()
         {
-            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
+            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
 
             var useQ = Menu.Item("useQ").GetValue<bool>();
             var useW = Menu.Item("useW").GetValue<bool>();
@@ -189,7 +189,7 @@ namespace ChewyMoonsShaco
         private static void Harass()
         {
             var useE = Menu.Item("useEHarass").GetValue<bool>();
-            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
+            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
 
             if (!target.IsValidTarget(E.Range)) return;
 

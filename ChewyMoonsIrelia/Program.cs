@@ -226,7 +226,7 @@ namespace ChewyMoonsIrelia
             var useE = _menu.Item("useE").GetValue<bool>();
             var useR = _menu.Item("useR").GetValue<bool>();
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
-            var target = Orbwalker.GetTarget() as Obj_AI_Hero;
+            var target = TargetSelector.GetTarget(_q.Range, TargetSelector.DamageType.Physical);
 
             if (target == null)
             {
