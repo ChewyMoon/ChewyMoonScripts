@@ -52,12 +52,10 @@ namespace ChewyMoonsShaco
             if (Items.HasItem(HydraId) && Items.CanUseItem(HydraId))
             {
                 Items.UseItem(TiamatId);
-                LXOrbwalker.ResetAutoAttackTimer();
             }
             else if (Items.HasItem(TiamatId) && Items.CanUseItem(TiamatId))
             {
                 Items.UseItem(TiamatId);
-                LXOrbwalker.ResetAutoAttackTimer();
             }
         }
 
@@ -87,6 +85,11 @@ namespace ChewyMoonsShaco
             var harassMenu = new Menu("Harass", "cmShacoHarass");
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             Menu.AddSubMenu(harassMenu);
+
+            // Ks
+            var ksMenu = new Menu("KS", "cmShacoKS");
+            ksMenu.AddItem(new MenuItem("ksE", "Use E").SetValue(true));
+            Menu.AddSubMenu(ksMenu);
 
             // Drawing
             var drawingMenu = new Menu("Drawings", "cmShacoDrawing");
@@ -139,15 +142,37 @@ namespace ChewyMoonsShaco
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
-            switch (LXOrbwalker.CurrentMode)
+            if (Menu.Item("ksE").GetValue<bool>())
             {
-                case LXOrbwalker.Mode.Combo:
+                KillSecure();
+            }
+
+            switch (Orbwalker.ActiveMode)
+            {
+                case Orbwalking.OrbwalkingMode.Combo:
                     Combo();
                     break;
 
-                case LXOrbwalker.Mode.Harass:
+                case Orbwalking.OrbwalkingMode.Mixed:
                     Harass();
                     break;
+            }
+        }
+
+        private static void KillSecure()
+        {
+            if (!E.IsReady())
+                return;
+
+            foreach (
+                var target in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.IsEnemy)
+                        .Where(x => x.Distance(ObjectManager.Player) <= E.Range)
+                        .Where(target => ObjectManager.Player.GetSpellDamage(target, SpellSlot.E) > target.Health))
+            {
+                E.CastOnUnit(target, Menu.Item("usePackets").GetValue<bool>());
+                return;
             }
         }
 
