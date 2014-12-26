@@ -168,6 +168,7 @@ namespace ChewyMoonsShaco
                 var target in
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsEnemy)
+                        .Where(x => !x.IsDead)
                         .Where(x => x.Distance(ObjectManager.Player) <= E.Range)
                         .Where(target => ObjectManager.Player.GetSpellDamage(target, SpellSlot.E) > target.Health))
             {
