@@ -44,6 +44,7 @@ namespace Mid_or_Feed
 
         private void CreateMenu()
         {
+            Game.PrintChat("menu created");
             Menu = new Menu("Mid or Feed", "mof", true);
 
             // Target Selector
