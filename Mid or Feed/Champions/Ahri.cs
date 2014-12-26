@@ -32,7 +32,7 @@ namespace Mid_or_Feed.Champions
             Game.OnGameUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
-            Drawing.OnDraw += DrawingOnOnDraw;
+            //Drawing.OnDraw += DrawingOnOnDraw;
 
             PrintChat("Ahri loaded.");
         }

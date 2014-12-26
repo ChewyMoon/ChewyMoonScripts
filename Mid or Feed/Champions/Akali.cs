@@ -101,7 +101,7 @@ namespace Mid_or_Feed.Champions
                 }
 
                 if (spell.Slot == SpellSlot.R && useR &&
-                    Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Player))
+                    Player.Distance(target) > Player.GetRealAutoAttackRange())
                 {
                     spell.CastOnUnit(target, Packets);
                 }
