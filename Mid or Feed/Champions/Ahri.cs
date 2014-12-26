@@ -146,32 +146,32 @@ namespace Mid_or_Feed.Champions
 
         public override void Combo(Menu config)
         {
-            config.AddItem(new MenuItem("useQ", "Use Q", true).SetValue(true));
-            config.AddItem(new MenuItem("useW", "Use W", true).SetValue(true));
-            config.AddItem(new MenuItem("useE", "Use E", true).SetValue(true));
+            config.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            config.AddItem(new MenuItem("useW", "Use W").SetValue(true));
+            config.AddItem(new MenuItem("useE", "Use E").SetValue(true));
         }
 
         public override void Harass(Menu config)
         {
-            config.AddItem(new MenuItem("useQHarass", "Use Q", true).SetValue(true));
+            config.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
         }
 
         public override void ItemMenu(Menu config)
         {
-            config.AddItem(new MenuItem("useDFG", "Use DFG", true).SetValue(true));
+            config.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }
 
         public override void Misc(Menu config)
         {
-            config.AddItem(new MenuItem("gapcloseE", "E on Gapcloser", true).SetValue(true));
+            config.AddItem(new MenuItem("gapcloseE", "E on Gapcloser").SetValue(true));
             config.AddItem(new MenuItem("interruptE", "E to Interrupt", true).SetValue(true));
         }
 
         public override void Drawings(Menu config)
         {
-            config.AddItem(new MenuItem("drawQ", "Draw Q", true).SetValue(true));
-            config.AddItem(new MenuItem("drawW", "Draw W", true).SetValue(true));
-            config.AddItem(new MenuItem("drawE", "Draw E", true).SetValue(true));
+            config.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            config.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            config.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
         }
     }
 }
