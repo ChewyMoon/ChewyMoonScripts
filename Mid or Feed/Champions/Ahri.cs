@@ -86,6 +86,7 @@ namespace Mid_or_Feed.Champions
 
         private void DoCombo()
         {
+            Console.Write("Combo, {0}", Packets);
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
 
             if (!target.IsValidTarget())
