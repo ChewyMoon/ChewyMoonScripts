@@ -88,14 +88,6 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget())
-            {
-                Console.WriteLine("not valid target");
-                return;
-            }
-
-            Console.WriteLine("Valid target");
-
             var useQ = GetBool("useQ");
             var useW = GetBool("useW");
             var useE = GetBool("useE");
