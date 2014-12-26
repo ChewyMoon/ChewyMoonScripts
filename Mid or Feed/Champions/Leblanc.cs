@@ -166,7 +166,7 @@ namespace Mid_or_Feed.Champions
         private void DoCombo()
         {
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             if (Dfg.IsReady() && GetBool("useDFG"))
@@ -226,7 +226,7 @@ namespace Mid_or_Feed.Champions
         private void DoHarass()
         {
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             var useQ = GetBool("useQHarass");

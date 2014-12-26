@@ -78,7 +78,7 @@ namespace ChewyMoonsLux
             var useE = ChewyMoonsLux.Menu.Item("useEHarass").GetValue<bool>();
 
             var target = ChewyMoonsLux.Orbwalker.GetTarget() as Obj_AI_Hero;
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
 
             if (HasPassive(target)) return;
 
@@ -113,7 +113,7 @@ namespace ChewyMoonsLux
                     ChewyMoonsLux.E.Cast(ChewyMoonsLux.PacketCast);
             }
 
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
             if (HasPassive(target)) return;
 
             if (useDfg)

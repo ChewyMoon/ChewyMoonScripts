@@ -88,7 +88,7 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             var useQ = GetBool("useQ");
@@ -100,10 +100,10 @@ namespace Mid_or_Feed.Champions
                 Dfg.Cast(target);
 
             if (useE && E.IsReady())
-                E.Cast(target, Packets);
+                E.Cast(target);
 
             if (useQ && Q.IsReady())
-                Q.Cast(target, Packets);
+                Q.Cast(target);
 
             if (useW && W.IsReady() && W.InRange(target.ServerPosition))
                 W.Cast(Packets);
@@ -112,7 +112,7 @@ namespace Mid_or_Feed.Champions
         private void DoHarass()
         {
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             if (!GetBool("useQHarass") || !Q.IsReady())

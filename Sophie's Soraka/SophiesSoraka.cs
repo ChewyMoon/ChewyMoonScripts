@@ -140,7 +140,7 @@ namespace Sophies_Soraka
             var useE = Menu.Item("useE").GetValue<bool>();
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
 
             if (useQ && Q.IsReady())
             {
@@ -159,7 +159,7 @@ namespace Sophies_Soraka
             var useE = Menu.Item("useEHarass").GetValue<bool>();
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
 
             if (useQ && Q.IsReady())
             {

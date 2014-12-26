@@ -185,7 +185,7 @@ namespace Mid_or_Feed.Champions
             var minions = col.Where(x => !(x is Obj_AI_Hero)).Count(x => x.IsMinion);
 
             if (minions <= 1)
-                Q.Cast(input.CastPosition, Packets);
+                Q.Cast(input.CastPosition);
         }
 
         private void CastE(Obj_AI_Hero target)
@@ -198,18 +198,18 @@ namespace Mid_or_Feed.Champions
                         .Where(x => !x.IsDead)
                         .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width)) return;
 
-                var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
+                var isInAaRange = Player.Distance(target) <= Player.GetRealAutoAttackRange();
 
                 if (isInAaRange && !HasPassive(target))
-                    E.Cast(Player, Packets);
+                    E.Cast();
 
                 // Pop E if the target is out of AA range
                 if (!isInAaRange)
-                    E.Cast(Player, Packets);
+                    Player.Spellbook.CastSpell(SpellSlot.E, Player);
             }
             else
             {
-                E.Cast(target, Packets);
+                E.Cast(target);
             }
         }
 
@@ -217,7 +217,7 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             var useQ = GetBool("useQ");
@@ -233,7 +233,7 @@ namespace Mid_or_Feed.Champions
 
             if (useW)
             {
-                W.Cast(Game.CursorPos, Packets);
+                W.Cast(Game.CursorPos);
             }
 
             if (useE)
@@ -243,7 +243,7 @@ namespace Mid_or_Feed.Champions
 
             if (useR)
             {
-                R.Cast(target, Packets);
+                R.Cast(target);
             }
 
             if (!useRKillable) return;
@@ -256,7 +256,7 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget())
+            if (target == null)
                 return;
 
             var useQ = GetBool("useQHarass");

@@ -73,7 +73,7 @@ namespace Mid_or_Feed.Champions
                 GapcloseCombo();
             }
 
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
 
             var useQ = GetValue<bool>("useQ");
             var useE = GetValue<bool>("useE");
@@ -119,7 +119,7 @@ namespace Mid_or_Feed.Champions
             if (!r.IsReady()) return;
 
             var target = TargetSelector.GetTarget(r.Range*3, TargetSelector.DamageType.Magical);
-            if (!target.IsValidTarget()) return;
+            if (target == null) return;
 
             foreach (
                 var minion in
