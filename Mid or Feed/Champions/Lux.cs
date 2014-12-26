@@ -364,7 +364,7 @@ namespace Mid_or_Feed.Champions
             miscMenu.AddItem(new MenuItem("stealBlue", "Steal Blue buff").SetValue(true));
             miscMenu.AddItem(new MenuItem("stealRed", "Steal Red Buff").SetValue(false));
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider()));
+            miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider(15, 1)));
         }
 
         public override void Drawings(Menu drawingMenu)
