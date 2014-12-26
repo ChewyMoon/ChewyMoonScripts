@@ -29,7 +29,7 @@ namespace Mid_or_Feed
 
         public bool Packets
         {
-            get { return GetValue<bool>("packets"); }
+            get { return false; }
         }
 
         public Obj_AI_Hero Player
