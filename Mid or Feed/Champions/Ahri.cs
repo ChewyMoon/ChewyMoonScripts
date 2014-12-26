@@ -94,6 +94,8 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
+            Console.WriteLine("Valid target");
+
             var useQ = GetBool("useQ");
             var useW = GetBool("useW");
             var useE = GetBool("useE");
