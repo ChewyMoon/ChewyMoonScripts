@@ -48,10 +48,28 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-            //Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
+            Obj_AI_Hero.OnTeleport += ObjAiHeroOnOnTeleport;
+            
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
+        }
+
+        private void ObjAiHeroOnOnTeleport(GameObject sender, GameObjectTeleportEventArgs args)
+        {
+            if (!GetBool("rKSRecall"))
+                return;
+
+            var decoded = Packet.S2C.Teleport.Decoded(sender, args);
+            var hero = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
+
+            if (hero.IsAlly || decoded.Type != Packet.S2C.Teleport.Type.Recall || decoded.Status != Packet.S2C.Teleport.Status.Start)
+                return;
+
+            var rDamage = Player.GetSpellDamage(hero, SpellSlot.R);
+            if (rDamage > hero.Health)
+                R.Cast(hero);
+
         }
 
         public static bool EActivated
@@ -67,31 +85,6 @@ namespace Mid_or_Feed.Champions
             Q.Cast(gapcloser.Sender, Packets);
         }
 
-        private void GameOnOnGameProcessPacket(GamePacketEventArgs args)
-        {
-            if (!GetBool("rKSRecall"))
-                return;
-
-            var data = args.PacketData;
-            if (data[0] != Packet.S2C.Teleport.Header)
-                return;
-
-            var decoded = Packet.S2C.Teleport.Decoded(data);
-
-            if (decoded.Type != Packet.S2C.Teleport.Type.Recall)
-                return;
-
-            if (decoded.Status != Packet.S2C.Teleport.Status.Start)
-                return;
-
-            var unit = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
-
-            if (unit.IsAlly)
-                return;
-
-            if (Player.GetSpellDamage(unit, SpellSlot.R) > unit.Health)
-                R.Cast(unit, Packets);
-        }
 
         public static bool HasPassive(Obj_AI_Hero hero)
         {
@@ -365,7 +358,7 @@ namespace Mid_or_Feed.Champions
         public override void Misc(Menu miscMenu)
         {
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
-            miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true)); // Might be patched..
+            miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true));
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("stealBlue", "Steal Blue buff").SetValue(true));
             miscMenu.AddItem(new MenuItem("stealRed", "Steal Red Buff").SetValue(false));
