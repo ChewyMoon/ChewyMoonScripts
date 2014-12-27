@@ -153,6 +153,8 @@ namespace Mid_or_Feed.Champions
 
         private void ItsKillSecure()
         {
+            if (!R.IsReady())
+                return;
             foreach (
                 var enemy in
                     ObjectManager.Get<Obj_AI_Hero>()
@@ -166,6 +168,9 @@ namespace Mid_or_Feed.Champions
 
         private void AutoW()
         {
+            if (!W.IsReady())
+                return;
+
             foreach (
                 var ally in from ally in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead)
                     let allyPercent = ally.Health/ally.MaxHealth*100
@@ -205,7 +210,7 @@ namespace Mid_or_Feed.Champions
 
                 // Pop E if the target is out of AA range
                 if (!isInAaRange)
-                    Player.Spellbook.CastSpell(SpellSlot.E, Player);
+                    E.Cast();
             }
             else
             {
@@ -226,29 +231,29 @@ namespace Mid_or_Feed.Champions
             var useR = GetBool("useR");
             var useRKillable = GetBool("useRKillable");
 
-            if (useQ && !HasPassive(target))
+            if (useQ && !HasPassive(target) && Q.IsReady())
             {
                 CastQ(target);
             }
 
-            if (useW)
+            if (useW && W.IsReady())
             {
                 W.Cast(Game.CursorPos);
             }
 
-            if (useE)
+            if (useE && E.IsReady())
             {
                 CastE(target);
             }
 
-            if (useR)
+            if (useR && R.IsReady())
             {
                 R.Cast(target);
             }
 
             if (!useRKillable) return;
             var killable = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage > target.Health;
-            if (killable)
+            if (killable && R.IsReady())
                 R.Cast(target);
         }
 
@@ -262,12 +267,12 @@ namespace Mid_or_Feed.Champions
             var useQ = GetBool("useQHarass");
             var useE = GetBool("useEHarass");
 
-            if (useQ && !HasPassive(target))
+            if (useQ && !HasPassive(target) && Q.IsReady())
             {
                 CastQ(target);
             }
 
-            if (!useE) return;
+            if (!useE || !E.IsReady()) return;
             CastE(target);
         }
 
