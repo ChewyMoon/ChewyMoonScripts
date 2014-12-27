@@ -168,7 +168,11 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
             if (target == null)
+            {
+                Console.WriteLine("Target is null, returned.");
                 return;
+            }
+                
 
             if (Dfg.IsReady() && GetBool("useDFG"))
                 Dfg.Cast(target);
@@ -201,7 +205,12 @@ namespace Mid_or_Feed.Champions
                     E.Cast(target, Packets);
                 }
 
-                if (spell.Slot != SpellSlot.R) continue;
+                if (spell.Slot != SpellSlot.R)
+                {
+                    Console.WriteLine("Slot is not R, continued.");
+                    continue;
+                    
+                }
 
                 if (RStatus == RSpell.Q)
                     R.CastOnUnit(target, Packets);
