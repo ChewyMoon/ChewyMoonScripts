@@ -48,7 +48,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-            Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
+            //Game.OnGameProcessPacket += GameOnOnGameProcessPacket;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
@@ -159,6 +159,7 @@ namespace Mid_or_Feed.Champions
                 var enemy in
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsValidTarget())
+                        .Where(x => !x.IsZombie)
                         .Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
             {
                 R.Cast(enemy, Packets);
