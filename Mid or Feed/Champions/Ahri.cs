@@ -25,7 +25,7 @@ namespace Mid_or_Feed.Champions
             E = new Spell(SpellSlot.E, 1000);
 
             Q.SetSkillshot(0.25f, 100, 2500, false, SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.25f, 100, 60, true, SkillshotType.SkillshotLine);
+            E.SetSkillshot(0.25f, 100, 1500, true, SkillshotType.SkillshotLine);
 
             Dfg = new Items.Item(3128, 750);
 
