@@ -162,7 +162,7 @@ namespace Mid_or_Feed.Champions
 
         private void AutoW()
         {
-            if (!W.IsReady())
+            if (!W.IsReady() || Player.IsRecalling())
                 return;
 
             foreach (
