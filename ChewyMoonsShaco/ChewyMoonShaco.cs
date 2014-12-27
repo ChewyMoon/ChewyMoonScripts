@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LX_Orbwalker;
 
 #endregion
 
@@ -37,17 +37,20 @@ namespace ChewyMoonsShaco
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
-            LXOrbwalker.AfterAttack += LxOrbwalkerOnAfterAttack;
+            Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
 
             Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" +
                            "loaded!" +
                            "</font>");
         }
 
-        private static void LxOrbwalkerOnAfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (!unit.IsMe) return;
-            if (!target.IsValidTarget() || target.IsMinion) return;
+            if (!(target is Obj_AI_Hero))
+                return;
+
+            if (!target.IsValidTarget()) return;
 
             if (Items.HasItem(HydraId) && Items.CanUseItem(HydraId))
             {
