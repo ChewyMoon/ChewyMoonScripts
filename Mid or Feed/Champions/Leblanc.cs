@@ -11,7 +11,7 @@ using LeagueSharp.Common;
 
 namespace Mid_or_Feed.Champions
 {
-    internal class Leblanc : Plugin
+    internal class LeBlanc : Plugin
     {
         public enum RSpell
         {
@@ -28,7 +28,7 @@ namespace Mid_or_Feed.Champions
         public static List<Spell> SpellList;
         public static Items.Item Dfg;
 
-        public Leblanc()
+        public LeBlanc()
         {
             Q = new Spell(SpellSlot.Q, 720);
             W = new Spell(SpellSlot.W, 600);
