@@ -32,11 +32,12 @@ namespace Mid_or_Feed.Champions
         {
             Q = new Spell(SpellSlot.Q, 720);
             W = new Spell(SpellSlot.W, 600);
-            E = new Spell(SpellSlot.E, 900);
+            E = new Spell(SpellSlot.E, 950);
             R = new Spell(SpellSlot.R);
 
-            W.SetSkillshot(0.5f, 200, 1200, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(0.25f, 100, 1750, true, SkillshotType.SkillshotLine);
+            // W Delay to be tested ; w ;
+            W.SetSkillshot(0, 220, 1500, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(0.25f, 70, 1600, true, SkillshotType.SkillshotLine);
 
             // Populate spell list
             SpellList = new List<Spell> {Q, R, W, E};
@@ -92,7 +93,7 @@ namespace Mid_or_Feed.Champions
             // Use position instead of server position for drawing
             var p = Player.Position;
 
-            foreach (var spell in SpellList.Where(spell => GetBool("draw" + spell.Slot)))
+            foreach (var spell in SpellList.Where(spell => GetBool("draw" + spell.Slot.ToString().ToUpper())))
             {
                 Utility.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
             }
