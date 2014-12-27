@@ -48,8 +48,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-            Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;
-            
+            Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;           
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
@@ -328,18 +327,18 @@ namespace Mid_or_Feed.Champions
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false).DontSave());
-            comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true).DontSave());
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false));
+            comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true));
 
-            comboMenu.Item("useRKillable").ValueChanged += delegate
+            comboMenu.Item("useRKillable").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
             {
-                if (GetBool("useR"))
+                if (args.GetNewValue<bool>() && GetBool("useR"))
                     Menu.Item("useR").SetValue(false);
             };
 
-            comboMenu.Item("useR").ValueChanged += delegate
+            comboMenu.Item("useR").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
             {
-                if (GetBool("useRKillable"))
+                if (args.GetNewValue<bool>() && GetBool("useRKillable"))
                     Menu.Item("useRKillable").SetValue(false);
             };
         }
