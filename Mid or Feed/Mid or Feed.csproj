@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="Champions\Ahri.cs" />
     <Compile Include="Champions\Akali.cs" />
-    <Compile Include="Champions\LeBlanc.cs" />
+    <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Program.cs" />
