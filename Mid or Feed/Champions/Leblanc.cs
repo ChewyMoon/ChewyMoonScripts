@@ -182,7 +182,7 @@ namespace Mid_or_Feed.Champions
 
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
             {
-                Console.WriteLine("use" + spell.Slot);
+                Game.PrintChat("use" + spell.Slot);
                 if (spell.Slot == SpellSlot.Q)
                 {
                     Q.CastOnUnit(target, Packets);
