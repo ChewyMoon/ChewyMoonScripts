@@ -131,6 +131,12 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameUpdate(EventArgs args)
         {
+            Console.Clear();
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy))
+            {
+                Console.WriteLine("{0}: {1}", enemy.ChampionName, enemy.Buffs.ToArray().Select(x => x.Name));
+            }
+
             switch (RStatus)
             {
                 case RSpell.Q:
@@ -247,7 +253,7 @@ namespace Mid_or_Feed.Champions
             }
 
             if (useWBack && !HasQBuff(target) && WActivated)
-                W.CastOnUnit(Player, Packets);
+                W.Cast();
         }
 
         public override float GetComboDamage(Obj_AI_Hero target)
