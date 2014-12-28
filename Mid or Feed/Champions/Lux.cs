@@ -123,7 +123,7 @@ namespace Mid_or_Feed.Champions
             foreach (
                 var blueBuff in
                     blueBuffs.Where(
-                        blueBuff => Player.GetDamageSpell(blueBuff, SpellSlot.R).CalculatedDamage > blueBuff.Health))
+                        blueBuff => Player.GetSpellDamage(blueBuff, SpellSlot.R) > blueBuff.Health))
             {
                 R.Cast(blueBuff, Packets);
             }
@@ -137,7 +137,7 @@ namespace Mid_or_Feed.Champions
             foreach (
                 var redBuff in
                     redBuffs.Where(
-                        redBuff => Player.GetDamageSpell(redBuff, SpellSlot.R).CalculatedDamage > redBuff.Health))
+                        redBuff => Player.GetSpellDamage(redBuff, SpellSlot.R) > redBuff.Health))
             {
                 R.Cast(redBuff, Packets);
             }
@@ -245,7 +245,7 @@ namespace Mid_or_Feed.Champions
             }
 
             if (!useRKillable) return;
-            var killable = Player.GetDamageSpell(target, SpellSlot.R).CalculatedDamage > target.Health;
+            var killable = Player.GetSpellDamage(target, SpellSlot.R)> target.Health;
             if (killable && R.IsReady())
                 R.Cast(target);
         }
