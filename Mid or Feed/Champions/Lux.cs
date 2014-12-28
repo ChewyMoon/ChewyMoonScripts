@@ -196,7 +196,7 @@ namespace Mid_or_Feed.Champions
                         .Where(x => !x.IsDead)
                         .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width)) return;
 
-                var isInAaRange = Player.Distance(target) <= Player.GetRealAutoAttackRange();
+                var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
 
                 if (isInAaRange && !HasPassive(target))
                     E.Cast();
