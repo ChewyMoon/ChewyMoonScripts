@@ -63,9 +63,10 @@
     <Compile Include="Champions\Akali.cs" />
     <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />
+    <Compile Include="Manager.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Plugins\AutoIgnite.cs" />
-    <Compile Include="Plugins\PotionManager.cs" />
+    <Compile Include="Managers\AutoIgnite.cs" />
+    <Compile Include="Managers\PotionManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

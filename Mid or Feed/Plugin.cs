@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using Mid_or_Feed.Managers;
 
 #endregion
 
@@ -14,8 +15,10 @@ namespace Mid_or_Feed
         protected Plugin()
         {
             CreateMenu();
+
             Utility.HpBarDamageIndicator.DamageToUnit = DamageToUnit;
             Utility.HpBarDamageIndicator.Enabled = true;
+
             PrintChat("loading. Created by ChewyMoon :3");
         }
 
@@ -44,7 +47,6 @@ namespace Mid_or_Feed
 
         private void CreateMenu()
         {
-            Game.PrintChat("menu created");
             Menu = new Menu("Mid or Feed", "mof", true);
 
             // Target Selector
@@ -77,6 +79,21 @@ namespace Mid_or_Feed
             miscMenu.AddItem(new MenuItem("packets", "Use packets").SetValue(true));
             Misc(miscMenu);
             Menu.AddSubMenu(miscMenu);
+
+            // Managers
+
+            // Auto Ignite
+            if (Player.GetSpellSlot("SummonerDot") != SpellSlot.Unknown)
+            {
+                var igniteMenu = new Menu("Ignite", "mofIgnite");
+                new AutoIgnite().Load(igniteMenu);
+                Menu.AddSubMenu(igniteMenu);
+            }
+
+            // Potion Manager
+            var pmManager = new Menu("Potion Manager", "mofPM");
+            new PotionManager().Load(pmManager);
+            Menu.AddSubMenu(pmManager);
 
             // Drawing
             var drawingMenu = new Menu("Drawings", "mofDrawing");
