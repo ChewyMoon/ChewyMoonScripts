@@ -85,7 +85,7 @@ namespace Mid_or_Feed.Champions
 
         public bool HasQBuff(Obj_AI_Hero target)
         {
-            return target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancChaosOrbM");
+            return target.HasBuff("LeblancChaosOrb", true) || target.HasBuff("LeblancChaosOrbM", true);
         }
 
         private void Drawing_OnDraw(EventArgs args)
