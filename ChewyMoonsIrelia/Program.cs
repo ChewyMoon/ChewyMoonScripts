@@ -44,7 +44,7 @@ namespace ChewyMoonsIrelia
             Utilities.PrintChat("We've switched from LX-Orbwalker to the common orbwalker. Sorry about that.");
 
             _q = new Spell(SpellSlot.Q, 650);
-            _w = new Spell(SpellSlot.W, ObjectManager.Player.GetRealAutoAttackRange()); // So confused.
+            _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)); // So confused.
             _e = new Spell(SpellSlot.E, 425);
             _r = new Spell(SpellSlot.R, 1000);
 

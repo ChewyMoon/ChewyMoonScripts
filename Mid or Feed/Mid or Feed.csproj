@@ -64,6 +64,8 @@
     <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />
     <Compile Include="Plugin.cs" />
+    <Compile Include="Plugins\AutoIgnite.cs" />
+    <Compile Include="Plugins\PotionManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
