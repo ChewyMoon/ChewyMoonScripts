@@ -46,7 +46,7 @@ namespace Mid_or_Feed.Managers
 
             if (Items.CanUseItem(Mpid) && Items.HasItem(Mpid))
             {
-                Items.UseItem(Hpid);
+                Items.UseItem(Mpid);
             }
         }
 
