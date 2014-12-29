@@ -96,8 +96,7 @@ namespace Mid_or_Feed.Champions
 
                 if (spell.Slot == SpellSlot.E && useE)
                 {
-                    // Might be buggy
-                    spell.CastOnUnit(Player, Packets);
+                    spell.Cast(Packets);
                 }
 
                 if (spell.Slot == SpellSlot.R && useR &&
