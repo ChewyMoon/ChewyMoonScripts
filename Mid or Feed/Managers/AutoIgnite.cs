@@ -29,41 +29,36 @@ namespace Mid_or_Feed.Managers
         private void GameOnOnGameUpdate(EventArgs args)
         {
             var igniteKill = _menu.Item("igniteKill").GetValue<bool>();
-            var igniteKS = _menu.Item("igniteKS").GetValue<bool>();
+            var igniteKs = _menu.Item("igniteKS").GetValue<bool>();
 
             if (!_igniteSlot.IsReady())
                 return;
 
             if (igniteKill)
             {
-                foreach (
-                    var enemy in
-                        ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(x => x.IsEnemy)
-                            .Where(x => x.Distance(ObjectManager.Player) <= IgniteRange)
-                            .Where(
-                                enemy =>
-                                    ObjectManager.Player.GetSummonerSpellDamage(enemy, Damage.SummonerSpell.Ignite) >
-                                    enemy.Health))
-                {
-                    ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, enemy);
-                    return;
-                }
-            }
-
-            if (!igniteKS) return;
-            foreach (
-                var enemy in
+                var igniteKillableEnemy =
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsEnemy)
+                        .Where(x => !x.IsDead)
                         .Where(x => x.Distance(ObjectManager.Player) <= IgniteRange)
-                        .Where(enemy => enemy.Health <=
-                                        ObjectManager.Player.GetSummonerSpellDamage(enemy, Damage.SummonerSpell.Ignite)/
-                                        5))
-            {
-                ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, enemy);
-                return;
+                        .FirstOrDefault(
+                            x => ObjectManager.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) > x.Health);
+
+                if (igniteKillableEnemy.IsValidTarget())
+                    ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, igniteKillableEnemy);
             }
+
+            if (!igniteKs) return;
+
+            var enemy =
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsEnemy)
+                    .Where(x => x.Distance(ObjectManager.Player) <= IgniteRange)
+                    .FirstOrDefault(
+                        x => x.Health <= ObjectManager.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite)/5);
+
+            if (enemy.IsValidTarget())
+                ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, enemy);
         }
     }
 }
