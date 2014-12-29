@@ -90,11 +90,13 @@ namespace Mid_or_Feed.Champions
         }
 
         private void Drawing_OnDraw(EventArgs args)
-        {         
+        {
             // Use position instead of server position for drawing
             var p = Player.Position;
 
-            foreach (var spell in SpellList.Where(x => x.Slot != SpellSlot.R).Where(x => GetBool(string.Format("draw{0}", x.Slot))))
+            foreach (
+                var spell in
+                    SpellList.Where(x => x.Slot != SpellSlot.R).Where(x => GetBool(string.Format("draw{0}", x.Slot))))
             {
                 Utility.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
             }
@@ -169,7 +171,7 @@ namespace Mid_or_Feed.Champions
                 Console.WriteLine("Target is null, returned.");
                 return;
             }
-                
+
 
             if (Dfg.IsReady() && GetBool("useDFG"))
                 Dfg.Cast(target);
@@ -204,9 +206,8 @@ namespace Mid_or_Feed.Champions
 
                 if (spell.Slot != SpellSlot.R)
                 {
-                   // Console.WriteLine("Slot is not R, continued.");
+                    // Console.WriteLine("Slot is not R, continued.");
                     continue;
-                    
                 }
 
                 if (RStatus == RSpell.Q)

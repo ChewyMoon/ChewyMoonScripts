@@ -1,18 +1,20 @@
-﻿using System;
+﻿#region
+
+using System;
 using LeagueSharp;
 using LeagueSharp.Common;
 
+#endregion
+
 namespace Mid_or_Feed.Managers
 {
-    class PotionManager : Manager
+    internal class PotionManager : Manager
     {
-        private static Menu _menu;
-
         private const string HpPotName = "RegenerationPotion";
         private const string MpPotName = "FlaskOfCrystalWater";
-
         private const int Hpid = 2003;
         private const int Mpid = 2004;
+        private static Menu _menu;
 
         public override void Load(Menu config)
         {
@@ -32,16 +34,18 @@ namespace Mid_or_Feed.Managers
             var useHp = _menu.Item("useHP").GetValue<bool>();
             var useMp = _menu.Item("useMP").GetValue<bool>();
 
-            if (useHp && ObjectManager.Player.HealthPercentage() <= _menu.Item("useHPPercent").GetValue<Slider>().Value && !HasHealthPotBuff())
+            if (useHp && ObjectManager.Player.HealthPercentage() <= _menu.Item("useHPPercent").GetValue<Slider>().Value &&
+                !HasHealthPotBuff())
             {
                 // Cast health pot
                 if (Items.CanUseItem(Hpid) && Items.HasItem(Hpid))
                 {
-                   Items.UseItem(Hpid);
+                    Items.UseItem(Hpid);
                 }
             }
 
-            if (!useMp || !(ObjectManager.Player.ManaPercentage() <= _menu.Item("useMPPercent").GetValue<Slider>().Value) ||
+            if (!useMp ||
+                !(ObjectManager.Player.ManaPercentage() <= _menu.Item("useMPPercent").GetValue<Slider>().Value) ||
                 HasMannaPutBuff()) return;
 
             if (Items.CanUseItem(Mpid) && Items.HasItem(Mpid))

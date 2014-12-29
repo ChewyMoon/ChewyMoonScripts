@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region
+
 using LeagueSharp.Common;
+
+#endregion
 
 namespace Mid_or_Feed
 {
-    abstract class Manager
+    internal abstract class Manager
     {
         public virtual void Load(Menu config)
         {
-            
         }
     }
 }

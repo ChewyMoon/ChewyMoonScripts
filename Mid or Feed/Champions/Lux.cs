@@ -48,10 +48,15 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
-            Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;           
+            Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
+        }
+
+        public static bool EActivated
+        {
+            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1 || EGameObject != null; }
         }
 
         private void ObjAiHeroOnOnTeleport(GameObject sender, GameObjectTeleportEventArgs args)
@@ -62,18 +67,13 @@ namespace Mid_or_Feed.Champions
             var decoded = Packet.S2C.Teleport.Decoded(sender, args);
             var hero = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
-            if (hero.IsAlly || decoded.Type != Packet.S2C.Teleport.Type.Recall || decoded.Status != Packet.S2C.Teleport.Status.Start)
+            if (hero.IsAlly || decoded.Type != Packet.S2C.Teleport.Type.Recall ||
+                decoded.Status != Packet.S2C.Teleport.Status.Start)
                 return;
 
             var rDamage = Player.GetSpellDamage(hero, SpellSlot.R);
             if (rDamage > hero.Health)
                 R.Cast(hero);
-
-        }
-
-        public static bool EActivated
-        {
-            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E).ToggleState == 1 || EGameObject != null; }
         }
 
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -83,7 +83,6 @@ namespace Mid_or_Feed.Champions
 
             Q.Cast(gapcloser.Sender, Packets);
         }
-
 
         public static bool HasPassive(Obj_AI_Hero hero)
         {
@@ -245,7 +244,7 @@ namespace Mid_or_Feed.Champions
             }
 
             if (!useRKillable) return;
-            var killable = Player.GetSpellDamage(target, SpellSlot.R)> target.Health;
+            var killable = Player.GetSpellDamage(target, SpellSlot.R) > target.Health;
             if (killable && R.IsReady())
                 R.Cast(target);
         }
