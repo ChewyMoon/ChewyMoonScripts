@@ -132,6 +132,8 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameUpdate(EventArgs args)
         {
+            Console.WriteLine(Player.Spellbook.GetSpell(SpellSlot.Q).ToggleState);
+
             //Setup prediction for R spell
             switch (RStatus)
             {
@@ -202,7 +204,7 @@ namespace Mid_or_Feed.Champions
 
                 if (spell.Slot != SpellSlot.R)
                 {
-                    Console.WriteLine("Slot is not R, continued.");
+                   // Console.WriteLine("Slot is not R, continued.");
                     continue;
                     
                 }
