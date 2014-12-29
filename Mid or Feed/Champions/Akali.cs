@@ -121,15 +121,13 @@ namespace Mid_or_Feed.Champions
             var target = TargetSelector.GetTarget(r.Range*3, TargetSelector.DamageType.Magical);
             if (target == null) return;
 
-            foreach (
-                var minion in
-                    MinionManager.GetMinions(Player.ServerPosition, r.Range)
-                        .Where(x => x.IsValidTarget())
-                        .Where(minion => minion.Distance(target) < r.Range))
-            {
+
+            var minion =
+                MinionManager.GetMinions(Player.ServerPosition, r.Range)
+                    .Where(x => x.IsValidTarget()).FirstOrDefault(x => x.Distance(target) < r.Range);
+
+            if (minion.IsValidTarget())
                 r.CastOnUnit(minion, Packets);
-                break;
-            }
         }
 
         private void DoHarass()
