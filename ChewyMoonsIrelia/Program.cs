@@ -12,6 +12,8 @@ namespace ChewyMoonsIrelia
 {
     internal class Program
     {
+        //TODO: Rewrite irelia ult
+
         private const string ChampName = "Irelia";
         private static Menu _menu;
         private static Spell _q;
@@ -23,6 +25,7 @@ namespace ChewyMoonsIrelia
         private static int _charges;
         private static bool _packetCast;
         public static Items.Item BotRk;
+        public static Items.Item Cutlass;
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
@@ -41,17 +44,17 @@ namespace ChewyMoonsIrelia
             if (ObjectManager.Player.BaseSkinName != ChampName)
                 return;
 
-            Utilities.PrintChat("We've switched from LX-Orbwalker to the common orbwalker. Sorry about that.");
-
             _q = new Spell(SpellSlot.Q, 650);
-            _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)); // So confused.
+            _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player));
             _e = new Spell(SpellSlot.E, 425);
             _r = new Spell(SpellSlot.R, 1000);
 
-            _r.SetSkillshot(0.15f, 80f, 1500f, false, SkillshotType.SkillshotLine); // fix new prediction
+            _r.SetSkillshot(0, 65, 1600f, false, SkillshotType.SkillshotLine);
 
             SetupMenu();
-            BotRk = new Items.Item(3153, 450);
+
+            BotRk = ItemData.Blade_of_the_Ruined_King.GetItem();
+            Cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
             // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
@@ -68,6 +71,9 @@ namespace ChewyMoonsIrelia
 
             if (BotRk.IsReady())
                 dmg += ObjectManager.Player.GetItemDamage(hero, Damage.DamageItems.Botrk);
+
+            if (Cutlass.IsReady())
+                dmg += ObjectManager.Player.GetItemDamage(hero, Damage.DamageItems.Bilgewater);
 
             if (_q.IsReady())
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q);
@@ -119,6 +125,7 @@ namespace ChewyMoonsIrelia
             var drawQ = _menu.Item("qDraw").GetValue<bool>();
             var drawE = _menu.Item("eDraw").GetValue<bool>();
             var drawR = _menu.Item("rDraw").GetValue<bool>();
+            var drawStunnable = _menu.Item("drawStunnable").GetValue<bool>();
 
             var position = ObjectManager.Player.Position;
 
@@ -130,6 +137,18 @@ namespace ChewyMoonsIrelia
 
             if (drawR)
                 Utility.DrawCircle(position, _r.Range, _r.IsReady() ? Color.Aqua : Color.Red);
+
+            if(!drawStunnable)
+                return;
+
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()).Where(CanStunTarget))
+            {
+                const string text = "Stunnable";
+                var size = Drawing.GetTextExtent(text);
+                var enemyPos = enemy.Position;
+
+                Drawing.DrawText(enemyPos.X - size.Width/2f, enemyPos.Y, Color.LawnGreen, text);
+            }
         }
 
         private static void Game_OnGameUpdate(EventArgs args)
@@ -277,6 +296,9 @@ namespace ChewyMoonsIrelia
             if (BotRk.IsReady())
                 BotRk.Cast(target);
 
+            if (Cutlass.IsReady())
+                Cutlass.Cast(target);
+
             // stunerino
             if (useE && _e.IsReady())
             {
@@ -330,20 +352,20 @@ namespace ChewyMoonsIrelia
 
         private static void SetupMenu()
         {
-            _menu = new Menu("[ChewyMoon's Irelia]", "cmIrelia", true);
+            _menu = new Menu("ChewyMoon's Irelia", "cmIrelia", true);
 
             // Target Selector
-            var targetSelectorMenu = new Menu("[Chewy's Irelia] - TS", "cmIreliaTS");
+            var targetSelectorMenu = new Menu("Target Selector", "cmIreliaTS");
             TargetSelector.AddToMenu(targetSelectorMenu);
             _menu.AddSubMenu(targetSelectorMenu);
 
             // Orbwalker
-            var orbwalkerMenu = new Menu("[Chewy's Irelia] - Orbwalker", "cmIreliaOW");
+            var orbwalkerMenu = new Menu("Orbwalker", "cmIreliaOW");
             Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
             _menu.AddSubMenu(orbwalkerMenu);
 
             // Combo
-            var comboMenu = new Menu("[Chewy's Irelia] - Combo", "cmIreliaCombo");
+            var comboMenu = new Menu("Combo", "cmIreliaCombo");
             comboMenu.AddItem(new MenuItem("useQ", "Use Q in combo").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W in combo").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E in combo").SetValue(true));
@@ -353,7 +375,7 @@ namespace ChewyMoonsIrelia
             _menu.AddSubMenu(comboMenu);
 
             // Lasthiting
-            var farmingMenu = new Menu("[Chewy's Irelia] - Farming", "cmIreliaFarming");
+            var farmingMenu = new Menu("Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
             farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind(88, KeyBindType.Press)));
             farmingMenu.AddItem(new MenuItem("qNoFarmTower", "Don't Q minions under tower").SetValue(false));
@@ -368,17 +390,18 @@ namespace ChewyMoonsIrelia
             _menu.AddSubMenu(farmingMenu);
 
             //Drawing menu
-            var drawingMenu = new Menu("[Chewy's Irelia] - Drawing", "cmIreliaDraw");
+            var drawingMenu = new Menu("Drawing", "cmIreliaDraw");
             drawingMenu.AddItem(new MenuItem("qDraw", "Draw Q").SetValue(true));
             drawingMenu.AddItem(new MenuItem("eDraw", "Draw E").SetValue(false));
             drawingMenu.AddItem(new MenuItem("rDraw", "Draw R").SetValue(true));
             drawingMenu.AddItem(new MenuItem("comboDraw", "Draw Combo Damage").SetValue(true));
             drawingMenu.Item("comboDraw").ValueChanged +=
                 (sender, args) => Utility.HpBarDamageIndicator.Enabled = args.GetNewValue<bool>();
+            drawingMenu.AddItem(new MenuItem("drawStunnable", "Draw Stunnable").SetValue(true));
             _menu.AddSubMenu(drawingMenu);
 
             //Misc
-            var miscMenu = new Menu("[Chewy's Irelia - Misc", "cmIreliaMisc");
+            var miscMenu = new Menu(" Misc", "cmIreliaMisc");
             miscMenu.AddItem(new MenuItem("interruptUlts", "Interrupt ults with E").SetValue(true));
             miscMenu.AddItem(new MenuItem("interruptQE", "Q + E to interrupt if not in range").SetValue(true));
             miscMenu.AddItem(new MenuItem("packetCast", "Use packets to cast spells").SetValue(false));

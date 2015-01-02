@@ -13,8 +13,8 @@ namespace Mid_or_Feed.Champions
 {
     internal class Akali : Plugin
     {
-        private const int GunbladeId = 3146;
-        private const int CutlassId = 3144;
+        private Items.Item Gunblade;
+        private Items.Item Cutlass;
         private readonly List<Spell> _spellList;
 
         public Akali()
@@ -25,6 +25,9 @@ namespace Mid_or_Feed.Champions
                 new Spell(SpellSlot.Q, 600),
                 new Spell(SpellSlot.E, 325)
             };
+
+            Gunblade = ItemData.Hextech_Gunblade.GetItem();
+            Cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
@@ -79,11 +82,11 @@ namespace Mid_or_Feed.Champions
             var useE = GetValue<bool>("useE");
             var useR = GetValue<bool>("useR");
 
-            if (Items.CanUseItem(GunbladeId))
-                Items.UseItem(GunbladeId, target);
+            if (Gunblade.IsReady() && GetBool("useGunblade"))
+                Gunblade.Cast(target);
 
-            if (Items.CanUseItem(CutlassId))
-                Items.UseItem(CutlassId);
+            if (Cutlass.IsReady() && GetBool("useCutlass"))
+                Cutlass.Cast(target);
 
             foreach (var spell in _spellList.Where(x => x.IsReady()))
             {

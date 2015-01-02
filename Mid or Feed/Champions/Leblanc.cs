@@ -43,7 +43,7 @@ namespace Mid_or_Feed.Champions
             SpellList = new List<Spell> {Q, R, W, E};
 
             // Create DFG item
-            Dfg = new Items.Item(3128, 750);
+            Dfg = ItemData.Deathfire_Grasp.GetItem();
 
             // Setup Events
             Game.OnGameUpdate += GameOnOnGameUpdate;

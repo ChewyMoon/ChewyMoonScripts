@@ -27,7 +27,7 @@ namespace Mid_or_Feed.Champions
             Q.SetSkillshot(0.25f, 100, 2500, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.25f, 60, 1500, true, SkillshotType.SkillshotLine);
 
-            Dfg = new Items.Item(3128, 750);
+            Dfg = ItemData.Deathfire_Grasp.GetItem();
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;

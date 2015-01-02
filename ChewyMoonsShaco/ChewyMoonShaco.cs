@@ -19,8 +19,8 @@ namespace ChewyMoonsShaco
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
         public static List<Spell> SpellList;
-        public static int TiamatId = 3077;
-        public static int HydraId = 3074;
+        public static Items.Item Tiamat;
+        public static Items.Item Hydra;
 
         public static void OnGameLoad(EventArgs args)
         {
@@ -33,6 +33,9 @@ namespace ChewyMoonsShaco
             SpellList = new List<Spell> {Q, E, W};
 
             CreateMenu();
+
+            Tiamat = ItemData.Tiamat_Melee_Only.GetItem();
+            Hydra = ItemData.Ravenous_Hydra_Melee_Only.GetItem();
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -51,13 +54,13 @@ namespace ChewyMoonsShaco
 
             if (!target.IsValidTarget()) return;
 
-            if (Items.HasItem(HydraId) && Items.CanUseItem(HydraId))
+            if (Hydra.IsReady())
             {
-                Items.UseItem(TiamatId);
+                Hydra.Cast();
             }
-            else if (Items.HasItem(TiamatId) && Items.CanUseItem(TiamatId))
+            else if (Tiamat.IsReady())
             {
-                Items.UseItem(TiamatId);
+                Tiamat.Cast();
             }
         }
 
