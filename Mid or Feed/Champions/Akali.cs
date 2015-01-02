@@ -148,10 +148,10 @@ namespace Mid_or_Feed.Champions
                 _spellList.Where(spell => spell.Level > 0 && spell.IsReady())
                     .Sum(spell => Player.GetDamageSpell(target, spell.Slot).CalculatedDamage);
 
-            if (Items.CanUseItem(GunbladeId))
+            if (Gunblade.IsReady())
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
 
-            if (Items.CanUseItem(CutlassId))
+            if (Cutlass.IsReady())
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
 
             return (float) damage;
