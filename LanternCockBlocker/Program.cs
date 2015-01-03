@@ -19,7 +19,7 @@ namespace LanternCockBlocker
 
         private static void GameOnOnGameLoad(EventArgs args)
         {
-            menu = new Menu("LanternCockBlocker", "cmLCB");
+            menu = new Menu("Lantern Blocker", "cmLCB");
             menu.AddItem(new MenuItem("enabled", "Enabled").SetValue(true));
             menu.AddToMainMenu();
 
