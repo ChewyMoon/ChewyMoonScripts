@@ -147,7 +147,7 @@ namespace ChewyMoonsIrelia
                 var size = Drawing.GetTextExtent(text);
                 var enemyPos = enemy.Position;
 
-                Drawing.DrawText(enemyPos.X - size.Width/2f, enemyPos.Y, Color.LawnGreen, text);
+                Drawing.DrawText(enemyPos.X, enemyPos.Y, Color.LawnGreen, text);
             }
         }
 
