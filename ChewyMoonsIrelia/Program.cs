@@ -146,7 +146,7 @@ namespace ChewyMoonsIrelia
             {
                 const string text = "Stunnable";
                 var size = Drawing.GetTextExtent(text);
-                var enemyPos = enemy.Position;
+                var enemyPos = enemy.ServerPosition;
 
                 Drawing.DrawText(enemyPos.X, enemyPos.Y, Color.LawnGreen, text);
 
