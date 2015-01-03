@@ -140,6 +140,7 @@ namespace ChewyMoonsIrelia
 
             if(!drawStunnable)
                 return;
+            Console.WriteLine("Menu active");
 
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()).Where(CanStunTarget))
             {
@@ -148,6 +149,8 @@ namespace ChewyMoonsIrelia
                 var enemyPos = enemy.Position;
 
                 Drawing.DrawText(enemyPos.X, enemyPos.Y, Color.LawnGreen, text);
+
+                Console.WriteLine("Drew on {0}", enemy.ChampionName);
             }
         }
 
