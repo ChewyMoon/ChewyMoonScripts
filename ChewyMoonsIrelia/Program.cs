@@ -344,6 +344,9 @@ namespace ChewyMoonsIrelia
 
         private static bool CanStunTarget(AttackableUnit target)
         {
+            if (!_e.IsReady())
+                return false;
+
             var enemyHealthPercent = target.Health/target.MaxHealth*100;
             var myHealthPercent = ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
 
