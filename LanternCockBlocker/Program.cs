@@ -20,7 +20,7 @@ namespace LanternCockBlocker
         private static void GameOnOnGameLoad(EventArgs args)
         {
             menu = new Menu("Lantern Blocker", "cmLCB");
-            menu.AddItem(new MenuItem("enabled", "Enabled").SetValue(true));
+            menu.AddItem(new MenuItem("enabled", "Enabled").SetValue(new KeyBind(32, KeyBindType.Press)));
             menu.AddToMainMenu();
 
             Game.PrintChat("Lantern Cock Blocker by ChewyMoon loaded!");
