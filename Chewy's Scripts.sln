@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Golderino", "Golderino\Gold
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cya Nerds", "Cya Nerds\Cya Nerds.csproj", "{C9BC0D42-9B17-4905-B153-D1669874F76E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanternCockBlocker", "LanternCockBlocker\LanternCockBlocker.csproj", "{A75B6255-9437-454C-A264-EAD48AF0F2F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
