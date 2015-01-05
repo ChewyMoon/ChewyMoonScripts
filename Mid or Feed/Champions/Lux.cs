@@ -51,7 +51,7 @@ namespace Mid_or_Feed.Champions
             Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
-            PrintChat("Lux loaded!");
+            PrintChat("Lux loaded! hopey you lose kurisu jk");
         }
 
         public static bool EActivated
