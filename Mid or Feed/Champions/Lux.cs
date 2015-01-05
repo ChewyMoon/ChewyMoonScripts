@@ -51,7 +51,7 @@ namespace Mid_or_Feed.Champions
             Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
 
-            PrintChat("Lux loaded! hopey you lose kurisu jk");
+            PrintChat("Lux loaded!");
         }
 
         public static bool EActivated
@@ -151,6 +151,7 @@ namespace Mid_or_Feed.Champions
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsValidTarget())
                         .Where(x => !x.IsZombie)
+                        .Where(x => !x.IsDead)
                         .Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
             {
                 R.Cast(enemy, Packets);
@@ -193,6 +194,7 @@ namespace Mid_or_Feed.Champions
                     !ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsEnemy)
                         .Where(x => !x.IsDead)
+                        .Where(x => x.IsValidTarget())
                         .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width)) return;
 
                 var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
