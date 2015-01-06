@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX.Direct3D9;
 
 #endregion
 
@@ -98,8 +99,7 @@ namespace Sophies_Soraka
         private static void AutoR()
         {
             if (!R.IsReady()) return;
-
-            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            
             foreach (
                 var friend in
                     ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
@@ -109,7 +109,7 @@ namespace Sophies_Soraka
 
                 if (friendHealth <= health)
                 {
-                    R.CastOnUnit(ObjectManager.Player, Packets);
+                    R.Cast(Packets);
                 }
             }
         }
@@ -117,6 +117,10 @@ namespace Sophies_Soraka
         private static void AutoW()
         {
             if (!W.IsReady()) return;
+
+            var autoWHealth = Menu.Item("autoWHealth").GetValue<Slider>().Value;
+            if (ObjectManager.Player.HealthPercentage() < autoWHealth)
+                return;
 
             foreach (
                 var friend in
@@ -237,9 +241,10 @@ namespace Sophies_Soraka
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50)));
+            miscMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
+            miscMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
             miscMenu.AddItem(new MenuItem("autoR", "Auto use R").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15)));
+            miscMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15, 1)));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
