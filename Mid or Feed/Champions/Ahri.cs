@@ -45,13 +45,13 @@ namespace Mid_or_Feed.Champions
             var p = Player.Position;
 
             if (drawQ)
-                Utility.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
 
             if (drawW)
-                Utility.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
 
             if (drawE)
-                Utility.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
         }
 
         private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)

@@ -98,7 +98,7 @@ namespace Mid_or_Feed.Champions
                 var spell in
                     SpellList.Where(x => x.Slot != SpellSlot.R).Where(x => GetBool(string.Format("draw{0}", x.Slot))))
             {
-                Utility.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
             }
         }
 

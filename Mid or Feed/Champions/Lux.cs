@@ -276,33 +276,27 @@ namespace Mid_or_Feed.Champions
             var drawW = GetBool("drawW");
             var drawE = GetBool("drawE");
             var drawR = GetBool("drawR");
-            var drawRMinimap = GetBool("drawRMinimap");
 
             var p = Player.Position;
 
             if (drawQ)
             {
-                Utility.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
             }
 
             if (drawW)
             {
-                Utility.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
             }
 
             if (drawE)
             {
-                Utility.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
             }
 
             if (drawR)
             {
-                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
-            }
-
-            if (drawRMinimap)
-            {
-                Utility.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red, 2, 30, true);
+                Render.Circle.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
             }
         }
 
@@ -372,7 +366,6 @@ namespace Mid_or_Feed.Champions
             drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(false));
             drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
             drawingMenu.AddItem(new MenuItem("drawR", "Draw R").SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawRMinimap", "Draw R(Minimap)").SetValue(true));
         }
     }
 }

@@ -63,16 +63,16 @@ namespace ChewyMoonsLux
             var position = ObjectManager.Player.Position;
 
             if (drawQ)
-                Utility.DrawCircle(position, Q.Range, qColor);
+                Render.Circle.DrawCircle(position, Q.Range, qColor);
 
             if (drawW)
-                Utility.DrawCircle(position, W.Range, wColor);
+                Render.Circle.DrawCircle(position, W.Range, wColor);
 
             if (drawE)
-                Utility.DrawCircle(position, E.Range, eColor);
+                Render.Circle.DrawCircle(position, E.Range, eColor);
 
             if (drawR)
-                Utility.DrawCircle(position, R.Range, rColor);
+                Render.Circle.DrawCircle(position, R.Range, rColor);
         }
 
         private static void SetupMenu()

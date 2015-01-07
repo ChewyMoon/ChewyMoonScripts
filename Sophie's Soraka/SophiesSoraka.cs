@@ -59,17 +59,17 @@ namespace Sophies_Soraka
 
             if (drawQ)
             {
-                Utility.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
             }
 
             if (drawW)
             {
-                Utility.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
             }
 
             if (drawE)
             {
-                Utility.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+                Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
             }
         }
 

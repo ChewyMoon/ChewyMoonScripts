@@ -124,17 +124,17 @@ namespace ChewyMoonsShaco
 
             if (qCircle.Active)
             {
-                Utility.DrawCircle(pos, Q.Range, qCircle.Color);
+                Render.Circle.DrawCircle(pos, Q.Range, qCircle.Color);
             }
 
             if (wCircle.Active)
             {
-                Utility.DrawCircle(pos, W.Range, wCircle.Color);
+                Render.Circle.DrawCircle(pos, W.Range, wCircle.Color);
             }
 
             if (eCircle.Active)
             {
-                Utility.DrawCircle(pos, E.Range, eCircle.Color);
+                Render.Circle.DrawCircle(pos, E.Range, eCircle.Color);
             }
 
             if (!qPosCircle.Active) return;

@@ -43,13 +43,13 @@ namespace Mid_or_Feed.Champions
             var pos = Player.Position;
 
             if (q.Active)
-                Utility.DrawCircle(pos, GetSpell(_spellList, SpellSlot.Q).Range, q.Color);
+                Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.Q).Range, q.Color);
 
             if (e.Active)
-                Utility.DrawCircle(pos, GetSpell(_spellList, SpellSlot.E).Range, e.Color);
+                Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.E).Range, e.Color);
 
             if (r.Active)
-                Utility.DrawCircle(pos, GetSpell(_spellList, SpellSlot.R).Range, r.Color);
+                Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.R).Range, r.Color);
         }
 
         private void GameOnOnGameUpdate(EventArgs args)
