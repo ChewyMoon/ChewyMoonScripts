@@ -8,8 +8,6 @@ namespace Mid_or_Feed
 {
     internal abstract class Manager
     {
-        public virtual void Load(Menu config)
-        {
-        }
+        public virtual void Load(Menu config) {}
     }
 }

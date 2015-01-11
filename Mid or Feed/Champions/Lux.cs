@@ -36,14 +36,18 @@ namespace Mid_or_Feed.Champions
             {
                 //Noticed a different E game object name while looking through Kurisu's oracle, credits to him.
                 if (sender.Name.Contains("LuxLightstrike_tar_green") || sender.Name.Contains("LuxLightstrike_tar_red"))
+                {
                     EGameObject = sender;
+                }
             };
 
             GameObject.OnDelete += delegate(GameObject sender, EventArgs args)
             {
                 //Noticed a different E game object name while looking through Kurisu's oracle, credits to him.
                 if (sender.Name.Contains("LuxLightstrike_tar_green") || sender.Name.Contains("LuxLightstrike_tar_red"))
+                {
                     EGameObject = null;
+                }
             };
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
@@ -62,24 +66,32 @@ namespace Mid_or_Feed.Champions
         private void ObjAiHeroOnOnTeleport(GameObject sender, GameObjectTeleportEventArgs args)
         {
             if (!GetBool("rKSRecall"))
+            {
                 return;
+            }
 
             var decoded = Packet.S2C.Teleport.Decoded(sender, args);
             var hero = ObjectManager.GetUnitByNetworkId<Obj_AI_Hero>(decoded.UnitNetworkId);
 
             if (hero.IsAlly || decoded.Type != Packet.S2C.Teleport.Type.Recall ||
                 decoded.Status != Packet.S2C.Teleport.Status.Start)
+            {
                 return;
+            }
 
             var rDamage = Player.GetSpellDamage(hero, SpellSlot.R);
             if (rDamage > hero.Health)
+            {
                 R.Cast(hero);
+            }
         }
 
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             if (!GetBool("qGapcloser"))
+            {
                 return;
+            }
 
             Q.Cast(gapcloser.Sender, Packets);
         }
@@ -102,27 +114,36 @@ namespace Mid_or_Feed.Champions
             }
 
             if (GetBool("autoW"))
+            {
                 AutoW();
+            }
 
             if (GetBool("rKS"))
+            {
                 ItsKillSecure();
+            }
 
             if (GetBool("stealBlue"))
+            {
                 StealBlue();
+            }
 
             if (GetBool("stealRed"))
+            {
                 StealRed();
+            }
         }
 
         private void StealBlue()
         {
-            if (!R.IsReady()) return;
+            if (!R.IsReady())
+            {
+                return;
+            }
 
             var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_BLUE"));
-            foreach (
-                var blueBuff in
-                    blueBuffs.Where(
-                        blueBuff => Player.GetSpellDamage(blueBuff, SpellSlot.R) > blueBuff.Health))
+            foreach (var blueBuff in
+                blueBuffs.Where(blueBuff => Player.GetSpellDamage(blueBuff, SpellSlot.R) > blueBuff.Health))
             {
                 R.Cast(blueBuff, Packets);
             }
@@ -130,13 +151,14 @@ namespace Mid_or_Feed.Champions
 
         private void StealRed()
         {
-            if (!R.IsReady()) return;
+            if (!R.IsReady())
+            {
+                return;
+            }
 
             var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_RED"));
-            foreach (
-                var redBuff in
-                    redBuffs.Where(
-                        redBuff => Player.GetSpellDamage(redBuff, SpellSlot.R) > redBuff.Health))
+            foreach (var redBuff in
+                redBuffs.Where(redBuff => Player.GetSpellDamage(redBuff, SpellSlot.R) > redBuff.Health))
             {
                 R.Cast(redBuff, Packets);
             }
@@ -145,14 +167,15 @@ namespace Mid_or_Feed.Champions
         private void ItsKillSecure()
         {
             if (!R.IsReady())
+            {
                 return;
-            foreach (
-                var enemy in
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.IsValidTarget())
-                        .Where(x => !x.IsZombie)
-                        .Where(x => !x.IsDead)
-                        .Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
+            }
+            foreach (var enemy in
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsValidTarget())
+                    .Where(x => !x.IsZombie)
+                    .Where(x => !x.IsDead)
+                    .Where(enemy => Player.GetDamageSpell(enemy, SpellSlot.R).CalculatedDamage > enemy.Health))
             {
                 R.Cast(enemy, Packets);
                 return;
@@ -162,11 +185,13 @@ namespace Mid_or_Feed.Champions
         private void AutoW()
         {
             if (!W.IsReady() || Player.IsRecalling())
+            {
                 return;
+            }
 
             foreach (
                 var ally in from ally in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead)
-                    let allyPercent = ally.Health/ally.MaxHealth*100
+                    let allyPercent = ally.Health / ally.MaxHealth * 100
                     let healthPercent = GetValue<Slider>("autoWPercent").Value
                     where healthPercent >= allyPercent
                     select ally)
@@ -179,11 +204,13 @@ namespace Mid_or_Feed.Champions
         private void CastQ(Obj_AI_Base target)
         {
             var input = Q.GetPrediction(target);
-            var col = Q.GetCollision(Player.ServerPosition.To2D(), new List<Vector2> {input.CastPosition.To2D()});
+            var col = Q.GetCollision(Player.ServerPosition.To2D(), new List<Vector2> { input.CastPosition.To2D() });
             var minions = col.Where(x => !(x is Obj_AI_Hero)).Count(x => x.IsMinion);
 
             if (minions <= 1)
+            {
                 Q.Cast(input.CastPosition);
+            }
         }
 
         private void CastE(Obj_AI_Hero target)
@@ -195,16 +222,23 @@ namespace Mid_or_Feed.Champions
                         .Where(x => x.IsEnemy)
                         .Where(x => !x.IsDead)
                         .Where(x => x.IsValidTarget())
-                        .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width)) return;
+                        .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width))
+                {
+                    return;
+                }
 
                 var isInAaRange = Player.Distance(target) <= Orbwalking.GetRealAutoAttackRange(Player);
 
                 if (isInAaRange && !HasPassive(target))
+                {
                     E.Cast();
+                }
 
                 // Pop E if the target is out of AA range
                 if (!isInAaRange)
+                {
                     E.Cast();
+                }
             }
             else
             {
@@ -217,7 +251,9 @@ namespace Mid_or_Feed.Champions
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
             if (target == null)
+            {
                 return;
+            }
 
             var useQ = GetBool("useQ");
             var useW = GetBool("useW");
@@ -245,10 +281,15 @@ namespace Mid_or_Feed.Champions
                 R.Cast(target);
             }
 
-            if (!useRKillable) return;
+            if (!useRKillable)
+            {
+                return;
+            }
             var killable = Player.GetSpellDamage(target, SpellSlot.R) > target.Health;
             if (killable && R.IsReady())
+            {
                 R.Cast(target);
+            }
         }
 
         private void DoHarass()
@@ -256,7 +297,9 @@ namespace Mid_or_Feed.Champions
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
             if (target == null)
+            {
                 return;
+            }
 
             var useQ = GetBool("useQHarass");
             var useE = GetBool("useEHarass");
@@ -266,7 +309,10 @@ namespace Mid_or_Feed.Champions
                 CastQ(target);
             }
 
-            if (!useE || !E.IsReady()) return;
+            if (!useE || !E.IsReady())
+            {
+                return;
+            }
             CastE(target);
         }
 
@@ -306,13 +352,19 @@ namespace Mid_or_Feed.Champions
             var p = Player;
 
             if (Q.IsReady())
+            {
                 dmg += p.GetDamageSpell(target, SpellSlot.Q).CalculatedDamage;
+            }
 
             if (E.IsReady())
+            {
                 dmg += p.GetDamageSpell(target, SpellSlot.E).CalculatedDamage;
+            }
 
             if (R.IsReady())
+            {
                 dmg += p.GetDamageSpell(target, SpellSlot.R).CalculatedDamage;
+            }
 
             return (float) dmg;
         }
@@ -328,13 +380,17 @@ namespace Mid_or_Feed.Champions
             comboMenu.Item("useRKillable").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
             {
                 if (args.GetNewValue<bool>() && GetBool("useR"))
+                {
                     Menu.Item("useR").SetValue(false);
+                }
             };
 
             comboMenu.Item("useR").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
             {
                 if (args.GetNewValue<bool>() && GetBool("useRKillable"))
+                {
                     Menu.Item("useRKillable").SetValue(false);
+                }
             };
         }
 

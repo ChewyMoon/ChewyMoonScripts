@@ -42,14 +42,12 @@ namespace ChewyMoonsLux
         private static void AutoShield()
         {
             // linq op babbyyy
-            foreach (
-                var teamMate in
-                    from teamMate in
-                        ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid)
-                    let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>()
-                    let ourPercent = teamMate.Health/teamMate.MaxHealth*100
-                    where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady()
-                    select teamMate)
+            foreach (var teamMate in
+                from teamMate in ObjectManager.Get<Obj_AI_Base>().Where(teamMate => teamMate.IsAlly && teamMate.IsValid)
+                let hasToBePercent = ChewyMoonsLux.Menu.Item("autoShieldPercent").GetValue<int>()
+                let ourPercent = teamMate.Health / teamMate.MaxHealth * 100
+                where ourPercent <= hasToBePercent && ChewyMoonsLux.W.IsReady()
+                select teamMate)
             {
                 ChewyMoonsLux.W.Cast(teamMate, ChewyMoonsLux.PacketCast);
             }
@@ -58,15 +56,14 @@ namespace ChewyMoonsLux
         private static void KillSecure()
         {
             // KILL SECURE MY ASS LOOL
-            foreach (
-                var hero in
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(hero => hero.IsValidTarget())
-                        .Where(
-                            hero =>
-                                ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range &&
-                                ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) >= hero.Health &&
-                                ChewyMoonsLux.R.IsReady()))
+            foreach (var hero in
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(hero => hero.IsValidTarget())
+                    .Where(
+                        hero =>
+                            ObjectManager.Player.Distance(hero) <= ChewyMoonsLux.R.Range &&
+                            ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) >= hero.Health &&
+                            ChewyMoonsLux.R.IsReady()))
             {
                 ChewyMoonsLux.R.Cast(hero, ChewyMoonsLux.PacketCast);
             }
@@ -78,16 +75,25 @@ namespace ChewyMoonsLux
             var useE = ChewyMoonsLux.Menu.Item("useEHarass").GetValue<bool>();
 
             var target = ChewyMoonsLux.Orbwalker.GetTarget() as Obj_AI_Hero;
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
-            if (HasPassive(target)) return;
+            if (HasPassive(target))
+            {
+                return;
+            }
 
             if (useQ & ChewyMoonsLux.Q.IsReady() && !HasPassive(target))
             {
                 SpellCombo.CastQ(target);
             }
 
-            if (!useE || !ChewyMoonsLux.E.IsReady() || HasPassive(target) || _eGameObject != null) return;
+            if (!useE || !ChewyMoonsLux.E.IsReady() || HasPassive(target) || _eGameObject != null)
+            {
+                return;
+            }
             ChewyMoonsLux.E.Cast(target, ChewyMoonsLux.PacketCast);
         }
 
@@ -110,15 +116,26 @@ namespace ChewyMoonsLux
                         .Where(hero => hero.IsValidTarget(_eGameObject.BoundingRadius))
                         .ToList();
                 if (targetsInE.Any(leTarget => !HasPassive(leTarget)))
+                {
                     ChewyMoonsLux.E.Cast(ChewyMoonsLux.PacketCast);
+                }
             }
 
-            if (target == null) return;
-            if (HasPassive(target)) return;
+            if (target == null)
+            {
+                return;
+            }
+            if (HasPassive(target))
+            {
+                return;
+            }
 
             if (useDfg)
             {
-                if (Items.CanUseItem(3128) && Items.HasItem(3128)) Items.UseItem(3128, target);
+                if (Items.CanUseItem(3128) && Items.HasItem(3128))
+                {
+                    Items.UseItem(3128, target);
+                }
             }
 
             if (ChewyMoonsLux.Q.IsReady() && useQ && !HasPassive(target))
@@ -136,8 +153,14 @@ namespace ChewyMoonsLux
                 ChewyMoonsLux.W.Cast(Game.CursorPos, ChewyMoonsLux.PacketCast);
             }
 
-            if (target.IsDead) return;
-            if (!ChewyMoonsLux.R.IsReady() || !useR || HasPassive(target)) return;
+            if (target.IsDead)
+            {
+                return;
+            }
+            if (!ChewyMoonsLux.R.IsReady() || !useR || HasPassive(target))
+            {
+                return;
+            }
 
             if (ChewyMoonsLux.Menu.Item("onlyRIfKill").GetValue<bool>())
             {
@@ -159,13 +182,19 @@ namespace ChewyMoonsLux
 
         public static void OnGameObjectCreate(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("LuxLightstrike_tar_green")) return;
+            if (!sender.Name.Contains("LuxLightstrike_tar_green"))
+            {
+                return;
+            }
             _eGameObject = sender;
         }
 
         public static void OnGameObjectDelete(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("LuxLightstrike_tar_green")) return;
+            if (!sender.Name.Contains("LuxLightstrike_tar_green"))
+            {
+                return;
+            }
             _eGameObject = null; //rip e Kappa
         }
     }

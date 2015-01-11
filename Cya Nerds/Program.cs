@@ -58,12 +58,14 @@ namespace Cya_Nerds
             }
 
             if (!loaded)
+            {
                 return;
+            }
 
             _menu = new Menu("Cya Nerds", "cmCyaNerds", true);
             _menu.AddItem(new MenuItem("maxWardJump", "Jump to max range").SetValue(true));
             _menu.AddItem(new MenuItem("jumpRange", "Existing Obj Range").SetValue(new Slider(250, 0, 700)));
-            _menu.AddItem(new MenuItem("wardDelay", "Ward Delay(MS)").SetValue(new Slider(3000, 0, 10*1000)));
+            _menu.AddItem(new MenuItem("wardDelay", "Ward Delay(MS)").SetValue(new Slider(3000, 0, 10 * 1000)));
             _menu.AddItem(
                 new MenuItem("wardJump", "Ward Jump").SetValue(new KeyBind("t".ToCharArray()[0], KeyBindType.Press)));
             _menu.AddToMainMenu();
@@ -76,17 +78,25 @@ namespace Cya_Nerds
         private static void GameObjectOnOnCreate(GameObject sender, EventArgs args)
         {
             if (!WardJump)
+            {
                 return;
+            }
 
             if (!(sender is Obj_AI_Minion))
+            {
                 return;
+            }
 
             if (!sender.Name.ToUpper().Contains("WARD"))
+            {
                 return;
+            }
 
             var ward = (Obj_AI_Minion) sender;
             if (sender.Position.Distance(ObjectManager.Player.ServerPosition) <= _plugin.WardJumpSpell.Range)
+            {
                 _plugin.WardJumpSpell.CastOnUnit(ward);
+            }
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)
@@ -94,26 +104,26 @@ namespace Cya_Nerds
             // Jump to Minion, Hero & ward
 
             if (!_plugin.WardJumpSpell.IsReady() || !WardJump)
+            {
                 return;
+            }
 
             var jumpRange = _menu.Item("jumpRange").GetValue<Slider>().Value;
 
-            foreach (
-                var ward in
-                    ObjectManager.Get<Obj_AI_Minion>()
-                        .Where(x => x.Name.ToUpper().Contains("WARD"))
-                        .Where(x => x.Distance(Game.CursorPos) < jumpRange))
+            foreach (var ward in
+                ObjectManager.Get<Obj_AI_Minion>()
+                    .Where(x => x.Name.ToUpper().Contains("WARD"))
+                    .Where(x => x.Distance(Game.CursorPos) < jumpRange))
             {
                 _plugin.WardJumpSpell.CastOnUnit(ward);
                 return;
             }
 
-            foreach (
-                var hero in
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => !x.IsDead)
-                        .Where(x => !x.IsMe)
-                        .Where(x => x.Distance(Game.CursorPos) < jumpRange))
+            foreach (var hero in
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => !x.IsDead)
+                    .Where(x => !x.IsMe)
+                    .Where(x => x.Distance(Game.CursorPos) < jumpRange))
             {
                 _plugin.WardJumpSpell.CastOnUnit(hero);
                 return;
@@ -128,14 +138,20 @@ namespace Cya_Nerds
 
             //now we have to place ward :<
             if (Environment.TickCount < _lastWardPlacedT + _menu.Item("wardDelay").GetValue<Slider>().Value)
+            {
                 return;
+            }
 
             if (!_plugin.WardJumpSpell.IsReady())
+            {
                 return;
+            }
 
             var wardSlot = Items.GetWardSlot();
             if (!Items.CanUseItem((int) wardSlot.Id) || wardSlot.Stacks == 0)
+            {
                 return;
+            }
 
             var placeAtMaxRange = _menu.Item("maxWardJump").GetValue<bool>();
             var pos = Game.CursorPos;

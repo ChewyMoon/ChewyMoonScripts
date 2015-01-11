@@ -130,25 +130,15 @@ namespace Mid_or_Feed
 
         #region Virtuals
 
-        public virtual void Combo(Menu config)
-        {
-        }
+        public virtual void Combo(Menu config) {}
 
-        public virtual void Harass(Menu config)
-        {
-        }
+        public virtual void Harass(Menu config) {}
 
-        public virtual void ItemMenu(Menu config)
-        {
-        }
+        public virtual void ItemMenu(Menu config) {}
 
-        public virtual void Misc(Menu config)
-        {
-        }
+        public virtual void Misc(Menu config) {}
 
-        public virtual void Drawings(Menu config)
-        {
-        }
+        public virtual void Drawings(Menu config) {}
 
         #endregion Virtuals
     }

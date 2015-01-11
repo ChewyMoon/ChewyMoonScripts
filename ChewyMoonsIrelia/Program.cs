@@ -31,18 +31,22 @@ namespace ChewyMoonsIrelia
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
-            AppDomain.CurrentDomain.UnhandledException +=
-                delegate(object sender, UnhandledExceptionEventArgs eventArgs)
+            AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs eventArgs)
+            {
+                var exception = eventArgs.ExceptionObject as Exception;
+                if (exception != null)
                 {
-                    var exception = eventArgs.ExceptionObject as Exception;
-                    if (exception != null) Console.WriteLine(exception.Message);
-                };
+                    Console.WriteLine(exception.Message);
+                }
+            };
         }
 
         private static void Game_OnGameLoad(EventArgs args)
         {
             if (ObjectManager.Player.BaseSkinName != ChampName)
+            {
                 return;
+            }
 
             _q = new Spell(SpellSlot.Q, 650);
             _w = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(ObjectManager.Player));
@@ -70,39 +74,63 @@ namespace ChewyMoonsIrelia
             double dmg = 0;
 
             if (BotRk.IsReady())
+            {
                 dmg += ObjectManager.Player.GetItemDamage(hero, Damage.DamageItems.Botrk);
+            }
 
             if (Cutlass.IsReady())
+            {
                 dmg += ObjectManager.Player.GetItemDamage(hero, Damage.DamageItems.Bilgewater);
+            }
 
             if (_q.IsReady())
+            {
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q);
+            }
 
             if (_w.IsReady())
+            {
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.W);
+            }
 
             if (_e.IsReady())
+            {
                 dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.E);
+            }
 
             // Damage calc per blade
             if (_r.IsReady())
-                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R)*4;
+            {
+                dmg += ObjectManager.Player.GetSpellDamage(hero, SpellSlot.R) * 4;
+            }
 
             return (float) dmg;
         }
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if (!_menu.Item("eOnGapclose").GetValue<bool>()) return;
-            if (!_e.IsReady()) return;
+            if (!_menu.Item("eOnGapclose").GetValue<bool>())
+            {
+                return;
+            }
+            if (!_e.IsReady())
+            {
+                return;
+            }
 
             _e.Cast(gapcloser.Sender, _packetCast);
         }
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
-            if (!_menu.Item("interruptUlts").GetValue<bool>()) return;
-            if (spell.DangerLevel != InterruptableDangerLevel.High || !CanStunTarget(unit)) return;
+            if (!_menu.Item("interruptUlts").GetValue<bool>())
+            {
+                return;
+            }
+            if (spell.DangerLevel != InterruptableDangerLevel.High || !CanStunTarget(unit))
+            {
+                return;
+            }
 
             var range = unit.Distance(ObjectManager.Player);
             if (range <= _e.Range)
@@ -114,7 +142,10 @@ namespace ChewyMoonsIrelia
             }
             else if (range <= _q.Range)
             {
-                if (!_q.IsReady() || !_e.IsReady()) return;
+                if (!_q.IsReady() || !_e.IsReady())
+                {
+                    return;
+                }
                 _q.Cast(unit, _packetCast);
                 _e.Cast(unit, _packetCast);
             }
@@ -130,16 +161,24 @@ namespace ChewyMoonsIrelia
             var position = ObjectManager.Player.Position;
 
             if (drawQ)
+            {
                 Render.Circle.DrawCircle(position, _q.Range, _q.IsReady() ? Color.Aqua : Color.Red);
+            }
 
             if (drawE)
+            {
                 Render.Circle.DrawCircle(position, _e.Range, _e.IsReady() ? Color.Aqua : Color.Red);
+            }
 
             if (drawR)
+            {
                 Render.Circle.DrawCircle(position, _r.Range, _r.IsReady() ? Color.Aqua : Color.Red);
+            }
 
-            if(!drawStunnable)
+            if (!drawStunnable)
+            {
                 return;
+            }
 
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()).Where(CanStunTarget))
             {
@@ -147,7 +186,7 @@ namespace ChewyMoonsIrelia
                 var size = Drawing.GetTextExtent(text);
                 var enemyPos = Drawing.WorldToScreen(enemy.Position);
 
-                Drawing.DrawText(enemyPos.X - size.Width/2f, enemyPos.Y, Color.LightSeaGreen, text);
+                Drawing.DrawText(enemyPos.X - size.Width / 2f, enemyPos.Y, Color.LightSeaGreen, text);
             }
         }
 
@@ -157,7 +196,10 @@ namespace ChewyMoonsIrelia
 
             FireCharges();
 
-            if (!Orbwalking.CanMove(100)) return;
+            if (!Orbwalking.CanMove(100))
+            {
+                return;
+            }
 
             if (_menu.Item("waveClear").GetValue<KeyBind>().Active && !ObjectManager.Player.IsDead)
             {
@@ -192,7 +234,9 @@ namespace ChewyMoonsIrelia
                         var damage = ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q);
 
                         if (damage > minion.Health && _q.IsReady())
+                        {
                             _q.Cast(minion, _packetCast);
+                        }
                     }
                     else
                     {
@@ -200,37 +244,52 @@ namespace ChewyMoonsIrelia
                     }
                 }
 
-                if (useW && _w.IsReady()) _w.Cast();
-                if (useR && _r.IsReady()) _r.Cast(minion, _packetCast);
+                if (useW && _w.IsReady())
+                {
+                    _w.Cast();
+                }
+                if (useR && _r.IsReady())
+                {
+                    _r.Cast(minion, _packetCast);
+                }
             }
         }
 
         private static void LastHitWithQ()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range);
-            foreach (
-                var minion in
-                    minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health))
+            foreach (var minion in
+                minions.Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health))
             {
                 var noFarmDangerous = _menu.Item("qNoFarmTower").GetValue<bool>();
                 // If do not farm under tower
                 if (noFarmDangerous)
                 {
-                    if (minion.UnderTurret()) continue;
+                    if (minion.UnderTurret())
+                    {
+                        continue;
+                    }
                     if (_q.IsReady())
+                    {
                         _q.Cast(minion, _packetCast);
+                    }
                 }
                 else
                 {
                     if (_q.IsReady())
+                    {
                         _q.Cast(minion, _packetCast);
+                    }
                 }
             }
         }
 
         private static void FireCharges()
         {
-            if (!_hasToFire) return;
+            if (!_hasToFire)
+            {
+                return;
+            }
 
             _r.Cast(Orbwalker.GetTarget() as Obj_AI_Hero, _packetCast); //Dunnno
             _charges -= 1;
@@ -251,7 +310,10 @@ namespace ChewyMoonsIrelia
             {
                 GapCloseCombo();
             }
-            if (target == null || !target.IsValid) return;
+            if (target == null || !target.IsValid)
+            {
+                return;
+            }
 
             var isUnderTower = target.UnderTurret();
             var diveTower = _menu.Item("diveTower").GetValue<bool>();
@@ -261,13 +323,19 @@ namespace ChewyMoonsIrelia
             if (isUnderTower && !diveTower)
             {
                 // Calculate percent hp
-                var percent = (int) target.Health/target.MaxHealth*100;
+                var percent = (int) target.Health / target.MaxHealth * 100;
                 var overridePercent = _menu.Item("diveTowerPercent").GetValue<Slider>().Value;
 
-                if (percent > overridePercent) doNotCombo = true;
+                if (percent > overridePercent)
+                {
+                    doNotCombo = true;
+                }
             }
 
-            if (doNotCombo) return;
+            if (doNotCombo)
+            {
+                return;
+            }
 
             if (useW && _w.IsReady())
             {
@@ -294,10 +362,14 @@ namespace ChewyMoonsIrelia
 
             // Now that we q'd, lets cast BOTRK
             if (BotRk.IsReady())
+            {
                 BotRk.Cast(target);
+            }
 
             if (Cutlass.IsReady())
+            {
                 Cutlass.Cast(target);
+            }
 
             // stunerino
             if (useE && _e.IsReady())
@@ -317,25 +389,35 @@ namespace ChewyMoonsIrelia
 
             // Resharper did this, IDK if it works.
             // Original code:  if (useR && R.IsReady() && !hasToFire)
-            if (!useR || !_r.IsReady() || _hasToFire) return;
+            if (!useR || !_r.IsReady() || _hasToFire)
+            {
+                return;
+            }
             _hasToFire = true;
             _charges = 4;
         }
 
         private static void GapCloseCombo()
         {
-            if (!_menu.Item("useMinionGapclose").GetValue<bool>()) return;
+            if (!_menu.Item("useMinionGapclose").GetValue<bool>())
+            {
+                return;
+            }
 
-            var target = TargetSelector.GetTarget(_q.Range*3, TargetSelector.DamageType.Physical);
-            if (!target.IsValidTarget() || target == null) return;
+            var target = TargetSelector.GetTarget(_q.Range * 3, TargetSelector.DamageType.Physical);
+            if (!target.IsValidTarget() || target == null)
+            {
+                return;
+            }
 
-            foreach (
-                var minion in
-                    MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range)
-                        .Where(minion => ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
-                                         minion.ServerPosition.Distance(target.ServerPosition) < _q.Range)
-                        .Where(minion => minion.IsValidTarget(_q.Range*3))
-                        .Where(minion => _q.IsReady()))
+            foreach (var minion in
+                MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _q.Range)
+                    .Where(
+                        minion =>
+                            ObjectManager.Player.GetSpellDamage(minion, SpellSlot.Q) > minion.Health &&
+                            minion.ServerPosition.Distance(target.ServerPosition) < _q.Range)
+                    .Where(minion => minion.IsValidTarget(_q.Range * 3))
+                    .Where(minion => _q.IsReady()))
             {
                 _q.Cast(minion, _packetCast);
                 break;
@@ -345,10 +427,12 @@ namespace ChewyMoonsIrelia
         private static bool CanStunTarget(AttackableUnit target)
         {
             if (!_e.IsReady())
+            {
                 return false;
+            }
 
-            var enemyHealthPercent = target.Health/target.MaxHealth*100;
-            var myHealthPercent = ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
+            var enemyHealthPercent = target.Health / target.MaxHealth * 100;
+            var myHealthPercent = ObjectManager.Player.Health / ObjectManager.Player.MaxHealth * 100;
 
             return enemyHealthPercent > myHealthPercent;
         }
@@ -380,7 +464,8 @@ namespace ChewyMoonsIrelia
             // Lasthiting
             var farmingMenu = new Menu("Farming", "cmIreliaFarming");
             farmingMenu.AddItem(new MenuItem("qLasthitEnable", "Last hitting with Q").SetValue(false));
-            farmingMenu.AddItem(new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind(88, KeyBindType.Press)));
+            farmingMenu.AddItem(
+                new MenuItem("qLastHit", "Last hit with Q").SetValue(new KeyBind(88, KeyBindType.Press)));
             farmingMenu.AddItem(new MenuItem("qNoFarmTower", "Don't Q minions under tower").SetValue(false));
             // Wave clear submenu
             var waveClearMenu = new Menu("Wave Clear", "cmIreliaFarmingWaveClear");

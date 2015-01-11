@@ -16,7 +16,7 @@ namespace ChewyMoonsLux
     {
         public static bool AnalyzeQ(PredictionInput input, PredictionOutput output)
         {
-            var posList = new List<Vector3> {ObjectManager.Player.ServerPosition, output.CastPosition};
+            var posList = new List<Vector3> { ObjectManager.Player.ServerPosition, output.CastPosition };
             var collision = Collision.GetCollision(posList, input);
             var minions = collision.Count(collisionObj => collisionObj.IsMinion);
             return minions > 1;
@@ -34,7 +34,10 @@ namespace ChewyMoonsLux
                 Console.WriteLine("Minions: {0}\nToo Many: {1}", minions, minions > 1);
             }
 
-            if (minions > 1) return;
+            if (minions > 1)
+            {
+                return;
+            }
 
             ChewyMoonsLux.Q.Cast(prediction.CastPosition, ChewyMoonsLux.PacketCast);
         }

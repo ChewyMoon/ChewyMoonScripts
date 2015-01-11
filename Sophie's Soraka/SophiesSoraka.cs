@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX.Direct3D9;
 
 #endregion
 
@@ -28,7 +27,9 @@ namespace Sophies_Soraka
         public static void OnGameLoad(EventArgs args)
         {
             if (ObjectManager.Player.ChampionName != "Soraka")
+            {
                 return;
+            }
 
             Q = new Spell(SpellSlot.Q, 950);
             W = new Spell(SpellSlot.W, 550);
@@ -98,13 +99,15 @@ namespace Sophies_Soraka
 
         private static void AutoR()
         {
-            if (!R.IsReady()) return;
-            
-            foreach (
-                var friend in
-                    ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
+            if (!R.IsReady())
             {
-                var friendHealth = (int) friend.Health/friend.MaxHealth*100;
+                return;
+            }
+
+            foreach (var friend in
+                ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly).Where(x => !x.IsDead).Where(x => !x.IsZombie))
+            {
+                var friendHealth = (int) friend.Health / friend.MaxHealth * 100;
                 var health = Menu.Item("autoRPercent").GetValue<Slider>().Value;
 
                 if (friendHealth <= health)
@@ -116,23 +119,27 @@ namespace Sophies_Soraka
 
         private static void AutoW()
         {
-            if (!W.IsReady()) return;
+            if (!W.IsReady())
+            {
+                return;
+            }
 
             var autoWHealth = Menu.Item("autoWHealth").GetValue<Slider>().Value;
             if (ObjectManager.Player.HealthPercentage() < autoWHealth)
+            {
                 return;
+            }
 
-            foreach (
-                var friend in
-                    from friend in
-                        ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(x => !x.IsEnemy)
-                            .Where(x => !x.IsMe)
-                            .Where(friend => W.InRange(friend.ServerPosition))
-                    let friendHealth = friend.Health/friend.MaxHealth*100
-                    let healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value
-                    where friendHealth <= healthPercent
-                    select friend)
+            foreach (var friend in
+                from friend in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => !x.IsEnemy)
+                        .Where(x => !x.IsMe)
+                        .Where(friend => W.InRange(friend.ServerPosition))
+                let friendHealth = friend.Health / friend.MaxHealth * 100
+                let healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value
+                where friendHealth <= healthPercent
+                select friend)
             {
                 W.CastOnUnit(friend, Packets);
             }
@@ -144,7 +151,10 @@ namespace Sophies_Soraka
             var useE = Menu.Item("useE").GetValue<bool>();
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
             if (useQ && Q.IsReady())
             {
@@ -163,7 +173,10 @@ namespace Sophies_Soraka
             var useE = Menu.Item("useEHarass").GetValue<bool>();
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
             if (useQ && Q.IsReady())
             {
@@ -194,10 +207,18 @@ namespace Sophies_Soraka
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
             if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != InterruptableDangerLevel.High)
+            {
                 return;
+            }
 
-            if (!unit.IsValidTarget(E.Range)) return;
-            if (!E.IsReady()) return;
+            if (!unit.IsValidTarget(E.Range))
+            {
+                return;
+            }
+            if (!E.IsReady())
+            {
+                return;
+            }
 
             E.Cast(unit, Packets);
         }

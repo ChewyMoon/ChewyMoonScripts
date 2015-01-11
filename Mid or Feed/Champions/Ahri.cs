@@ -45,19 +45,27 @@ namespace Mid_or_Feed.Champions
             var p = Player.Position;
 
             if (drawQ)
+            {
                 Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+            }
 
             if (drawW)
+            {
                 Render.Circle.DrawCircle(p, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
+            }
 
             if (drawE)
+            {
                 Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+            }
         }
 
         private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
             if (!GetBool("interruptE") || spell.DangerLevel != InterruptableDangerLevel.High)
+            {
                 return;
+            }
 
             E.Cast(unit, Packets);
         }
@@ -65,7 +73,9 @@ namespace Mid_or_Feed.Champions
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             if (!GetBool("gapcloseE"))
+            {
                 return;
+            }
 
             E.Cast(gapcloser.Sender, Packets);
         }
@@ -89,7 +99,9 @@ namespace Mid_or_Feed.Champions
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
 
             if (target == null)
+            {
                 return;
+            }
 
             var useQ = GetBool("useQ");
             var useW = GetBool("useW");
@@ -97,26 +109,38 @@ namespace Mid_or_Feed.Champions
             var useDfg = GetBool("useDFG");
 
             if (useDfg && Dfg.IsReady())
+            {
                 Dfg.Cast(target);
+            }
 
             if (useE && E.IsReady())
+            {
                 E.Cast(target);
+            }
 
             if (useQ && Q.IsReady())
+            {
                 Q.Cast(target);
+            }
 
             if (useW && W.IsReady() && W.InRange(target.ServerPosition))
+            {
                 W.Cast(Packets);
+            }
         }
 
         private void DoHarass()
         {
             var target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
             if (target == null)
+            {
                 return;
+            }
 
             if (!GetBool("useQHarass") || !Q.IsReady())
+            {
                 return;
+            }
 
             Q.Cast(target, Packets);
         }
@@ -126,20 +150,27 @@ namespace Mid_or_Feed.Champions
             double dmg = 0;
 
             if (Q.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.Q, 1);
+            }
 
             if (W.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.W);
+            }
 
             if (E.IsReady())
             {
                 dmg += Player.GetSpellDamage(target, SpellSlot.E);
-                dmg += dmg*0.2;
+                dmg += dmg * 0.2;
             }
 
-            if (!Dfg.IsReady()) return (float) dmg;
+            if (!Dfg.IsReady())
+            {
+                return (float) dmg;
+            }
             dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-            dmg += dmg*0.2;
+            dmg += dmg * 0.2;
 
             return (float) dmg;
         }

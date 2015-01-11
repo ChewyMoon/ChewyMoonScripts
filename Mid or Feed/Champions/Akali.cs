@@ -13,9 +13,9 @@ namespace Mid_or_Feed.Champions
 {
     internal class Akali : Plugin
     {
-        private Items.Item Gunblade;
-        private Items.Item Cutlass;
         private readonly List<Spell> _spellList;
+        private readonly Items.Item Cutlass;
+        private readonly Items.Item Gunblade;
 
         public Akali()
         {
@@ -43,13 +43,19 @@ namespace Mid_or_Feed.Champions
             var pos = Player.Position;
 
             if (q.Active)
+            {
                 Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.Q).Range, q.Color);
+            }
 
             if (e.Active)
+            {
                 Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.E).Range, e.Color);
+            }
 
             if (r.Active)
+            {
                 Render.Circle.DrawCircle(pos, GetSpell(_spellList, SpellSlot.R).Range, r.Color);
+            }
         }
 
         private void GameOnOnGameUpdate(EventArgs args)
@@ -68,29 +74,39 @@ namespace Mid_or_Feed.Champions
 
         private void DoCombo()
         {
-            var target = TargetSelector.GetTarget(GetSpell(_spellList, SpellSlot.Q).Range,
-                TargetSelector.DamageType.Magical);
+            var target = TargetSelector.GetTarget(
+                GetSpell(_spellList, SpellSlot.Q).Range, TargetSelector.DamageType.Magical);
 
             if (target == null && GetValue<bool>("gapcloseR"))
             {
                 GapcloseCombo();
             }
 
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
             var useQ = GetValue<bool>("useQ");
             var useE = GetValue<bool>("useE");
             var useR = GetValue<bool>("useR");
 
             if (Gunblade.IsReady() && GetBool("useGunblade"))
+            {
                 Gunblade.Cast(target);
+            }
 
             if (Cutlass.IsReady() && GetBool("useCutlass"))
+            {
                 Cutlass.Cast(target);
+            }
 
             foreach (var spell in _spellList.Where(x => x.IsReady()))
             {
-                if (!target.IsValidTarget(spell.Range)) return;
+                if (!target.IsValidTarget(spell.Range))
+                {
+                    return;
+                }
 
                 if (spell.Slot == SpellSlot.Q && useQ)
                 {
@@ -115,21 +131,33 @@ namespace Mid_or_Feed.Champions
             var requiredAmmo = GetValue<StringList>("gapcloseAmmo").SelectedIndex == 0 ? 2 : 3;
             var ammo = Player.Spellbook.GetSpell(SpellSlot.R).Ammo;
 
-            if (!(ammo >= requiredAmmo)) return;
+            if (!(ammo >= requiredAmmo))
+            {
+                return;
+            }
 
             var r = GetSpell(_spellList, SpellSlot.R);
-            if (!r.IsReady()) return;
+            if (!r.IsReady())
+            {
+                return;
+            }
 
-            var target = TargetSelector.GetTarget(r.Range*3, TargetSelector.DamageType.Magical);
-            if (target == null) return;
+            var target = TargetSelector.GetTarget(r.Range * 3, TargetSelector.DamageType.Magical);
+            if (target == null)
+            {
+                return;
+            }
 
 
             var minion =
                 MinionManager.GetMinions(Player.ServerPosition, r.Range)
-                    .Where(x => x.IsValidTarget()).FirstOrDefault(x => x.Distance(target) < r.Range);
+                    .Where(x => x.IsValidTarget())
+                    .FirstOrDefault(x => x.Distance(target) < r.Range);
 
             if (minion.IsValidTarget())
+            {
                 r.CastOnUnit(minion, Packets);
+            }
         }
 
         private void DoHarass()
@@ -137,7 +165,10 @@ namespace Mid_or_Feed.Champions
             var q = GetSpell(_spellList, SpellSlot.Q);
 
             var target = Orbwalker.GetTarget() as Obj_AI_Hero;
-            if (!target.IsValidTarget() || !q.IsReady() || !GetValue<bool>("useQHarass")) return;
+            if (!target.IsValidTarget() || !q.IsReady() || !GetValue<bool>("useQHarass"))
+            {
+                return;
+            }
 
             q.CastOnUnit(target, Packets);
         }
@@ -149,10 +180,14 @@ namespace Mid_or_Feed.Champions
                     .Sum(spell => Player.GetDamageSpell(target, spell.Slot).CalculatedDamage);
 
             if (Gunblade.IsReady())
+            {
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
+            }
 
             if (Cutlass.IsReady())
+            {
                 damage += Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
+            }
 
             return (float) damage;
         }
@@ -178,7 +213,7 @@ namespace Mid_or_Feed.Champions
         public override void Misc(Menu miscMenu)
         {
             miscMenu.AddItem(new MenuItem("gapcloseR", "Gapclose with R").SetValue(true));
-            miscMenu.AddItem(new MenuItem("gapcloseAmmo", "^ Charges").SetValue(new StringList(new[] {"2", "3"})));
+            miscMenu.AddItem(new MenuItem("gapcloseAmmo", "^ Charges").SetValue(new StringList(new[] { "2", "3" })));
         }
 
         public override void Drawings(Menu drawingMenu)

@@ -32,20 +32,25 @@ namespace LanternCockBlocker
         private static void GameObject_OnCreate(GameObject sender, EventArgs args)
         {
             if (sender.Name != "ThreshLantern" || sender.IsAlly || !_menu.Item("enabled").GetValue<bool>())
+            {
                 return;
+            }
 
             if (sender.Position.Distance(ObjectManager.Player.ServerPosition) > 600)
-                return;
-
-            Utility.DelayAction.Add(_menu.Item("delay").GetValue<Slider>().Value, delegate
             {
-                var ward = Items.GetWardSlot();
+                return;
+            }
 
-                if (Items.CanUseItem((int) ward.Id))
+            Utility.DelayAction.Add(
+                _menu.Item("delay").GetValue<Slider>().Value, delegate
                 {
-                    Items.UseItem((int) ward.Id, sender.Position);
-                }
-            });
+                    var ward = Items.GetWardSlot();
+
+                    if (Items.CanUseItem((int) ward.Id))
+                    {
+                        Items.UseItem((int) ward.Id, sender.Position);
+                    }
+                });
         }
     }
 }

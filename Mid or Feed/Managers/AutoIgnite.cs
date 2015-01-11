@@ -32,7 +32,9 @@ namespace Mid_or_Feed.Managers
             var igniteKs = _menu.Item("igniteKS").GetValue<bool>();
 
             if (!_igniteSlot.IsReady())
+            {
                 return;
+            }
 
             if (igniteKill)
             {
@@ -45,20 +47,27 @@ namespace Mid_or_Feed.Managers
                             x => ObjectManager.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) > x.Health);
 
                 if (igniteKillableEnemy.IsValidTarget())
+                {
                     ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, igniteKillableEnemy);
+                }
             }
 
-            if (!igniteKs) return;
+            if (!igniteKs)
+            {
+                return;
+            }
 
             var enemy =
                 ObjectManager.Get<Obj_AI_Hero>()
                     .Where(x => x.IsEnemy)
                     .Where(x => x.Distance(ObjectManager.Player) <= IgniteRange)
                     .FirstOrDefault(
-                        x => x.Health <= ObjectManager.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite)/5);
+                        x => x.Health <= ObjectManager.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) / 5);
 
             if (enemy.IsValidTarget())
+            {
                 ObjectManager.Player.Spellbook.CastSpell(_igniteSlot, enemy);
+            }
         }
     }
 }

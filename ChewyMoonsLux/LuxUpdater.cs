@@ -53,7 +53,7 @@ namespace ChewyMoonsLux
         public bool NeedUpdate;
         public string UpdateVersion;
         private readonly string _updatelink;
-        private readonly WebClient _wc = new WebClient {Proxy = null};
+        private readonly WebClient _wc = new WebClient { Proxy = null };
 
         public Updater(string versionlink, string updatelink, string localversion)
         {
@@ -72,7 +72,8 @@ namespace ChewyMoonsLux
                     File.Delete(Path.Combine(Assembly.GetExecutingAssembly().Location) + ".bak");
                 }
 
-                File.Move(Assembly.GetExecutingAssembly().Location,
+                File.Move(
+                    Assembly.GetExecutingAssembly().Location,
                     Path.Combine(Assembly.GetExecutingAssembly().Location) + ".bak");
                 _wc.DownloadFile(_updatelink, Path.Combine(Assembly.GetExecutingAssembly().Location));
                 // ReSharper restore PossiblyMistakenUseOfParamsMethod

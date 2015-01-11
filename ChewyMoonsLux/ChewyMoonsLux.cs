@@ -23,7 +23,10 @@ namespace ChewyMoonsLux
 
         public static void OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.BaseSkinName != "Lux") return;
+            if (ObjectManager.Player.BaseSkinName != "Lux")
+            {
+                return;
+            }
 
             Q = new Spell(SpellSlot.Q, 1175);
             W = new Spell(SpellSlot.W, 1075);
@@ -63,16 +66,24 @@ namespace ChewyMoonsLux
             var position = ObjectManager.Player.Position;
 
             if (drawQ)
+            {
                 Render.Circle.DrawCircle(position, Q.Range, qColor);
+            }
 
             if (drawW)
+            {
                 Render.Circle.DrawCircle(position, W.Range, wColor);
+            }
 
             if (drawE)
+            {
                 Render.Circle.DrawCircle(position, E.Range, eColor);
+            }
 
             if (drawR)
+            {
                 Render.Circle.DrawCircle(position, R.Range, rColor);
+            }
         }
 
         private static void SetupMenu()

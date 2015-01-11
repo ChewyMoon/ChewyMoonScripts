@@ -46,7 +46,10 @@ namespace Mid_or_Feed.Managers
 
             if (!useMp ||
                 !(ObjectManager.Player.ManaPercentage() <= _menu.Item("useMPPercent").GetValue<Slider>().Value) ||
-                HasMannaPutBuff()) return;
+                HasMannaPutBuff())
+            {
+                return;
+            }
 
             if (Items.CanUseItem(Mpid) && Items.HasItem(Mpid))
             {

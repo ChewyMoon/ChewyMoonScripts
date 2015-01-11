@@ -40,7 +40,7 @@ namespace Mid_or_Feed.Champions
             E.SetSkillshot(0.25f, 70, 1600, true, SkillshotType.SkillshotLine);
 
             // Populate spell list
-            SpellList = new List<Spell> {Q, R, W, E};
+            SpellList = new List<Spell> { Q, R, W, E };
 
             // Create DFG item
             Dfg = ItemData.Deathfire_Grasp.GetItem();
@@ -94,9 +94,8 @@ namespace Mid_or_Feed.Champions
             // Use position instead of server position for drawing
             var p = Player.Position;
 
-            foreach (
-                var spell in
-                    SpellList.Where(x => x.Slot != SpellSlot.R).Where(x => GetBool(string.Format("draw{0}", x.Slot))))
+            foreach (var spell in
+                SpellList.Where(x => x.Slot != SpellSlot.R).Where(x => GetBool(string.Format("draw{0}", x.Slot))))
             {
                 Render.Circle.DrawCircle(p, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
             }
@@ -105,7 +104,9 @@ namespace Mid_or_Feed.Champions
         private void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
         {
             if (!GetBool("eInterrupt") || spell.DangerLevel != InterruptableDangerLevel.High)
+            {
                 return;
+            }
 
             if (E.IsReady())
             {
@@ -120,7 +121,9 @@ namespace Mid_or_Feed.Champions
         private void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             if (!GetBool("eGapcloser"))
+            {
                 return;
+            }
 
             if (E.IsReady())
             {
@@ -174,7 +177,9 @@ namespace Mid_or_Feed.Champions
 
 
             if (Dfg.IsReady() && GetBool("useDFG"))
+            {
                 Dfg.Cast(target);
+            }
 
             // Start combo off with r or q
             if (Q.InRange(target.ServerPosition) && Q.IsReady())
@@ -211,16 +216,25 @@ namespace Mid_or_Feed.Champions
                 }
 
                 if (RStatus == RSpell.Q)
+                {
                     R.CastOnUnit(target, Packets);
+                }
 
                 if (RStatus == RSpell.W && !RActivated)
+                {
                     R.Cast(target, Packets);
+                }
 
                 else
+                {
                     R.Cast(target, Packets);
+                }
             }
 
-            if (!GetBool("useWBack") || !target.IsDead) return;
+            if (!GetBool("useWBack") || !target.IsDead)
+            {
+                return;
+            }
             if (WActivated)
             {
                 W.CastOnUnit(Player, Packets);
@@ -235,7 +249,9 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
             if (target == null)
+            {
                 return;
+            }
 
             var useQ = GetBool("useQHarass");
             var useW = GetBool("useWHarass");
@@ -252,7 +268,9 @@ namespace Mid_or_Feed.Champions
             }
 
             if (useWBack && !HasQBuff(target) && WActivated)
+            {
                 W.Cast();
+            }
         }
 
         public override float GetComboDamage(Obj_AI_Hero target)
@@ -260,20 +278,31 @@ namespace Mid_or_Feed.Champions
             double dmg = 0;
 
             if (Q.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.Q);
+            }
 
             if (W.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.W);
+            }
 
             if (E.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.E);
+            }
 
             if (R.IsReady())
+            {
                 dmg += Player.GetSpellDamage(target, SpellSlot.R);
+            }
 
-            if (!Dfg.IsReady()) return (float) dmg;
+            if (!Dfg.IsReady())
+            {
+                return (float) dmg;
+            }
             dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-            dmg += dmg*0.2;
+            dmg += dmg * 0.2;
 
             return (float) dmg;
         }

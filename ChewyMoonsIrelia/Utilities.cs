@@ -14,8 +14,8 @@ namespace ChewyMoonsIrelia
         /// <param name="msg"></param>
         public static void PrintChat(string msg)
         {
-            Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Irelia:</b></font> <font color=\"#FFFFFF\">" + msg +
-                           "</font>");
+            Game.PrintChat(
+                "<font color=\"#6699ff\"><b>ChewyMoon's Irelia:</b></font> <font color=\"#FFFFFF\">" + msg + "</font>");
         }
     }
 }

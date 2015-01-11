@@ -24,13 +24,16 @@ namespace ChewyMoonsShaco
 
         public static void OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.BaseSkinName != "Shaco") return;
+            if (ObjectManager.Player.BaseSkinName != "Shaco")
+            {
+                return;
+            }
 
             Q = new Spell(SpellSlot.Q, 400);
             W = new Spell(SpellSlot.W, 425);
             E = new Spell(SpellSlot.E, 625);
 
-            SpellList = new List<Spell> {Q, E, W};
+            SpellList = new List<Spell> { Q, E, W };
 
             CreateMenu();
 
@@ -41,18 +44,26 @@ namespace ChewyMoonsShaco
             Drawing.OnDraw += Drawing_OnDraw;
             Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
 
-            Game.PrintChat("<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" +
-                           "loaded!" +
-                           "</font>");
+            Game.PrintChat(
+                "<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" + "loaded!" +
+                "</font>");
         }
 
         private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
-            if (!unit.IsMe) return;
-            if (!(target is Obj_AI_Hero))
+            if (!unit.IsMe)
+            {
                 return;
+            }
+            if (!(target is Obj_AI_Hero))
+            {
+                return;
+            }
 
-            if (!target.IsValidTarget()) return;
+            if (!target.IsValidTarget())
+            {
+                return;
+            }
 
             if (Hydra.IsReady())
             {
@@ -137,11 +148,15 @@ namespace ChewyMoonsShaco
                 Render.Circle.DrawCircle(pos, E.Range, eCircle.Color);
             }
 
-            if (!qPosCircle.Active) return;
+            if (!qPosCircle.Active)
+            {
+                return;
+            }
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
-                Drawing.DrawLine(Drawing.WorldToScreen(enemy.Position),
-                    Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2, qPosCircle.Color);
+                Drawing.DrawLine(
+                    Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2,
+                    qPosCircle.Color);
             }
         }
 
@@ -167,15 +182,16 @@ namespace ChewyMoonsShaco
         private static void KillSecure()
         {
             if (!E.IsReady())
+            {
                 return;
+            }
 
-            foreach (
-                var target in
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.IsEnemy)
-                        .Where(x => !x.IsDead)
-                        .Where(x => x.Distance(ObjectManager.Player) <= E.Range)
-                        .Where(target => ObjectManager.Player.GetSpellDamage(target, SpellSlot.E) > target.Health))
+            foreach (var target in
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsEnemy)
+                    .Where(x => !x.IsDead)
+                    .Where(x => x.Distance(ObjectManager.Player) <= E.Range)
+                    .Where(target => ObjectManager.Player.GetSpellDamage(target, SpellSlot.E) > target.Health))
             {
                 E.CastOnUnit(target, Menu.Item("usePackets").GetValue<bool>());
                 return;
@@ -195,7 +211,10 @@ namespace ChewyMoonsShaco
             {
                 if (spell.Slot == SpellSlot.Q && useQ)
                 {
-                    if (!target.IsValidTarget(Q.Range)) continue;
+                    if (!target.IsValidTarget(Q.Range))
+                    {
+                        continue;
+                    }
 
                     var pos = ShacoUtil.GetQPos(target, true);
                     Q.Cast(pos, packets);
@@ -204,14 +223,23 @@ namespace ChewyMoonsShaco
                 if (spell.Slot == SpellSlot.W && useW)
                 {
                     //TODO: Make W based on waypoints
-                    if (!target.IsValidTarget(W.Range)) continue;
+                    if (!target.IsValidTarget(W.Range))
+                    {
+                        continue;
+                    }
 
                     var pos = ShacoUtil.GetQPos(target, true, 100);
                     W.Cast(pos, packets);
                 }
 
-                if (spell.Slot != SpellSlot.E || !useE) continue;
-                if (!target.IsValidTarget(E.Range)) continue;
+                if (spell.Slot != SpellSlot.E || !useE)
+                {
+                    continue;
+                }
+                if (!target.IsValidTarget(E.Range))
+                {
+                    continue;
+                }
 
                 E.CastOnUnit(target);
             }
@@ -222,7 +250,10 @@ namespace ChewyMoonsShaco
             var useE = Menu.Item("useEHarass").GetValue<bool>();
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
 
-            if (!target.IsValidTarget(E.Range)) return;
+            if (!target.IsValidTarget(E.Range))
+            {
+                return;
+            }
 
             if (useE && E.IsReady())
             {
