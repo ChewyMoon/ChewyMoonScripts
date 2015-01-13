@@ -19,6 +19,7 @@ namespace Irelia_Reloaded
         private static Spell R { get; set; }
         private static Spell E { get; set; }
         private static SpellSlot IgniteSlot { get; set; }
+
         // Config 
         private static bool Packets
         {
@@ -32,10 +33,12 @@ namespace Irelia_Reloaded
 
         private static Menu Menu { get; set; }
         private static Orbwalking.Orbwalker Orbwalker { get; set; }
+
         // Items
         private static Items.Item Botrk { get; set; }
         private static Items.Item Cutlass { get; set; }
         private static Items.Item Omen { get; set; }
+
         // Ult
         private static bool UltActivated
         {
@@ -47,6 +50,7 @@ namespace Irelia_Reloaded
         {
             get { return Player.HasBuff("sheen", true); }
         }
+
 
         private static void Main(string[] args)
         {
