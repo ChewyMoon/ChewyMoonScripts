@@ -137,7 +137,6 @@ namespace Irelia_Reloaded
             var drawE = Menu.Item("drawE").GetValue<bool>();
             var drawR = Menu.Item("drawR").GetValue<bool>();
             var drawStunnable = Menu.Item("drawStunnable").GetValue<bool>();
-            var drawStunAll = Menu.Item("drawStunnableAll").GetValue<bool>();
             var p = Player.Position;
 
             if (drawQ)
@@ -155,18 +154,22 @@ namespace Irelia_Reloaded
                 Render.Circle.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
             }
 
+            foreach (
+                var minion in
+                    MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
+            {
+                Render.Circle.DrawCircle(minion.Position, 125, Color.Chartreuse);
+            }
+
             if (!drawStunnable)
             {
                 return;
             }
 
-            foreach (var unit in ObjectManager.Get<Obj_AI_Base>().Where(x => x.CanStunTarget()))
+            foreach (var unit in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.CanStunTarget()).Where(x => x.IsEnemy).Where(x => !x.IsDead))
             {
-                // if not drawing stun and all target, and is not hero, return
-                if (!drawStunAll && !(unit is Obj_AI_Hero))
-                {
+                if (unit.IsAlly)
                     continue;
-                }
 
                 var drawPos = Drawing.WorldToScreen(unit.Position);
                 var textSize = Drawing.GetTextExtent("Stunnable");
@@ -517,7 +520,7 @@ namespace Irelia_Reloaded
             drawMenu.AddItem(new MenuItem("drawR", "Draw R").SetValue(true));
             drawMenu.AddItem(new MenuItem("drawDmg", "Draw Combo Damage").SetValue(true));
             drawMenu.AddItem(new MenuItem("drawStunnable", "Draw Stunnable").SetValue(true));
-            drawMenu.AddItem(new MenuItem("drawStunnableAll", "Draw Stunnable on all Units").SetValue(false));
+            drawMenu.AddItem(new MenuItem("drawKillableQ", "Draw Minions Killable with Q").SetValue(false));
             Menu.AddSubMenu(drawMenu);
 
             // Misc
