@@ -90,7 +90,7 @@ namespace Irelia_Reloaded
 
             // Setup Dmg Indicator
             Utility.HpBarDamageIndicator.DamageToUnit = DamageToUnit;
-            Utility.HpBarDamageIndicator.Enabled = Menu.Item("drawDmg").GetValue<bool>();
+            Utility.HpBarDamageIndicator.Enabled = true;
 
             // Subscribe to needed events
             Game.OnGameUpdate += Game_OnGameUpdate;
@@ -518,14 +518,6 @@ namespace Irelia_Reloaded
             drawMenu.AddItem(new MenuItem("drawDmg", "Draw Combo Damage").SetValue(true));
             drawMenu.AddItem(new MenuItem("drawStunnable", "Draw Stunnable").SetValue(true));
             drawMenu.AddItem(new MenuItem("drawStunnableAll", "Draw Stunnable on all Units").SetValue(false));
-
-            // Setup HP Bar Dmg Indicator
-            Menu.Item("drawDmg").ValueChanged +=
-                delegate(object sender, OnValueChangeEventArgs args)
-                {
-                    Utility.HpBarDamageIndicator.Enabled = args.GetNewValue<bool>();
-                };
-
             Menu.AddSubMenu(drawMenu);
 
             // Misc
