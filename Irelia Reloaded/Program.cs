@@ -159,7 +159,7 @@ namespace Irelia_Reloaded
                 var minion in
                     MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
             {
-                Render.Circle.DrawCircle(minion.Position, 125, Color.FromArgb(124, 252, 0));
+                Render.Circle.DrawCircle(minion.Position, 65, Color.FromArgb(124, 252, 0), 3);
             }
 
             if (!drawStunnable)
