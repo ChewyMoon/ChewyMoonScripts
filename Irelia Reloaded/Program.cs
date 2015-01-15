@@ -2,10 +2,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 #endregion
 
@@ -158,7 +159,7 @@ namespace Irelia_Reloaded
                 var minion in
                     MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
             {
-                Render.Circle.DrawCircle(minion.Position, 125, Color.Chartreuse);
+                Render.Circle.DrawCircle(minion.Position, 125, Color.FromArgb(124, 252, 0));
             }
 
             if (!drawStunnable)
@@ -192,7 +193,7 @@ namespace Irelia_Reloaded
                 case Orbwalking.OrbwalkingMode.Combo:
                     Combo();
                     break;
-            }
+            }        
         }
 
         private static void KillSteal()
