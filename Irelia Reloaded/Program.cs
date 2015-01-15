@@ -132,11 +132,10 @@ namespace Irelia_Reloaded
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.CanStunTarget())
                         .Where(x => x.IsEnemy)
-                        .Where(x => !x.IsDead))
+                        .Where(x => !x.IsDead)
+                        .Where(x => !x.IsAlly)
+                        .Where(x => x.IsVisible))
             {
-                if (unit.IsAlly)
-                    continue;
-
                 var drawPos = Drawing.WorldToScreen(unit.Position);
                 var textSize = Drawing.GetTextExtent("Stunnable");
                 Drawing.DrawText(drawPos.X - textSize.Width/2f, drawPos.Y, Color.Aqua, "Stunnable");
