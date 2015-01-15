@@ -2,11 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
-using Color = System.Drawing.Color;
 
 #endregion
 
@@ -14,45 +13,6 @@ namespace Irelia_Reloaded
 {
     internal class Program
     {
-        // Spells
-        private static Spell Q { get; set; }
-        private static Spell W { get; set; }
-        private static Spell R { get; set; }
-        private static Spell E { get; set; }
-        private static SpellSlot IgniteSlot { get; set; }
-
-        // Config 
-        private static bool Packets
-        {
-            get { return Menu.Item("packets").GetValue<bool>(); }
-        }
-
-        private static Obj_AI_Hero Player
-        {
-            get { return ObjectManager.Player; }
-        }
-
-        private static Menu Menu { get; set; }
-        private static Orbwalking.Orbwalker Orbwalker { get; set; }
-
-        // Items
-        private static Items.Item Botrk { get; set; }
-        private static Items.Item Cutlass { get; set; }
-        private static Items.Item Omen { get; set; }
-
-        // Ult
-        private static bool UltActivated
-        {
-            get { return Player.HasBuff("ireliatranscendentbladesspell", true); }
-        }
-
-        // Sheen buff
-        private static bool HasSheenBuff
-        {
-            get { return Player.HasBuff("sheen", true); }
-        }
-
-
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
@@ -119,7 +79,7 @@ namespace Irelia_Reloaded
             {
                 Q.Cast(unit, Packets);
 
-                var timeToArrive = (int) (1000 * Player.Distance(unit) / Q.Speed + Q.Delay);
+                var timeToArrive = (int) (1000*Player.Distance(unit)/Q.Speed + Q.Delay);
                 Utility.DelayAction.Add(timeToArrive, () => E.Cast(unit, Packets));
             }
         }
@@ -167,14 +127,19 @@ namespace Irelia_Reloaded
                 return;
             }
 
-            foreach (var unit in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.CanStunTarget()).Where(x => x.IsEnemy).Where(x => !x.IsDead))
+            foreach (
+                var unit in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.CanStunTarget())
+                        .Where(x => x.IsEnemy)
+                        .Where(x => !x.IsDead))
             {
                 if (unit.IsAlly)
                     continue;
 
                 var drawPos = Drawing.WorldToScreen(unit.Position);
                 var textSize = Drawing.GetTextExtent("Stunnable");
-                Drawing.DrawText(drawPos.X - textSize.Width / 2f, drawPos.Y, Color.Aqua, "Stunnable");
+                Drawing.DrawText(drawPos.X - textSize.Width/2f, drawPos.Y, Color.Aqua, "Stunnable");
             }
         }
 
@@ -193,7 +158,7 @@ namespace Irelia_Reloaded
                 case Orbwalking.OrbwalkingMode.Combo:
                     Combo();
                     break;
-            }        
+            }
         }
 
         private static void KillSteal()
@@ -238,7 +203,7 @@ namespace Irelia_Reloaded
                 var bestTarget =
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => x.IsValidTarget(600))
-                        .Where(x => Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) / 5 > x.Health)
+                        .Where(x => Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite)/5 > x.Health)
                         .OrderBy(x => x.ChampionsKilled)
                         .FirstOrDefault();
 
@@ -271,7 +236,7 @@ namespace Irelia_Reloaded
                         .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
                         .FirstOrDefault(
                             x =>
-                                x.Distance(TargetSelector.GetTarget(Q.Range * 5, TargetSelector.DamageType.Physical)) <
+                                x.Distance(TargetSelector.GetTarget(Q.Range*5, TargetSelector.DamageType.Physical)) <
                                 Q.Range);
 
                 if (minion.IsValidTarget())
@@ -539,13 +504,13 @@ namespace Irelia_Reloaded
         {
             float dmg = 0;
 
-            var spells = new List<Spell> { Q, W, E, R };
+            var spells = new List<Spell> {Q, W, E, R};
             foreach (var spell in spells.Where(x => x.IsReady()))
             {
                 // Account for each blade
                 if (spell.Slot == SpellSlot.R)
                 {
-                    dmg += spell.GetDamage(hero) * 4;
+                    dmg += spell.GetDamage(hero)*4;
                 }
                 else
                 {
@@ -565,6 +530,55 @@ namespace Irelia_Reloaded
 
             return dmg;
         }
+
+        #region Spells
+
+        private static Spell Q { get; set; }
+        private static Spell W { get; set; }
+        private static Spell R { get; set; }
+        private static Spell E { get; set; }
+        private static SpellSlot IgniteSlot { get; set; }
+
+        #endregion
+
+        #region Config
+
+        private static bool Packets
+        {
+            get { return Menu.Item("packets").GetValue<bool>(); }
+        }
+
+        private static Obj_AI_Hero Player
+        {
+            get { return ObjectManager.Player; }
+        }
+
+        private static Menu Menu { get; set; }
+        private static Orbwalking.Orbwalker Orbwalker { get; set; }
+
+        #endregion
+
+        #region Items
+
+        private static Items.Item Botrk { get; set; }
+        private static Items.Item Cutlass { get; set; }
+        private static Items.Item Omen { get; set; }
+
+        #endregion
+
+        #region Buffs
+
+        private static bool UltActivated
+        {
+            get { return Player.HasBuff("ireliatranscendentbladesspell", true); }
+        }
+
+        private static bool HasSheenBuff
+        {
+            get { return Player.HasBuff("sheen", true); }
+        }
+
+        #endregion
     }
 
     // Helpful extension to see if unit is stunnable
@@ -572,8 +586,8 @@ namespace Irelia_Reloaded
     {
         public static bool CanStunTarget(this AttackableUnit unit)
         {
-            return unit.Health / unit.MaxHealth * 100 >
-                   ObjectManager.Player.Health / ObjectManager.Player.MaxHealth * 100;
+            return unit.Health/unit.MaxHealth*100 >
+                   ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
         }
     }
 }
