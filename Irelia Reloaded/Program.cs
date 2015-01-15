@@ -58,6 +58,17 @@ namespace Irelia_Reloaded
             Drawing.OnDraw += DrawingOnOnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+
+            // to get Q tickcount in least amount of lines.
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+        }
+
+        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (args.SData.Name == "IreliaGatotsu" && sender.IsMe)
+            {
+                gatotsuTick = Environment.TickCount;
+            }
         }
 
         private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
@@ -354,6 +365,7 @@ namespace Irelia_Reloaded
             var useW = Menu.Item("waveclearW").GetValue<bool>();
             var useR = Menu.Item("waveclearR").GetValue<bool>();
             var reqMana = Menu.Item("waveClearMana").GetValue<Slider>().Value;
+            var waitTime = Menu.Item("gatotsuTime").GetValue<Slider>().Value;
             var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
 
             if (Player.ManaPercentage() < reqMana)
@@ -361,7 +373,7 @@ namespace Irelia_Reloaded
                 return;
             }
 
-            if (useQ && Q.IsReady())
+            if (useQ && Q.IsReady() && Environment.TickCount - gatotsuTick >= waitTime * 10)
             {
                 if (useQKillable)
                 {
@@ -408,23 +420,24 @@ namespace Irelia_Reloaded
         private static void LastHit()
         {
             var useQ = Menu.Item("lastHitQ").GetValue<bool>();
+            var waitTime = Menu.Item("gatotsuTime").GetValue<Slider>().Value;
+            var manaNeeded = Menu.Item("manaNeededQ").GetValue<Slider>().Value;
             var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
 
-            if (!useQ)
+            if (useQ && Player.Mana / Player.MaxMana * 100 > manaNeeded &&
+                Environment.TickCount - gatotsuTick >= waitTime * 10)
             {
-                return;
-            }
-
-            foreach (var minion in
-                MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
-            {
-                if (dontQUnderTower && !minion.UnderTurret())
+                foreach (var minion in
+                    MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
                 {
-                    Q.Cast(minion, Packets);
-                }
-                else
-                {
-                    Q.Cast(minion, Packets);
+                    if (dontQUnderTower && !minion.UnderTurret())
+                    {
+                        Q.Cast(minion, Packets);
+                    }
+                    else
+                    {
+                        Q.Cast(minion, Packets);
+                    }
                 }
             }
         }
@@ -466,7 +479,9 @@ namespace Irelia_Reloaded
             // Farming
             var farmingMenu = new Menu("Farming", "cmFarming");
             farmingMenu.AddItem(new MenuItem("lastHitQ", "Last Hit w/ Q").SetValue(false));
+            farmingMenu.AddItem(new MenuItem("manaNeededQ", "Last Hit Mana %")).SetValue(new Slider(35));
             farmingMenu.AddItem(new MenuItem("noQMinionTower", "Don't Q Minion Undertower").SetValue(true));
+            farmingMenu.AddItem(new MenuItem("gatotsuTime", "Delay between Q")).SetValue(new Slider(35));
 
             // Wave Clear SubMenu
             var waveClearMenu = new Menu("Wave Clear", "cmWaveClear");
@@ -474,7 +489,7 @@ namespace Irelia_Reloaded
             waveClearMenu.AddItem(new MenuItem("waveclearQKillable", "Only Q Killable Minion").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("waveclearW", "Use W").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("waveclearR", "Use R").SetValue(false));
-            waveClearMenu.AddItem(new MenuItem("waveClearMana", "Mana %").SetValue(new Slider(20)));
+            waveClearMenu.AddItem(new MenuItem("waveClearMana", "Wave Clear Mana %").SetValue(new Slider(20)));
             farmingMenu.AddSubMenu(waveClearMenu);
             Menu.AddSubMenu(farmingMenu);
 
@@ -537,6 +552,8 @@ namespace Irelia_Reloaded
         private static Spell R { get; set; }
         private static Spell E { get; set; }
         private static SpellSlot IgniteSlot { get; set; }
+
+        private static int gatotsuTick;
 
         #endregion
 
