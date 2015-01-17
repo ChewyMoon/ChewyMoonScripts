@@ -35,12 +35,11 @@ namespace Mid_or_Feed.Champions
             E = new Spell(SpellSlot.E, 950);
             R = new Spell(SpellSlot.R);
 
-            // W Delay to be tested ; w ;
-            W.SetSkillshot(0, 220, 1500, false, SkillshotType.SkillshotCircle);
+            W.SetSkillshot(0.5f, 220, 1500, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(0.25f, 70, 1600, true, SkillshotType.SkillshotLine);
 
             // Populate spell list
-            SpellList = new List<Spell> { Q, R, W, E };
+            SpellList = new List<Spell> {Q, R, W, E};
 
             // Create DFG item
             Dfg = ItemData.Deathfire_Grasp.GetItem();
@@ -50,6 +49,7 @@ namespace Mid_or_Feed.Champions
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
+            Obj_AI_Base.OnIssueOrder += ObjAiBaseOnOnIssueOrder;
 
             PrintChat("LeBlanc loaded!");
         }
@@ -137,7 +137,10 @@ namespace Mid_or_Feed.Champions
 
         private void GameOnOnGameUpdate(EventArgs args)
         {
-            Console.WriteLine(Player.Spellbook.GetSpell(SpellSlot.Q).ToggleState);
+            if (Menu.Item("Flee").GetValue<KeyBind>().Active)
+            {
+                Flee();
+            }
 
             //Setup prediction for R spell
             switch (RStatus)
@@ -147,11 +150,11 @@ namespace Mid_or_Feed.Champions
                     break;
                 case RSpell.W:
                     R = new Spell(SpellSlot.R, W.Range);
-                    R.SetSkillshot(0.5f, 200, 1200, false, SkillshotType.SkillshotCircle);
+                    R.SetSkillshot(W.Delay, W.Width, W.Speed, W.Collision, SkillshotType.SkillshotCircle);
                     break;
                 case RSpell.E:
                     R = new Spell(SpellSlot.R, E.Range);
-                    R.SetSkillshot(0.25f, 100, 1750, true, SkillshotType.SkillshotLine);
+                    R.SetSkillshot(E.Delay, E.Width, E.Speed, E.Collision, SkillshotType.SkillshotLine);
                     break;
             }
 
@@ -164,11 +167,63 @@ namespace Mid_or_Feed.Champions
                     DoCombo();
                     break;
             }
+
+            DoCloneLogic();
+        }
+
+        private void Flee()
+        {
+            var useJump = GetBool("Flee.UseW");
+            var useE = GetBool("Flee.UseE");
+            var doubleJump = GetBool("Flew.DoubleW");
+
+            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+
+            var closestEnemy =
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsValidTarget())
+                    .OrderBy(x => x.Distance(Player))
+                    .FirstOrDefault();
+
+            var jumpedW = false;
+            var jumpedR = false;
+
+
+            if (useE && E.IsReady())
+            {
+                E.Cast(closestEnemy, Packets);
+            }
+
+            if (useJump && W.IsReady() && !WActivated)
+            {
+                W.Cast(Game.CursorPos, Packets);
+                jumpedW = true;
+            }
+            else if (useJump && RStatus == RSpell.W && R.IsReady() && !RActivated)
+            {
+                R.Cast(Game.CursorPos, Packets);
+                jumpedR = true;
+            }
+
+            if (doubleJump && (jumpedW || jumpedR))
+            {
+                if (jumpedW && R.IsReady() && RStatus == RSpell.W && !RActivated)
+                {
+                    R.Cast(Game.CursorPos, Packets);
+                }
+
+                else if (jumpedR && W.IsReady() && !WActivated)
+                {
+                    W.Cast(Game.CursorPos, Packets);
+                }
+            }
         }
 
         private void DoCombo()
         {
-            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+            // Prioritize target in Q range to use q
+            var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical) ??
+                         TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
             if (target == null)
             {
                 Console.WriteLine("Target is null, returned.");
@@ -179,16 +234,6 @@ namespace Mid_or_Feed.Champions
             if (Dfg.IsReady() && GetBool("useDFG"))
             {
                 Dfg.Cast(target);
-            }
-
-            // Start combo off with r or q
-            if (Q.InRange(target.ServerPosition) && Q.IsReady())
-            {
-                Q.CastOnUnit(target, Packets);
-            }
-            else if (RStatus == RSpell.Q && R.InRange(target.ServerPosition) && R.IsReady())
-            {
-                R.CastOnUnit(target, Packets);
             }
 
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
@@ -209,25 +254,22 @@ namespace Mid_or_Feed.Champions
                     E.Cast(target, Packets);
                 }
 
-                if (spell.Slot != SpellSlot.R)
+                if (spell.Slot == SpellSlot.R)
                 {
-                    // Console.WriteLine("Slot is not R, continued.");
-                    continue;
-                }
+                    if (RStatus == RSpell.Q)
+                    {
+                        R.CastOnUnit(target, Packets);
+                    }
 
-                if (RStatus == RSpell.Q)
-                {
-                    R.CastOnUnit(target, Packets);
-                }
+                    if (RStatus == RSpell.W && !RActivated)
+                    {
+                        R.Cast(target, Packets);
+                    }
 
-                if (RStatus == RSpell.W && !RActivated)
-                {
-                    R.Cast(target, Packets);
-                }
-
-                else
-                {
-                    R.Cast(target, Packets);
+                    else
+                    {
+                        R.Cast(target, Packets);
+                    }
                 }
             }
 
@@ -302,7 +344,7 @@ namespace Mid_or_Feed.Champions
                 return (float) dmg;
             }
             dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-            dmg += dmg * 0.2;
+            dmg += dmg*0.2;
 
             return (float) dmg;
         }
@@ -330,8 +372,18 @@ namespace Mid_or_Feed.Champions
 
         public override void Misc(Menu miscMenu)
         {
+            var fleeMenu = new Menu("Flee", "mofLbFlee");
+            fleeMenu.AddItem(new MenuItem("Flee.UseW", "Use W/R").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("Flew.DoubleW", "Double Jump(W + R)").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("Flee.UseE", "Use E").SetValue(true));
+            miscMenu.AddSubMenu(fleeMenu);
+
             miscMenu.AddItem(new MenuItem("eGapcloser", "E Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
+            miscMenu.AddItem(
+                new MenuItem("CloneLogic", "Clone Logic").SetValue(
+                    new StringList(new[] {"Follow", "Mirror Player", "To Target"})));
+            miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
         }
 
         public override void Drawings(Menu drawingMenu)
@@ -340,5 +392,77 @@ namespace Mid_or_Feed.Champions
             drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
             drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
         }
+
+        #region Clone Logic
+
+        private void DoCloneLogic()
+        {
+            var clone = Player.Pet as Obj_AI_Base;
+
+            // Don't have clone or not valid
+            if (clone == null || clone.IsDead || !clone.IsValid)
+            {
+                return;
+            }
+
+            switch (Menu.Item("CloneLogic").GetValue<StringList>().SelectedIndex)
+            {
+                // Follow
+                case 0:
+                    var delay = Menu.Item("FollowDelay").GetValue<Slider>().Value;
+                    var moveTo = Player.GetWaypoints().Count < 1
+                        ? Player.ServerPosition
+                        : Player.GetWaypoints().FirstOrDefault().To3D();
+
+                    Utility.DelayAction.Add(delay, () => clone.IssueOrder(GameObjectOrder.MovePet, moveTo));
+                    break;
+
+                // To player
+                case 2:
+                    var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+                    clone.IssueOrder(GameObjectOrder.AttackUnit, target);
+                    break;
+            }
+        }
+
+        // Mirror logic
+        private void ObjAiBaseOnOnIssueOrder(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)
+        {
+            if (!sender.IsMe)
+            {
+                return;
+            }
+
+            if (args.Order.ToString().Contains("Pet"))
+            {
+                return;
+            }
+
+            GameObjectOrder convertedOrder;
+            switch (args.Order)
+            {
+                case GameObjectOrder.MoveTo:
+                    convertedOrder = GameObjectOrder.MovePet;
+                    break;
+                case GameObjectOrder.AutoAttack:
+                    convertedOrder = GameObjectOrder.AutoAttackPet;
+                    break;
+                default:
+                    convertedOrder = args.Order;
+                    break;
+            }
+
+            var clone = Player.Pet as Obj_AI_Base;
+
+            // Don't have clone or not valid
+            if (clone == null || clone.IsDead || !clone.IsValid)
+            {
+                return;
+            }
+
+            clone.IssueOrder(convertedOrder, args.Target);
+        }
+
+        #endregion
     }
 }
