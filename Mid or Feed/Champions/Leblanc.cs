@@ -175,7 +175,7 @@ namespace Mid_or_Feed.Champions
         {
             var useJump = GetBool("Flee.UseW");
             var useE = GetBool("Flee.UseE");
-            var doubleJump = GetBool("Flew.DoubleW");
+            var doubleJump = GetBool("Flee.DoubleW");
 
             Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
 
