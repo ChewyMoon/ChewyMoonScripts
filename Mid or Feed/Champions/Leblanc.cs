@@ -172,7 +172,8 @@ namespace Mid_or_Feed.Champions
                     break;
             }
 
-            DoCloneLogic();
+            // Broken 5.1
+            //DoCloneLogic();
         }
 
         private void Flee()
