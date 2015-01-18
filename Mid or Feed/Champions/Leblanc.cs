@@ -194,7 +194,7 @@ namespace Mid_or_Feed.Champions
             var jumpedR = false;
 
 
-            if (useE && E.IsReady())
+            if (useE && E.IsReady() && closestEnemy != null)
             {
                 E.Cast(closestEnemy, Packets);
             }
