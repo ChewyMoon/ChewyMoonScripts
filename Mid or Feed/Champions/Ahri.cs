@@ -123,7 +123,7 @@ namespace Mid_or_Feed.Champions
                 Q.Cast(target);
             }
 
-            if (useW && W.IsReady() && W.InRange(target.ServerPosition))
+            if (useW && W.IsReady() && W.IsInRange(target.ServerPosition, W.Range))
             {
                 W.Cast(Packets);
             }

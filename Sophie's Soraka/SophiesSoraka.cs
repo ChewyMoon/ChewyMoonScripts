@@ -135,7 +135,7 @@ namespace Sophies_Soraka
                     ObjectManager.Get<Obj_AI_Hero>()
                         .Where(x => !x.IsEnemy)
                         .Where(x => !x.IsMe)
-                        .Where(friend => W.InRange(friend.ServerPosition))
+                        .Where(friend => W.IsInRange(friend.ServerPosition, W.Range))
                 let friendHealth = friend.Health / friend.MaxHealth * 100
                 let healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value
                 where friendHealth <= healthPercent
