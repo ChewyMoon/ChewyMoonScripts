@@ -326,7 +326,7 @@ namespace Mid_or_Feed.Champions
             var clone = Player.Pet as Obj_AI_Base;
 
             // Don't have clone or not valid
-            if (clone == null || clone.IsDead || !clone.IsValid)
+            if (clone == null || clone.IsDead || !clone.IsValid || clone.Health < 1)
             {
                 return;
             }
@@ -379,14 +379,15 @@ namespace Mid_or_Feed.Champions
             }
 
             var clone = Player.Pet as Obj_AI_Base;
+            
 
             // Don't have clone or not valid
-            if (clone == null || clone.IsDead || !clone.IsValid|| clone.Health < 1)
+            if (clone == null || clone.IsDead || !clone.IsValid|| clone.Health < 1 )
             {
                 return;
             }
 
-            clone.IssueOrder(convertedOrder, args.Target);
+            //clone.IssueOrder(convertedOrder, args.Target);
         }
 
         #endregion
