@@ -452,7 +452,7 @@ namespace Mid_or_Feed.Champions
         {
             var fleeMenu = new Menu("Flee", "mofLbFlee");
             fleeMenu.AddItem(new MenuItem("Flee.UseW", "Use W/R").SetValue(true));
-            fleeMenu.AddItem(new MenuItem("Flew.DoubleW", "Double Jump(W + R)").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("Flee.DoubleW", "Double Jump(W + R)").SetValue(true));
             fleeMenu.AddItem(new MenuItem("Flee.UseE", "Use E").SetValue(true));
             miscMenu.AddSubMenu(fleeMenu);
 
