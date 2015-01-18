@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using LeagueSharp;
@@ -30,6 +31,9 @@ namespace Mid_or_Feed.Champions
 
         public Leblanc()
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
             Q = new Spell(SpellSlot.Q, 720);
             W = new Spell(SpellSlot.W, 600);
             E = new Spell(SpellSlot.E, 950);
@@ -377,7 +381,7 @@ namespace Mid_or_Feed.Champions
             var clone = Player.Pet as Obj_AI_Base;
 
             // Don't have clone or not valid
-            if (clone == null || clone.IsDead || !clone.IsValid)
+            if (clone == null || clone.IsDead || !clone.IsValid|| clone.Health < 1)
             {
                 return;
             }
