@@ -22,15 +22,15 @@ namespace Mid_or_Feed.Champions
 
         public Lux()
         {
-            Q = new Spell(SpellSlot.Q, 1300);
+            Q = new Spell(SpellSlot.Q, 1175);
             W = new Spell(SpellSlot.W, 1075);
             E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 3340);
 
-            Q.SetSkillshot(0.25f, 70, 1200, false, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.5f, 70, 1200, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.5f, 150, 1200, false, SkillshotType.SkillshotLine);
-            E.SetSkillshot(0.25f, 275, 1300, false, SkillshotType.SkillshotCircle);
-            R.SetSkillshot(1, 190, float.MaxValue, false, SkillshotType.SkillshotLine);
+            E.SetSkillshot(0.5f, 275, 1300, false, SkillshotType.SkillshotCircle);
+            R.SetSkillshot(1.75f, 190, 3000, false, SkillshotType.SkillshotLine);
 
             GameObject.OnCreate += delegate(GameObject sender, EventArgs args)
             {
