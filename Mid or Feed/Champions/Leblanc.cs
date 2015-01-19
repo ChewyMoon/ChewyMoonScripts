@@ -98,6 +98,11 @@ namespace Mid_or_Feed.Champions
             }
         }
 
+        public bool HasEBuff(Obj_AI_Base target)
+        {
+            return target.HasBuff("LeblancSoulShackle", true) || target.HasBuff("LeblancSoulShackleM", true);
+        }
+
         private void Drawing_OnDraw(EventArgs args)
         {
             // Use position instead of server position for drawing
@@ -240,12 +245,13 @@ namespace Mid_or_Feed.Champions
             // Prioritize target in Q range to use q
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical) ??
                          TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+
+            var dontDoubleE = GetBool("DontDoubleE");
+
             if (target == null)
             {
-                Console.WriteLine("Target is null, returned.");
                 return;
             }
-
 
             if (Dfg.IsReady() && GetBool("useDFG"))
             {
@@ -267,7 +273,14 @@ namespace Mid_or_Feed.Champions
 
                 if (spell.Slot == SpellSlot.E)
                 {
-                    E.Cast(target, Packets);
+                    if (dontDoubleE && !HasEBuff(target))
+                    {
+                        E.Cast(target, Packets);
+                    }
+                    else
+                    {
+                        E.Cast(target, Packets);
+                    }
                 }
 
                 if (spell.Slot == SpellSlot.R)
@@ -282,9 +295,16 @@ namespace Mid_or_Feed.Champions
                         R.Cast(target, Packets);
                     }
 
-                    else
+                    else if(RStatus == RSpell.E)
                     {
-                        R.Cast(target, Packets);
+                        if (dontDoubleE && !HasEBuff(target))
+                        {
+                            R.Cast(target, Packets);
+                        }
+                        else
+                        {
+                            R.Cast(target, Packets);
+                        }
                     }
                 }
             }
@@ -347,7 +367,7 @@ namespace Mid_or_Feed.Champions
             switch (Menu.Item("CloneLogic").GetValue<StringList>().SelectedIndex)
             {
                 // Follow
-                case 0:
+                case 1:
                     var delay = Menu.Item("FollowDelay").GetValue<Slider>().Value;
                     var moveTo = Player.GetWaypoints().Count < 1
                         ? Player.ServerPosition
@@ -367,7 +387,7 @@ namespace Mid_or_Feed.Champions
                     });
                     break;
 
-                // To player
+                // To enemy
                 case 2:
                     var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
                     if (clone != null)
@@ -463,7 +483,7 @@ namespace Mid_or_Feed.Champions
             comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
-            //comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
+            comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
         }
 
         public override void Harass(Menu harassMenu)
