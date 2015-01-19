@@ -98,7 +98,7 @@ namespace Mid_or_Feed.Champions
 
         public static bool HasPassive(Obj_AI_Hero hero)
         {
-            return hero.HasBuff("luxilluminatingfraulein");
+            return hero.HasBuff("luxilluminatingfraulein", true);
         }
 
         private void GameOnOnGameUpdate(EventArgs args)
