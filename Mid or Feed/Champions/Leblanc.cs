@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using LeagueSharp;
@@ -31,9 +30,6 @@ namespace Mid_or_Feed.Champions
 
         public Leblanc()
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             Q = new Spell(SpellSlot.Q, 720);
             W = new Spell(SpellSlot.W, 600);
             E = new Spell(SpellSlot.E, 950);
@@ -93,6 +89,15 @@ namespace Mid_or_Feed.Champions
             return target.HasBuff("LeblancChaosOrb", true) || target.HasBuff("LeblancChaosOrbM", true);
         }
 
+        public bool HasValidClone
+        {
+            get
+            {
+                var clone = Player.Pet as Obj_AI_Base;
+                return clone != null && clone.IsValid && !clone.IsDead && !(clone.Health < 1);
+            }
+        }
+
         private void Drawing_OnDraw(EventArgs args)
         {
             // Use position instead of server position for drawing
@@ -144,6 +149,12 @@ namespace Mid_or_Feed.Champions
             if (Menu.Item("Flee").GetValue<KeyBind>().Active)
             {
                 Flee();
+            }
+
+            Console.Clear();
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()))
+            {
+                Console.WriteLine("{0}: {1}", enemy.ChampionName, string.Join(",", enemy.Buffs.Select(x => x.Name)));
             }
 
             //Setup prediction for R spell
@@ -324,10 +335,11 @@ namespace Mid_or_Feed.Champions
 
         private void DoCloneLogic()
         {
+
             var clone = Player.Pet as Obj_AI_Base;
 
             // Don't have clone or not valid
-            if (clone == null || clone.IsDead || !clone.IsValid || clone.Health < 1)
+            if (!HasValidClone)
             {
                 return;
             }
@@ -341,13 +353,27 @@ namespace Mid_or_Feed.Champions
                         ? Player.ServerPosition
                         : Player.GetWaypoints().FirstOrDefault().To3D();
 
-                    Utility.DelayAction.Add(delay, () => clone.IssueOrder(GameObjectOrder.MovePet, moveTo));
+                    Utility.DelayAction.Add(delay, () =>
+                    {
+                        if (!HasValidClone)
+                        {
+                            return;
+                        }
+
+                        if (clone != null)
+                        {
+                            clone.IssueOrder(GameObjectOrder.MovePet, moveTo);
+                        }
+                    });
                     break;
 
                 // To player
                 case 2:
                     var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                    clone.IssueOrder(GameObjectOrder.AttackUnit, target);
+                    if (clone != null)
+                    {
+                        clone.IssueOrder(GameObjectOrder.AutoAttackPet, target);
+                    }
                     break;
             }
         }
@@ -383,12 +409,15 @@ namespace Mid_or_Feed.Champions
             
 
             // Don't have clone or not valid
-            if (clone == null || clone.IsDead || !clone.IsValid|| clone.Health < 1 )
+            if (!HasValidClone)
             {
                 return;
             }
 
-            //clone.IssueOrder(convertedOrder, args.Target);
+            if (clone != null)
+            {
+                clone.IssueOrder(convertedOrder, args.Target);
+            }
         }
 
         #endregion
@@ -434,6 +463,7 @@ namespace Mid_or_Feed.Champions
             comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
+            //comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
         }
 
         public override void Harass(Menu harassMenu)
