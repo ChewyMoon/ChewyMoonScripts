@@ -230,6 +230,7 @@ namespace Irelia_Reloaded
             var useW = Menu.Item("useW").GetValue<bool>();
             var useE = Menu.Item("useE").GetValue<bool>();
             var useR = Menu.Item("useR").GetValue<bool>();
+            var minQRange = Menu.Item("minQRange").GetValue<Slider>().Value;
             var useEStun = Menu.Item("useEStun").GetValue<bool>();
             var useQGapclose = Menu.Item("useQGapclose").GetValue<bool>();
             var useWBeforeQ = Menu.Item("useWBeforeQ").GetValue<bool>();
@@ -292,14 +293,14 @@ namespace Irelia_Reloaded
                     W.Cast(Packets);
                 }
 
-                if (useQ && Q.IsReady())
+                if (useQ && Q.IsReady() && target.Distance(Player.ServerPosition) > minQRange)
                 {
                     Q.Cast(target, Packets);
                 }
             }
             else
             {
-                if (useQ && Q.IsReady())
+                if (useQ && Q.IsReady() && target.Distance(Player.ServerPosition) > minQRange)
                 {
                     Q.Cast(target, Packets);
                 }
@@ -460,6 +461,7 @@ namespace Irelia_Reloaded
             var comboMenu = new Menu("Combo", "cmCombo");
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useQGapclose", "Gapclose with Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("minQRange", "Minimum Q Range")).SetValue(new Slider(250, 20, 400));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useEStun", "Only Use E to Stun").SetValue(false));
