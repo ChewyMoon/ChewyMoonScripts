@@ -388,7 +388,7 @@ namespace Mid_or_Feed.Champions
                     break;
 
                 // To enemy
-                case 2:
+                case 3:
                     var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
                     if (clone != null)
                     {
@@ -407,6 +407,11 @@ namespace Mid_or_Feed.Champions
             }
 
             if (args.Order.ToString().Contains("Pet"))
+            {
+                return;
+            }
+
+            if (Menu.Item("CloneLogic").GetValue<StringList>().SelectedIndex != 2)
             {
                 return;
             }
