@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -123,42 +124,52 @@ namespace Mid_or_Feed.Champions
                 ItsKillSecure();
             }
 
-            if (GetBool("stealBlue"))
+            // Steal buffs, become challenger ggez
+            if (GetValue<KeyBind>("AutoSteal").Active || GetValue<KeyBind>("KeySteal").Active)
             {
-                StealBlue();
+                StealBlue(GetBool("StealAllyBlue"), GetBool("StealEnemyBlue"));
             }
 
-            if (GetBool("stealRed"))
+            if (GetValue<KeyBind>("AutoSteal").Active || GetValue<KeyBind>("KeySteal").Active)
             {
-                StealRed();
+                StealRed(GetBool("StealAllyRed"), GetBool("StealEnemyRed"));
             }
         }
 
-        private void StealBlue()
+        private void StealBlue(bool stealFriendly, bool stealEnemy)
         {
             if (!R.IsReady())
             {
                 return;
             }
 
-            var blueBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_BLUE"));
-            foreach (var blueBuff in
-                blueBuffs.Where(blueBuff => Player.GetSpellDamage(blueBuff, SpellSlot.R) > blueBuff.Health))
+            var blueBuff =
+                ObjectManager.Get<Obj_AI_Minion>()
+                    .Where(x => x.BaseSkinName == "SRU_Blue")
+                    .Where(x => Player.GetSpellDamage(x, SpellSlot.R) > x.Health)
+                    .FirstOrDefault(x => (stealFriendly && x.IsAlly) || (stealEnemy && x.IsEnemy));
+
+            if (blueBuff != null)
             {
                 R.Cast(blueBuff, Packets);
             }
+
         }
 
-        private void StealRed()
+        private void StealRed(bool stealFriendly, bool stealEnemy)
         {
             if (!R.IsReady())
             {
                 return;
             }
 
-            var redBuffs = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.Name.ToUpper().Equals("SRU_RED"));
-            foreach (var redBuff in
-                redBuffs.Where(redBuff => Player.GetSpellDamage(redBuff, SpellSlot.R) > redBuff.Health))
+            var redBuff =
+                ObjectManager.Get<Obj_AI_Minion>()
+                    .Where(x => x.BaseSkinName == "SRU_Red")
+                    .Where(x => Player.GetSpellDamage(x, SpellSlot.R) > x.Health)
+                    .FirstOrDefault(x => (stealFriendly && x.IsAlly) || (stealEnemy && x.IsEnemy));
+
+            if (redBuff != null)
             {
                 R.Cast(redBuff, Packets);
             }
@@ -170,6 +181,7 @@ namespace Mid_or_Feed.Champions
             {
                 return;
             }
+
             foreach (var enemy in
                 ObjectManager.Get<Obj_AI_Hero>()
                     .Where(x => x.IsValidTarget())
@@ -196,7 +208,7 @@ namespace Mid_or_Feed.Champions
                     where healthPercent >= allyPercent
                     select ally)
             {
-                W.Cast(ally, Packets);
+                W.Cast(ally, Packets, true);
                 return;
             }
         }
@@ -209,7 +221,7 @@ namespace Mid_or_Feed.Champions
 
             if (minions <= 1)
             {
-                Q.Cast(input.CastPosition);
+                Q.Cast(input.CastPosition, Packets);
             }
         }
 
@@ -222,7 +234,7 @@ namespace Mid_or_Feed.Champions
                         .Where(x => x.IsEnemy)
                         .Where(x => !x.IsDead)
                         .Where(x => x.IsValidTarget())
-                        .Any(enemy => enemy.Distance(EGameObject.Position) <= E.Width))
+                        .Any(enemy => enemy.Distance(EGameObject.Position) < E.Width))
                 {
                     return;
                 }
@@ -231,18 +243,18 @@ namespace Mid_or_Feed.Champions
 
                 if (isInAaRange && !HasPassive(target))
                 {
-                    E.Cast();
+                    E.Cast(Packets);
                 }
 
                 // Pop E if the target is out of AA range
                 if (!isInAaRange)
                 {
-                    E.Cast();
+                    E.Cast(Packets);
                 }
             }
             else
             {
-                E.Cast(target);
+                E.Cast(target, Packets);
             }
         }
 
@@ -268,7 +280,7 @@ namespace Mid_or_Feed.Champions
 
             if (useW && W.IsReady())
             {
-                W.Cast(Game.CursorPos);
+                W.Cast(Game.CursorPos, Packets);
             }
 
             if (useE && E.IsReady())
@@ -278,7 +290,7 @@ namespace Mid_or_Feed.Champions
 
             if (useR && R.IsReady())
             {
-                R.Cast(target);
+                R.Cast(target, Packets, true);
             }
 
             if (!useRKillable)
@@ -288,7 +300,7 @@ namespace Mid_or_Feed.Champions
             var killable = Player.GetSpellDamage(target, SpellSlot.R) > target.Health;
             if (killable && R.IsReady())
             {
-                R.Cast(target);
+                R.Cast(target, Packets, true);
             }
         }
 
@@ -400,18 +412,23 @@ namespace Mid_or_Feed.Champions
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
         }
 
-        public override void ItemMenu(Menu itemsMenu)
-        {
-            //itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
-        }
-
         public override void Misc(Menu miscMenu)
         {
+            // Buff Steal Menui
+            var buffStealMenu = new Menu("Buff Stealing", "mofLuxBFF");
+            buffStealMenu.AddItem(new MenuItem("StealEnemyRed", "Steal Enemy Red Buff").SetValue(true));
+            buffStealMenu.AddItem(new MenuItem("StealEnemyBlue", "Steal Enemy Blue").SetValue(true));
+            buffStealMenu.AddItem(new MenuItem("StealAllyBlue", "Steal Ally Blue Buff").SetValue(false));
+            buffStealMenu.AddItem(new MenuItem("StealAllyRed", "Steal Ally Red Buff").SetValue(false));
+            buffStealMenu.AddItem(
+                new MenuItem("AutoSteal", "Steal(Toggle)").SetValue(new KeyBind(84, KeyBindType.Press, true)));
+            buffStealMenu.AddItem(
+                new MenuItem("KeySteal", "Steal(Press)").SetValue(new KeyBind(90, KeyBindType.Press)));
+            miscMenu.AddSubMenu(buffStealMenu);
+
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("rKSRecall", "KS enemies b'ing in FOW").SetValue(true));
             miscMenu.AddItem(new MenuItem("qGapcloser", "Q on Gapcloser").SetValue(true));
-            miscMenu.AddItem(new MenuItem("stealBlue", "Steal Blue buff").SetValue(true));
-            miscMenu.AddItem(new MenuItem("stealRed", "Steal Red Buff").SetValue(false));
             miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
             miscMenu.AddItem(new MenuItem("autoWPercent", "% Health").SetValue(new Slider(15, 1)));
         }
