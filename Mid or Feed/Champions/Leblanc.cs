@@ -49,7 +49,7 @@ namespace Mid_or_Feed.Champions
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnIssueOrder += ObjAiBaseOnOnIssueOrder;
+            //Obj_AI_Base.OnIssueOrder += ObjAiBaseOnOnIssueOrder;
 
             PrintChat("LeBlanc loaded!");
         }
@@ -93,8 +93,9 @@ namespace Mid_or_Feed.Champions
         {
             get
             {
-                var clone = Player.Pet as Obj_AI_Base;
-                return clone != null && clone.IsValid && !clone.IsDead && !(clone.Health < 1);
+                //var clone = Player.Pet as Obj_AI_Base;
+                //return clone != null && clone.IsValid && !clone.IsDead && !(clone.Health < 1);
+                return false;
             }
         }
 
