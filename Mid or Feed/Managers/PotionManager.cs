@@ -34,6 +34,11 @@ namespace Mid_or_Feed.Managers
             var useHp = _menu.Item("useHP").GetValue<bool>();
             var useMp = _menu.Item("useMP").GetValue<bool>();
 
+            if (ObjectManager.Player.InFountain())
+            {
+                return;
+            }
+
             if (useHp && ObjectManager.Player.HealthPercentage() <= _menu.Item("useHPPercent").GetValue<Slider>().Value &&
                 !HasHealthPotBuff())
             {

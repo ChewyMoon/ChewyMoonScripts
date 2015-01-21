@@ -93,9 +93,8 @@ namespace Mid_or_Feed.Champions
         {
             get
             {
-                //var clone = Player.Pet as Obj_AI_Base;
-                //return clone != null && clone.IsValid && !clone.IsDead && !(clone.Health < 1);
-                return false;
+                var clone = Player.Pet as Obj_AI_Base;
+                return clone != null && clone.IsValid && !clone.IsDead && clone.Health != 0f;
             }
         }
 
@@ -189,8 +188,7 @@ namespace Mid_or_Feed.Champions
                     break;
             }
 
-            // Broken 5.1
-            //DoCloneLogic();
+            DoCloneLogic();
         }
 
         private void Flee()
@@ -365,10 +363,10 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
-            switch (Menu.Item("CloneLogic").GetValue<StringList>().SelectedIndex)
+            switch (Menu.Item("CloneLogic").GetValue<StringList>().SelectedValue)
             {
                 // Follow
-                case 1:
+                case "Follow":
                     var delay = Menu.Item("FollowDelay").GetValue<Slider>().Value;
                     var moveTo = Player.GetWaypoints().Count < 1
                         ? Player.ServerPosition
@@ -389,9 +387,9 @@ namespace Mid_or_Feed.Champions
                     break;
 
                 // To enemy
-                case 3:
+                case "To Enemy":
                     var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                    if (clone != null)
+                    if (clone != null && target != null)
                     {
                         clone.IssueOrder(GameObjectOrder.AutoAttackPet, target);
                     }
@@ -412,7 +410,12 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
-            if (Menu.Item("CloneLogic").GetValue<StringList>().SelectedIndex != 2)
+            if (Menu.Item("CloneLogic").GetValue<StringList>().SelectedValue != "Mirror Player")
+            {
+                return;
+            }
+
+            if (!HasValidClone)
             {
                 return;
             }
@@ -431,18 +434,13 @@ namespace Mid_or_Feed.Champions
                     break;
             }
 
+            Game.PrintChat("Order: {0} Converted: {1}", args.Order.ToString(), convertedOrder.ToString());
+
             var clone = Player.Pet as Obj_AI_Base;
-            
-
-            // Don't have clone or not valid
-            if (!HasValidClone)
-            {
-                return;
-            }
-
-            if (clone != null)
+            if (clone != null && HasValidClone)
             {
                 clone.IssueOrder(convertedOrder, args.Target);
+                clone.IssueOrder(convertedOrder, args.TargetPosition);
             }
         }
 
@@ -516,7 +514,7 @@ namespace Mid_or_Feed.Champions
             miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
             miscMenu.AddItem(
                 new MenuItem("CloneLogic", "Clone Logic").SetValue(
-                    new StringList(new[] {"Follow", "Mirror Player", "To Target"})));
+                    new StringList(new[] {"Follow", "To Target"})));
             miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
             miscMenu.AddItem(new MenuItem("Flee", "Flee!").SetValue(new KeyBind('z', KeyBindType.Press)));
         }
