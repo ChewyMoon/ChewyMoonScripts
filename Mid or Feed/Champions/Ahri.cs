@@ -195,7 +195,7 @@ namespace Mid_or_Feed.Champions
         public override void Misc(Menu config)
         {
             config.AddItem(new MenuItem("gapcloseE", "E on Gapcloser", true).SetValue(true));
-            config.AddItem(new MenuItem("interruptE", "E to Interrupt", true, true).SetValue(true));
+            config.AddItem(new MenuItem("interruptE", "E to Interrupt").SetValue(true));
         }
 
         public override void Drawings(Menu config)
