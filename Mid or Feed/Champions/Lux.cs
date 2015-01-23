@@ -383,10 +383,10 @@ namespace Mid_or_Feed.Champions
 
         public override void Combo(Menu comboMenu)
         {
-            comboMenu.AddItem(new MenuItem("useQ", "Use Q", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useW", "Use W", true).SetValue(false));
-            comboMenu.AddItem(new MenuItem("useE", "Use E", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R", true).SetValue(false));
+            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
+            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false));
             comboMenu.AddItem(new MenuItem("useRKillable", "R only if Killable").SetValue(true));
 
             comboMenu.Item("useRKillable").ValueChanged += delegate(object sender, OnValueChangeEventArgs args)
@@ -408,8 +408,8 @@ namespace Mid_or_Feed.Champions
 
         public override void Harass(Menu harassMenu)
         {
-            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q", true).SetValue(true));
-            harassMenu.AddItem(new MenuItem("useEHarass", "Use E", true).SetValue(true));
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
         }
 
         public override void Misc(Menu miscMenu)
@@ -435,10 +435,10 @@ namespace Mid_or_Feed.Champions
 
         public override void Drawings(Menu drawingMenu)
         {
-            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q", true).SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawW", "Draw W", true).SetValue(false));
-            drawingMenu.AddItem(new MenuItem("drawE", "Draw E", true).SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawR", "Draw R", true).SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(false));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawR", "Draw R").SetValue(true));
         }
     }
 }

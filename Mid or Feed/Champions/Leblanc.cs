@@ -482,24 +482,24 @@ namespace Mid_or_Feed.Champions
 
         public override void Combo(Menu comboMenu)
         {
-            comboMenu.AddItem(new MenuItem("useQ", "Use Q", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useW", "Use W", true).SetValue(true));
+            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
             comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useE", "Use E", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R", true).SetValue(true));
+            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
             comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
         }
 
         public override void Harass(Menu harassMenu)
         {
-            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q", true).SetValue(true));
-            harassMenu.AddItem(new MenuItem("useWHarass", "Use W", true).SetValue(true));
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useWHarass", "Use W").SetValue(true));
             harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
         }
 
         public override void ItemMenu(Menu itemsMenu)
         {
-            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG", true).SetValue(true));
+            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }
 
         public override void Misc(Menu miscMenu)
@@ -521,9 +521,9 @@ namespace Mid_or_Feed.Champions
 
         public override void Drawings(Menu drawingMenu)
         {
-            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q", true).SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawW", "Draw W", true).SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawE", "Draw E", true).SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
         }
 
     }

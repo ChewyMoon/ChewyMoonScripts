@@ -194,14 +194,14 @@ namespace Mid_or_Feed.Champions
 
         public override void Combo(Menu comboMenu)
         {
-            comboMenu.AddItem(new MenuItem("useQ", "Use Q", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useE", "Use E", true).SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R", true).SetValue(true));
+            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
         }
 
         public override void Harass(Menu harassMenu)
         {
-            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q", true).SetValue(true));
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
         }
 
         public override void ItemMenu(Menu itemsMenu)
@@ -212,15 +212,15 @@ namespace Mid_or_Feed.Champions
 
         public override void Misc(Menu miscMenu)
         {
-            miscMenu.AddItem(new MenuItem("gapcloseR", "Gapclose with R", true).SetValue(true));
+            miscMenu.AddItem(new MenuItem("gapcloseR", "Gapclose with R").SetValue(true));
             miscMenu.AddItem(new MenuItem("gapcloseAmmo", "^ Charges").SetValue(new StringList(new[] { "2", "3" })));
         }
 
         public override void Drawings(Menu drawingMenu)
         {
-            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q", true).SetValue(new Circle(true, Color.White)));
-            drawingMenu.AddItem(new MenuItem("drawE", "Draw E", true).SetValue(new Circle(true, Color.White)));
-            drawingMenu.AddItem(new MenuItem("drawR", "Draw R", true).SetValue(new Circle(true, Color.White)));
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(new Circle(true, Color.White)));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(new Circle(true, Color.White)));
+            drawingMenu.AddItem(new MenuItem("drawR", "Draw R").SetValue(new Circle(true, Color.White)));
         }
     }
 }
