@@ -227,6 +227,7 @@ namespace Mid_or_Feed.Champions
 
         private void CastE(Obj_AI_Hero target)
         {
+            //TODO: Remake this
             if (EActivated)
             {
                 if (
@@ -268,14 +269,29 @@ namespace Mid_or_Feed.Champions
             }
 
             var useQ = GetBool("useQ");
+            var useQSlowed = GetBool("useQSlowed");
             var useW = GetBool("useW");
             var useE = GetBool("useE");
             var useR = GetBool("useR");
             var useRKillable = GetBool("useRKillable");
 
-            if (useQ && !HasPassive(target) && Q.IsReady())
+            if (useQ && !HasPassive(target) && Q.IsReady() && !useQSlowed)
             {
                 CastQ(target);
+            }
+
+            if (useQSlowed)
+            {
+                if (target.HasBuffOfType(BuffType.Slow) && EActivated && target.Distance(EGameObject.Position) < E.Width)
+                {
+                    Q.Cast(target, Packets);
+                }
+
+                // Cast Q if E is not up
+                if (!E.IsReady() && !EActivated && !HasPassive(target))
+                {
+                    Q.Cast(target, Packets);
+                }
             }
 
             if (useW && W.IsReady())
@@ -384,6 +400,7 @@ namespace Mid_or_Feed.Champions
         public override void Combo(Menu comboMenu)
         {
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useQSlowed", "Only use Q if slowed by E").SetValue(false));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(false));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(false));
