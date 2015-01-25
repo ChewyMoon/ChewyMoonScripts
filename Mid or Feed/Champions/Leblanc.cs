@@ -156,12 +156,6 @@ namespace Mid_or_Feed.Champions
                 Flee();
             }
 
-            Console.Clear();
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()))
-            {
-                Console.WriteLine("{0}: {1}", enemy.ChampionName, string.Join(",", enemy.Buffs.Select(x => x.Name)));
-            }
-
             //Setup prediction for R spell
             switch (RStatus)
             {
