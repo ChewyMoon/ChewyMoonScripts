@@ -47,7 +47,7 @@ namespace Mid_or_Feed
 
         private void CreateMenu()
         {
-            Menu = new Menu("Mid or Feed", "mof", true);
+            Menu = new Menu("Mid or Feed", "mof" + Player.ChampionName, true);
 
             // Target Selector
             var tsMenu = new Menu("Target Selector", "mofTS");
