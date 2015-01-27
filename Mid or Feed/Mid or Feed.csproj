@@ -64,6 +64,7 @@
     <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />
     <Compile Include="Champions\Malzahar.cs" />
+    <Compile Include="Champions\Yasuo.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Managers\AutoIgnite.cs" />

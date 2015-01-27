@@ -182,7 +182,7 @@ namespace Mid_or_Feed.Champions
                     break;
             }
 
-            DoCloneLogic();
+            //DoCloneLogic();
         }
 
         private void Flee()
@@ -506,10 +506,10 @@ namespace Mid_or_Feed.Champions
 
             miscMenu.AddItem(new MenuItem("eGapcloser", "E Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
-            miscMenu.AddItem(
-                new MenuItem("CloneLogic", "Clone Logic").SetValue(
-                    new StringList(new[] {"Follow", "To Target"})));
-            miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
+            //miscMenu.AddItem(
+              //  new MenuItem("CloneLogic", "Clone Logic").SetValue(
+                  //  new StringList(new[] {"Follow", "To Target"})));
+           // miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
             miscMenu.AddItem(new MenuItem("Flee", "Flee!").SetValue(new KeyBind('z', KeyBindType.Press)));
         }
 
