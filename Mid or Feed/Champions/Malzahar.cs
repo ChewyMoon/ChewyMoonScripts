@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX.Direct3D9;
 
 namespace Mid_or_Feed.Champions
 {
-    class Malzahar : Plugin
+    internal class Malzahar : Plugin
     {
-
-        private List<Spell> SpellList;
-
+        public readonly List<Spell> SpellList;
 
         public Malzahar()
         {
@@ -86,7 +81,7 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        void Game_OnGameUpdate(EventArgs args)
+        private void Game_OnGameUpdate(EventArgs args)
         {
             switch (OrbwalkerMode)
             {
@@ -127,7 +122,6 @@ namespace Mid_or_Feed.Champions
                     }
                 }
             }
-
         }
 
         private void DoHarass()
@@ -139,7 +133,11 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
-            foreach (var spell in SpellList.Where(x => x.IsReady()).Where(x => x.Slot != SpellSlot.R).Where(x => GetBool("Use" + x.Slot.ToString() + "Harass")))
+            foreach (
+                var spell in
+                    SpellList.Where(x => x.IsReady())
+                        .Where(x => x.Slot != SpellSlot.R)
+                        .Where(x => GetBool("Use" + x.Slot.ToString() + "Harass")))
             {
                 spell.Cast(target, Packets);
             }
