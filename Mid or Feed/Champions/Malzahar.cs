@@ -99,6 +99,11 @@ namespace Mid_or_Feed.Champions
         {
             var target = TargetSelector.GetTarget(900, TargetSelector.DamageType.Magical);
 
+            if (Player.IsCastingInterruptableSpell() || Player.IsChannelingImportantSpell())
+            {
+                return;
+            }
+
             if (!target.IsValidTarget())
             {
                 return;
@@ -106,7 +111,7 @@ namespace Mid_or_Feed.Champions
 
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(x => GetBool("Use" + x.Slot.ToString())))
             {
-                if (spell.Slot != SpellSlot.R && !Player.IsChannelingImportantSpell())
+                if (spell.Slot != SpellSlot.R)
                 {
                     spell.Cast(target, Packets);
                 }
