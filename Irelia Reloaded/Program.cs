@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using LeagueSharp.Common.Data;
 
 #endregion
 
@@ -67,7 +68,7 @@ namespace Irelia_Reloaded
         {
             if (args.SData.Name == "IreliaGatotsu" && sender.IsMe)
             {
-                gatotsuTick = Environment.TickCount;
+                _gatotsuTick = Environment.TickCount;
             }
         }
 
@@ -236,26 +237,44 @@ namespace Irelia_Reloaded
             var useWBeforeQ = Menu.Item("useWBeforeQ").GetValue<bool>();
             var procSheen = Menu.Item("procSheen").GetValue<bool>();
             var useIgnite = Menu.Item("useIgnite").GetValue<bool>();
+            var useRGapclose = Menu.Item("useRGapclose").GetValue<bool>();
 
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
 
             if (target == null && useQGapclose)
             {
-                var minion =
+                    var minionQ =
                     ObjectManager.Get<Obj_AI_Minion>()
                         .Where(x => x.IsValidTarget())
                         .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
                         .FirstOrDefault(
                             x =>
-                                x.Distance(TargetSelector.GetTarget(Q.Range*5, TargetSelector.DamageType.Physical)) <
+                                x.Distance(TargetSelector.GetTarget(Q.Range * 5, TargetSelector.DamageType.Physical)) <
                                 Q.Range);
 
-                if (minion.IsValidTarget())
-                {
-                    Q.Cast(minion, Packets);
-                }
+                    if (minionQ != null)
+                    {
+                        Q.CastOnUnit(minionQ, Packets);
+                        return;
+                    }
 
-                return;
+                if (useRGapclose)
+                {
+                    var minionR =
+                        ObjectManager.Get<Obj_AI_Minion>()
+                            .Where(x => x.IsValidTarget())
+                            .Where(x => x.Distance(Player) < Q.Range) // Use Q.Range so we follow up with a Q
+                            .Where(x => x.CountEnemiesInRange(Q.Range) >= 1)
+                            .FirstOrDefault(
+                                x =>
+                                    x.Health - Player.GetSpellDamage(x, SpellSlot.R) <
+                                    Player.GetSpellDamage(x, SpellSlot.Q));
+
+                    if (minionR != null)
+                    {
+                        R.Cast(minionR, Packets);
+                    }
+                }
             }
 
             if (!target.IsValidTarget())
@@ -295,14 +314,14 @@ namespace Irelia_Reloaded
 
                 if (useQ && Q.IsReady() && target.Distance(Player.ServerPosition) > minQRange)
                 {
-                    Q.Cast(target, Packets);
+                    Q.CastOnUnit(target, Packets);
                 }
             }
             else
             {
                 if (useQ && Q.IsReady() && target.Distance(Player.ServerPosition) > minQRange)
                 {
-                    Q.Cast(target, Packets);
+                    Q.CastOnUnit(target, Packets);
                 }
 
                 if (useW && W.IsReady())
@@ -374,7 +393,7 @@ namespace Irelia_Reloaded
                 return;
             }
 
-            if (useQ && Q.IsReady() && Environment.TickCount - gatotsuTick >= waitTime * 10)
+            if (useQ && Q.IsReady() && Environment.TickCount - _gatotsuTick >= waitTime * 10)
             {
                 if (useQKillable)
                 {
@@ -426,7 +445,7 @@ namespace Irelia_Reloaded
             var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
 
             if (useQ && Player.Mana / Player.MaxMana * 100 > manaNeeded &&
-                Environment.TickCount - gatotsuTick >= waitTime * 10)
+                Environment.TickCount - _gatotsuTick >= waitTime * 10)
             {
                 foreach (var minion in
                     MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
@@ -468,6 +487,7 @@ namespace Irelia_Reloaded
             comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
             comboMenu.AddItem(new MenuItem("useWBeforeQ", "W before Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("procSheen", "Proc Sheen Before Firing R").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useRGapclose", "Use R to Weaken Minion to Gapclose").SetValue(true));
             comboMenu.AddItem(new MenuItem("useIgnite", "Use Ignite").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
@@ -555,7 +575,7 @@ namespace Irelia_Reloaded
         private static Spell E { get; set; }
         private static SpellSlot IgniteSlot { get; set; }
 
-        private static int gatotsuTick;
+        private static int _gatotsuTick;
 
         #endregion
 
