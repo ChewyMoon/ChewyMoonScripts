@@ -35,7 +35,7 @@ namespace Mid_or_Feed.Champions
 
         private bool ShouldUseR(Obj_AI_Hero target)
         {
-            return GetComboDamage(target) > target.Health;
+            return Player.GetSpellDamage(target, SpellSlot.R) > target.Health;
         }
 
         private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero unit, InterruptableSpell spell)
