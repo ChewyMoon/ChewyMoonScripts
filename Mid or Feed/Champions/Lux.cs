@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -153,7 +152,6 @@ namespace Mid_or_Feed.Champions
             {
                 R.Cast(blueBuff, Packets);
             }
-
         }
 
         private void StealRed(bool stealFriendly, bool stealEnemy)
@@ -439,8 +437,7 @@ namespace Mid_or_Feed.Champions
             buffStealMenu.AddItem(new MenuItem("StealAllyRed", "Steal Ally Red Buff").SetValue(false));
             buffStealMenu.AddItem(
                 new MenuItem("AutoSteal", "Steal(Toggle)").SetValue(new KeyBind(84, KeyBindType.Press, true)));
-            buffStealMenu.AddItem(
-                new MenuItem("KeySteal", "Steal(Press)").SetValue(new KeyBind(90, KeyBindType.Press)));
+            buffStealMenu.AddItem(new MenuItem("KeySteal", "Steal(Press)").SetValue(new KeyBind(90, KeyBindType.Press)));
             miscMenu.AddSubMenu(buffStealMenu);
 
             miscMenu.AddItem(new MenuItem("rKS", "Use R to KS").SetValue(true));

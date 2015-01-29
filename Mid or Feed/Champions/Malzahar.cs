@@ -22,7 +22,7 @@ namespace Mid_or_Feed.Champions
             q.SetSkillshot(0.5f, 100, float.MaxValue, false, SkillshotType.SkillshotLine);
             w.SetSkillshot(0.5f, 240, 20, false, SkillshotType.SkillshotCircle);
 
-            SpellList = new List<Spell> {q, w, e, r};
+            SpellList = new List<Spell> { q, w, e, r };
 
 
             PrintChat("Malzahar loaded.");
@@ -138,11 +138,10 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
-            foreach (
-                var spell in
-                    SpellList.Where(x => x.IsReady())
-                        .Where(x => x.Slot != SpellSlot.R)
-                        .Where(x => GetBool("Use" + x.Slot.ToString() + "Harass")))
+            foreach (var spell in
+                SpellList.Where(x => x.IsReady())
+                    .Where(x => x.Slot != SpellSlot.R)
+                    .Where(x => GetBool("Use" + x.Slot.ToString() + "Harass")))
             {
                 spell.Cast(target, Packets);
             }

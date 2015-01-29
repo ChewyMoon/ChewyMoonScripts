@@ -61,7 +61,8 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
+        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender,
+            Interrupter2.InterruptableTargetEventArgs args)
         {
             if (!GetBool("interruptE") || args.DangerLevel != Interrupter2.DangerLevel.High)
             {

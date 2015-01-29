@@ -40,7 +40,7 @@ namespace Mid_or_Feed.Champions
             E.SetSkillshot(0.25f, 70, 1600, true, SkillshotType.SkillshotLine);
 
             // Populate spell list
-            SpellList = new List<Spell> {Q, W, E, R};
+            SpellList = new List<Spell> { Q, W, E, R };
 
             // Create DFG item
             Dfg = ItemData.Deathfire_Grasp.GetItem();
@@ -85,11 +85,6 @@ namespace Mid_or_Feed.Champions
             get { return Player.Spellbook.GetSpell(SpellSlot.R).Name == "leblancslidereturnm"; }
         }
 
-        public bool HasQBuff(Obj_AI_Hero target)
-        {
-            return target.HasBuff("LeblancChaosOrb", true) || target.HasBuff("LeblancChaosOrbM", true);
-        }
-
         public bool HasValidClone
         {
             get
@@ -97,6 +92,11 @@ namespace Mid_or_Feed.Champions
                 var clone = Player.Pet as Obj_AI_Base;
                 return clone != null && clone.IsValid && !clone.IsDead;
             }
+        }
+
+        public bool HasQBuff(Obj_AI_Hero target)
+        {
+            return target.HasBuff("LeblancChaosOrb", true) || target.HasBuff("LeblancChaosOrbM", true);
         }
 
         public bool HasEBuff(Obj_AI_Base target)
@@ -116,7 +116,8 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        private void Interrupter_OnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
+        private void Interrupter_OnPossibleToInterrupt(Obj_AI_Hero sender,
+            Interrupter2.InterruptableTargetEventArgs args)
         {
             if (!GetBool("eInterrupt") || args.DangerLevel != Interrupter2.DangerLevel.High)
             {
@@ -289,7 +290,7 @@ namespace Mid_or_Feed.Champions
                         R.Cast(target, Packets);
                     }
 
-                    else if(RStatus == RSpell.E)
+                    else if (RStatus == RSpell.E)
                     {
                         if (dontDoubleE && !HasEBuff(target))
                         {
@@ -345,11 +346,90 @@ namespace Mid_or_Feed.Champions
             }
         }
 
+        public override float GetComboDamage(Obj_AI_Hero target)
+        {
+            double dmg = 0;
+
+            if (Q.IsReady())
+            {
+                dmg += Player.GetSpellDamage(target, SpellSlot.Q);
+            }
+
+            if (W.IsReady())
+            {
+                dmg += Player.GetSpellDamage(target, SpellSlot.W);
+            }
+
+            if (E.IsReady())
+            {
+                dmg += Player.GetSpellDamage(target, SpellSlot.E);
+            }
+
+            if (R.IsReady())
+            {
+                dmg += Player.GetSpellDamage(target, SpellSlot.R);
+            }
+
+            if (!Dfg.IsReady())
+            {
+                return (float) dmg;
+            }
+            dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
+            dmg += dmg * 0.2;
+
+            return (float) dmg;
+        }
+
+        public override void Combo(Menu comboMenu)
+        {
+            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
+            comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
+        }
+
+        public override void Harass(Menu harassMenu)
+        {
+            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useWHarass", "Use W").SetValue(true));
+            harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
+        }
+
+        public override void ItemMenu(Menu itemsMenu)
+        {
+            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
+        }
+
+        public override void Misc(Menu miscMenu)
+        {
+            var fleeMenu = new Menu("Flee", "mofLbFlee");
+            fleeMenu.AddItem(new MenuItem("Flee.UseW", "Use W/R").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("Flee.DoubleW", "Double Jump(W + R)").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("Flee.UseE", "Use E").SetValue(true));
+            miscMenu.AddSubMenu(fleeMenu);
+
+            miscMenu.AddItem(new MenuItem("eGapcloser", "E Gapcloser").SetValue(true));
+            miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
+            //miscMenu.AddItem(
+            //  new MenuItem("CloneLogic", "Clone Logic").SetValue(
+            //  new StringList(new[] {"Follow", "To Target"})));
+            // miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
+            miscMenu.AddItem(new MenuItem("Flee", "Flee!").SetValue(new KeyBind('z', KeyBindType.Press)));
+        }
+
+        public override void Drawings(Menu drawingMenu)
+        {
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
+        }
+
         #region Clone Logic
 
         private void DoCloneLogic()
         {
-
             var clone = Player.Pet as Obj_AI_Base;
 
             // Don't have clone or not valid
@@ -367,18 +447,19 @@ namespace Mid_or_Feed.Champions
                         ? Player.ServerPosition
                         : Player.GetWaypoints().FirstOrDefault().To3D();
 
-                    Utility.DelayAction.Add(delay, () =>
-                    {
-                        if (!HasValidClone)
+                    Utility.DelayAction.Add(
+                        delay, () =>
                         {
-                            return;
-                        }
+                            if (!HasValidClone)
+                            {
+                                return;
+                            }
 
-                        if (clone != null)
-                        {
-                            clone.IssueOrder(GameObjectOrder.MovePet, moveTo);
-                        }
-                    });
+                            if (clone != null)
+                            {
+                                clone.IssueOrder(GameObjectOrder.MovePet, moveTo);
+                            }
+                        });
                     break;
 
                 // To enemy
@@ -440,86 +521,5 @@ namespace Mid_or_Feed.Champions
         }
 
         #endregion
-
-        public override float GetComboDamage(Obj_AI_Hero target)
-        {
-            double dmg = 0;
-
-            if (Q.IsReady())
-            {
-                dmg += Player.GetSpellDamage(target, SpellSlot.Q);
-            }
-
-            if (W.IsReady())
-            {
-                dmg += Player.GetSpellDamage(target, SpellSlot.W);
-            }
-
-            if (E.IsReady())
-            {
-                dmg += Player.GetSpellDamage(target, SpellSlot.E);
-            }
-
-            if (R.IsReady())
-            {
-                dmg += Player.GetSpellDamage(target, SpellSlot.R);
-            }
-
-            if (!Dfg.IsReady())
-            {
-                return (float) dmg;
-            }
-            dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-            dmg += dmg*0.2;
-
-            return (float) dmg;
-        }
-
-        public override void Combo(Menu comboMenu)
-        {
-            comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useWBack", "W/R back when enemy dead").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
-            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
-            comboMenu.AddItem(new MenuItem("DontDoubleE", "Dont Double Chain").SetValue(true));
-        }
-
-        public override void Harass(Menu harassMenu)
-        {
-            harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
-            harassMenu.AddItem(new MenuItem("useWHarass", "Use W").SetValue(true));
-            harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
-        }
-
-        public override void ItemMenu(Menu itemsMenu)
-        {
-            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
-        }
-
-        public override void Misc(Menu miscMenu)
-        {
-            var fleeMenu = new Menu("Flee", "mofLbFlee");
-            fleeMenu.AddItem(new MenuItem("Flee.UseW", "Use W/R").SetValue(true));
-            fleeMenu.AddItem(new MenuItem("Flee.DoubleW", "Double Jump(W + R)").SetValue(true));
-            fleeMenu.AddItem(new MenuItem("Flee.UseE", "Use E").SetValue(true));
-            miscMenu.AddSubMenu(fleeMenu);
-
-            miscMenu.AddItem(new MenuItem("eGapcloser", "E Gapcloser").SetValue(true));
-            miscMenu.AddItem(new MenuItem("eInterrupt", "E to Interrupt").SetValue(true));
-            //miscMenu.AddItem(
-              //  new MenuItem("CloneLogic", "Clone Logic").SetValue(
-                  //  new StringList(new[] {"Follow", "To Target"})));
-           // miscMenu.AddItem(new MenuItem("FollowDelay", "Clone Follow Delay(MS)").SetValue(new Slider(300, 0, 1000)));
-            miscMenu.AddItem(new MenuItem("Flee", "Flee!").SetValue(new KeyBind('z', KeyBindType.Press)));
-        }
-
-        public override void Drawings(Menu drawingMenu)
-        {
-            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
-            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
-        }
-
     }
 }
