@@ -32,7 +32,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += DrawingOnOnDraw;
 
             PrintChat("Ahri loaded.");
@@ -61,14 +61,14 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (!GetBool("interruptE") || spell.DangerLevel != InterruptableDangerLevel.High)
+            if (!GetBool("interruptE") || args.DangerLevel != Interrupter2.DangerLevel.High)
             {
                 return;
             }
 
-            E.Cast(unit, Packets);
+            E.Cast(sender, Packets);
         }
 
         private void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)

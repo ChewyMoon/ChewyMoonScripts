@@ -33,7 +33,7 @@ namespace Mid_or_Feed.Champions
 
             Game.OnGameUpdate += Game_OnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += DrawingOnOnDraw;
         }
 
@@ -96,10 +96,10 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero unit, InterruptableSpell spell)
+        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (QCount != 3 || !Q.IsReady() || !GetBool("UseQInterrupt") || !unit.IsValidTarget() ||
-                spell.DangerLevel != InterruptableDangerLevel.High)
+                args.DangerLevel != Interrupter2.DangerLevel.High)
             {
                 return;
             }

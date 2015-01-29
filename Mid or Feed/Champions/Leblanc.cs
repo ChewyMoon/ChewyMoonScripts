@@ -48,7 +48,7 @@ namespace Mid_or_Feed.Champions
             // Setup Events
             Game.OnGameUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += Interrupter_OnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;
             //Obj_AI_Base.OnIssueOrder += ObjAiBaseOnOnIssueOrder;
 
@@ -95,7 +95,7 @@ namespace Mid_or_Feed.Champions
             get
             {
                 var clone = Player.Pet as Obj_AI_Base;
-                return clone != null && clone.IsValid && !clone.IsDead && clone.Health != 0f;
+                return clone != null && clone.IsValid && !clone.IsDead;
             }
         }
 
@@ -116,20 +116,20 @@ namespace Mid_or_Feed.Champions
             }
         }
 
-        private void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter_OnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (!GetBool("eInterrupt") || spell.DangerLevel != InterruptableDangerLevel.High)
+            if (!GetBool("eInterrupt") || args.DangerLevel != Interrupter2.DangerLevel.High)
             {
                 return;
             }
 
             if (E.IsReady())
             {
-                E.Cast(unit, Packets);
+                E.Cast(sender, Packets);
             }
             else if (R.IsReady() && RStatus == RSpell.E)
             {
-                R.Cast(unit, Packets);
+                R.Cast(sender, Packets);
             }
         }
 

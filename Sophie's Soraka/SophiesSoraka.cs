@@ -44,7 +44,7 @@ namespace Sophies_Soraka
             PrintChat("Loaded ! Definitely created by Sophie AND NOT CHEWYMOON :3");
 
 
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Game.OnGameUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
@@ -204,9 +204,12 @@ namespace Sophies_Soraka
             }
         }
 
-        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != InterruptableDangerLevel.High)
+            var unit = sender;
+            var spell = args;
+
+            if (Menu.Item("eInterrupt").GetValue<bool>() == false || spell.DangerLevel != Interrupter2.DangerLevel.High)
             {
                 return;
             }

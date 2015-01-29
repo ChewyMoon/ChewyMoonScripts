@@ -63,7 +63,7 @@ namespace ChewyMoonsIrelia
 
             // IreliaUpdater.CheckForUpdates();
             Game.OnGameUpdate += Game_OnGameUpdate;
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;
             Utility.HpBarDamageIndicator.DamageToUnit += DamageToUnit;
@@ -122,13 +122,16 @@ namespace ChewyMoonsIrelia
             _e.Cast(gapcloser.Sender, _packetCast);
         }
 
-        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
+            var spell = args;
+            var unit = sender;
+
             if (!_menu.Item("interruptUlts").GetValue<bool>())
             {
                 return;
             }
-            if (spell.DangerLevel != InterruptableDangerLevel.High || !CanStunTarget(unit))
+            if (spell.DangerLevel != Interrupter2.DangerLevel.High || !CanStunTarget(unit))
             {
                 return;
             }

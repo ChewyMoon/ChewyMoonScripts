@@ -30,22 +30,22 @@ namespace Mid_or_Feed.Champions
             Game.OnGameUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
         }
 
-        private bool ShouldUseR(Obj_AI_Hero target)
+        private bool ShouldUseR(Obj_AI_Base target)
         {
             return Player.GetSpellDamage(target, SpellSlot.R) > target.Health;
         }
 
-        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero unit, InterruptableSpell spell)
+        private void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (!unit.IsValidTarget())
             {
                 return;
             }
 
-            if (spell.DangerLevel != InterruptableDangerLevel.High)
+            if (args.DangerLevel != Interrupter2.DangerLevel.High)
             {
                 return;
             }

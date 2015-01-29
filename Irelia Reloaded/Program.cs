@@ -58,7 +58,7 @@ namespace Irelia_Reloaded
             Game.OnGameUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += InterrupterOnOnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
 
             // to get Q tickcount in least amount of lines.
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
@@ -72,9 +72,12 @@ namespace Irelia_Reloaded
             }
         }
 
-        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (spell.DangerLevel != InterruptableDangerLevel.High || !unit.CanStunTarget())
+            var spell = args;
+            var unit = sender;
+
+            if (spell.DangerLevel != Interrupter2.DangerLevel.High || !unit.CanStunTarget())
             {
                 return;
             }
