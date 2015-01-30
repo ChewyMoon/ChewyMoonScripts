@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Schema;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -123,12 +124,111 @@ namespace Mid_or_Feed.Champions
 
             switch (OrbwalkerMode)
             {
+                case Orbwalking.OrbwalkingMode.LastHit:
+                    DoLastHit();
+                    break;
+
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    DoWaveClear();
+                    break;
+
                 case Orbwalking.OrbwalkingMode.Mixed:
                     DoHarass();
+                    DoLastHit();
                     break;
+
                 case Orbwalking.OrbwalkingMode.Combo:
                     DoCombo();
                     break;
+            }
+        }
+
+        private void DoWaveClear()
+        {
+            var useQ = GetBool("UseQWC");
+            var useE = GetBool("UseEWC");
+
+            // Q-E Wave Clear
+            if (useQ && useE && Q.IsReady() && E.IsReady())
+            {
+                var location =
+                    MinionManager.GetBestCircularFarmLocation(
+                        MinionManager.GetMinions(E.Range).Select(x => x.ServerPosition).ToList().To2D(), 270, E.Range);
+
+               // find nearest minion to that position
+                var nearestMinion =
+                    ObjectManager.Get<Obj_AI_Minion>()
+                        .Where(x => x.IsValidTarget(E.Range))
+                        .OrderBy(x => x.Distance(location.Position))
+                        .FirstOrDefault();
+
+                E.Cast(nearestMinion, Packets);
+
+                var castTimeDelay = (int) ((Player.Distance(nearestMinion)/E.Speed) + E.Delay + Game.Ping/2f);
+                Utility.DelayAction.Add(castTimeDelay, () => Q.Cast(nearestMinion, Packets));
+            }
+
+            if (useQ && Q.IsReady())
+            {
+                var location = Q.GetLineFarmLocation(MinionManager.GetMinions(Q.Range));
+                Q.Cast(location.Position, Packets);
+            }
+
+            if (useE && E.IsReady())
+            {
+                var minion =
+                    ObjectManager.Get<Obj_AI_Minion>()
+                        .Where(x => x.IsValidTarget(E.Range))
+                        .FirstOrDefault(x => Player.GetSpellDamage(x, SpellSlot.E) > x.Health);
+
+                if (minion != null)
+                {
+                    E.Cast(minion, Packets);
+                }
+            }
+        }
+
+        private void DoLastHit()
+        {
+            var useQ = GetBool("UseQLH");
+            var useLastQ = GetBool("Use3QLH");
+            var useE = GetBool("UseELH");
+            var lastHitOnHarass = GetBool("LastHitOnHarass");
+
+            if (!lastHitOnHarass && OrbwalkerMode == Orbwalking.OrbwalkingMode.Mixed)
+            {
+                return;
+            }
+
+            if (!useLastQ && QCount == 3)
+            {
+                return;
+            }
+            
+            // Prioritize Q over E
+            if (useQ && Q.IsReady())
+            {
+                var minion =
+                    ObjectManager.Get<Obj_AI_Minion>()
+                        .Where(x => x.IsValidTarget(Q.Range))
+                        .FirstOrDefault(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health);
+
+                if (minion != null)
+                {
+                    Q.Cast(minion);
+                }
+            }
+            else if (useE && E.IsReady())
+            {
+                var minion =
+                    ObjectManager.Get<Obj_AI_Minion>()
+                        .Where(x => x.IsValidTarget(Q.Range))
+                        .FirstOrDefault(x => Player.GetSpellDamage(x, SpellSlot.E) > x.Health);
+
+                if (minion != null)
+                {
+                    E.Cast(minion);
+                }
             }
         }
 
@@ -367,6 +467,22 @@ namespace Mid_or_Feed.Champions
 
         public override void Misc(Menu config)
         {
+            var farmingMenu = new Menu("Farming", "yasFarm");
+
+            var lastHitMenu = new Menu("Last Hit", "LastHIt");
+            lastHitMenu.AddItem(new MenuItem("UseQLH", "Use Q").SetValue(true));
+            lastHitMenu.AddItem(new MenuItem("UseELH", "Use E").SetValue(false));
+            lastHitMenu.AddItem(new MenuItem("LastHitOnHarass", "Last Hit in Mixed Mode").SetValue(true));
+            lastHitMenu.AddItem(new MenuItem("Use3QLH", "Use 3rd Q for last hitting").SetValue(false));
+            farmingMenu.AddSubMenu(lastHitMenu);
+
+            var waveClearMenu = new Menu("Wave Clear", "yasWaveClear");
+            waveClearMenu.AddItem(new MenuItem("UseQWC", "Use Q").SetValue(true));
+            waveClearMenu.AddItem(new MenuItem("UseEWC", "Use E").SetValue(true));
+            farmingMenu.AddSubMenu(waveClearMenu);
+
+            config.AddSubMenu(farmingMenu);
+
             config.AddItem(new MenuItem("UseQInterrupt", "Use Q3 to Interrupt").SetValue(true));
             config.AddItem(new MenuItem("UseQGapclose", "Use Q3 Gapcloser").SetValue(true));
             config.AddItem(new MenuItem("UltDown", "Use R When Falling Down").SetValue(true));
