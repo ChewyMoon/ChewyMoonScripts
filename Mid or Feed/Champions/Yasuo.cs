@@ -476,7 +476,7 @@ namespace Mid_or_Feed.Champions
             lastHitMenu.AddItem(new MenuItem("Use3QLH", "Use 3rd Q for last hitting").SetValue(false));
             farmingMenu.AddSubMenu(lastHitMenu);
 
-            var waveClearMenu = new Menu("Wave Clear", "yasWaveClear");
+            var waveClearMenu = new Menu("Wave/Jungle Clear", "yasWaveClear");
             waveClearMenu.AddItem(new MenuItem("UseQWC", "Use Q").SetValue(true));
             waveClearMenu.AddItem(new MenuItem("UseEWC", "Use E").SetValue(true));
             farmingMenu.AddSubMenu(waveClearMenu);
