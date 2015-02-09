@@ -76,7 +76,7 @@ namespace EasyPeasyRivenSqueezy
             Q = new Spell(SpellSlot.Q, 260) { Delay = 0.5f };
             W = new Spell(SpellSlot.W, 260);
             E = new Spell(SpellSlot.E, 250) { Delay = 0.3f, Speed = 1450 };
-            R = new Spell(SpellSlot.R, 1000);
+            R = new Spell(SpellSlot.R, 1100);
             Ignite = new Spell(Player.GetSpellSlot("summonerdot"), 600);
 
             R.SetSkillshot(0.25f, 150, 2200, false, SkillshotType.SkillshotCone);
