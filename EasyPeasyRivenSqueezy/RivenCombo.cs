@@ -160,9 +160,7 @@ namespace EasyPeasyRivenSqueezy
                     }
 
                     Riven.E.Cast(target.ServerPosition);
-                    var timeE = Game.Ping / 2f + Riven.E.Delay + (Riven.Player.Distance(distE) / Riven.E.Speed);
-
-                    Utility.DelayAction.Add((int) timeE, () => Riven.R.Cast(Riven.Player));
+                    Riven.R.Cast(Riven.Player);
                 }
                     // Q -> Q -> E -> R -> Q
                 else if (Riven.QCount == 2 && Riven.Q.IsReady() && Riven.E.IsReady())
@@ -194,20 +192,15 @@ namespace EasyPeasyRivenSqueezy
                 }
 
                 Riven.E.Cast(target.Position);
-                var timeE = Game.Ping / 2f + Riven.E.Delay + (Riven.Player.Distance(distE) / Riven.E.Speed);
 
-                Utility.DelayAction.Add(
-                    (int) timeE, delegate
-                    {
-                        if (Hydra.IsReady() || Tiamat.IsReady())
-                        {
-                            CastCircleThing();
-                        }
-                        else
-                        {
-                            CastW();
-                        }
-                    });
+                if (Hydra.IsReady() || Tiamat.IsReady())
+                {
+                    CastCircleThing();
+                }
+                else
+                {
+                    CastW();
+                }
             }
             else if ((Hydra.IsReady() || Tiamat.IsReady()) && Riven.W.IsReady())
             {
