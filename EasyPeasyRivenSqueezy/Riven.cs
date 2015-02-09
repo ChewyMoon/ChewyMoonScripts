@@ -203,6 +203,7 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(new MenuItem("DontEInAARange", "Dont Use E if Target is in your AA range").SetValue(true));
             comboMenu.AddItem(new MenuItem("GapcloseQ", "Q Gapclose").SetValue(true));
             comboMenu.AddItem(new MenuItem("GapcloseE", "E Gapclose").SetValue(true));
+            comboMenu.AddItem(new MenuItem("FollowTarget", "Follow Target(Magnet)").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             var miscMenu = new Menu("Misc", "cmMisc");

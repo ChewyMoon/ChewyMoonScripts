@@ -3,6 +3,7 @@ using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
+using SharpDX;
 
 namespace EasyPeasyRivenSqueezy
 {
@@ -27,6 +28,11 @@ namespace EasyPeasyRivenSqueezy
         {
             // Set the extra delay here to save time
             Riven.QDelay = Riven.Menu.Item("QExtraDelay").GetValue<Slider>().Value;
+
+            if (Riven.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
+            {
+                Riven.Orbwalker.SetOrbwalkingPoint(new Vector3());
+            }
 
             if (Riven.Ignite.IsReady())
             {
@@ -133,7 +139,16 @@ namespace EasyPeasyRivenSqueezy
 
             if (!target.IsValidTarget())
             {
+                Riven.Orbwalker.SetOrbwalkingPoint(new Vector3());
                 return;
+            }
+
+            if (Riven.GetBool("FollowTarget") && Orbwalking.CanMove(0))
+            {
+                Riven.Orbwalker.SetOrbwalkingPoint(
+                    target.Distance(Riven.Player) < Orbwalking.GetRealAutoAttackRange(Riven.Player)
+                        ? new Vector3()
+                        : target.ServerPosition);
             }
 
             if (Ghostblade.IsReady())
