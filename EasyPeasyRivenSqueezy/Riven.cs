@@ -172,7 +172,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            Utility.DelayAction.Add(Player.Level <= 3 ? 75 : 60 + Game.Ping / 2, () => Q.Cast(target.Position));
+            Utility.DelayAction.Add(Player.Level <= 3 ? 80 : 60 + Game.Ping / 2, () => Q.Cast(target.Position));
         }
 
         public static bool GetBool(string item)
