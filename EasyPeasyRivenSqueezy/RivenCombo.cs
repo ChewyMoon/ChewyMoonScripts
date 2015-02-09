@@ -134,10 +134,10 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            if (Riven.GetBool("FollowTarget"))
-            {
+            //if (Riven.GetBool("FollowTarget"))
+           // {
                // Riven.Orbwalker.SetOrbwalkingPoint(target.ServerPosition);
-            }
+            //}
 
             if (Ghostblade.IsReady())
             {
