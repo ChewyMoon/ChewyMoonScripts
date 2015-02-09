@@ -174,7 +174,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            Utility.DelayAction.Add((int)((Player.AttackCastDelay * 100) + QDelay + Game.Ping / 2f), () => Q.Cast(target.Position));
+            Utility.DelayAction.Add((int)(((Player.AttackCastDelay * 1000) + QDelay + Game.Ping / 2f)) / 2, () => Q.Cast(target.Position));
         }
 
         public static bool GetBool(string item)
@@ -234,8 +234,8 @@ namespace EasyPeasyRivenSqueezy
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 {
                     // Game.Ping / 2 + 75
-                    Utility.DelayAction.Add((int) (Q.Delay * 750 + Game.Ping / 2f), () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
-                    Utility.DelayAction.Add((int)(Q.Delay * 750 + Game.Ping / 2f), Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add((int) (Q.Delay * 1000 - Game.Ping / 2f), () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
+                    Utility.DelayAction.Add((int)(Q.Delay * 1000 - Game.Ping / 2f), Orbwalking.ResetAutoAttackTimer);
                 }
             }
         }
