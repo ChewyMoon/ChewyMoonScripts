@@ -25,6 +25,9 @@ namespace EasyPeasyRivenSqueezy
 
         public static void OnGameUpdate(EventArgs args)
         {
+            // Set the extra delay here to save time
+            Riven.QDelay = Riven.Menu.Item("QExtraDelay").GetValue<Slider>().Value;
+
             if (Riven.Ignite.IsReady())
             {
                 IgniteKillSecure();
@@ -130,14 +133,8 @@ namespace EasyPeasyRivenSqueezy
 
             if (!target.IsValidTarget())
             {
-                //Riven.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
                 return;
             }
-
-            //if (Riven.GetBool("FollowTarget"))
-           // {
-               // Riven.Orbwalker.SetOrbwalkingPoint(target.ServerPosition);
-            //}
 
             if (Ghostblade.IsReady())
             {
@@ -314,11 +311,6 @@ namespace EasyPeasyRivenSqueezy
             dmg += (float) Riven.Player.GetAutoAttackDamage(hero, true);
 
             return dmg;
-        }
-
-        private static bool KillableBy(SpellSlot slot, Obj_AI_Base target)
-        {
-            return Riven.Player.GetSpellDamage(target, slot) > target.Health;
         }
     }
 }

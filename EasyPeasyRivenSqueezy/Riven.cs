@@ -62,6 +62,8 @@ namespace EasyPeasyRivenSqueezy
             get { return ObjectManager.Player; }
         }
 
+        public static int QDelay { get; set; }
+
         public static void OnGameLoad(EventArgs args)
         {
             if (Player.ChampionName != "Riven")
@@ -172,7 +174,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            Utility.DelayAction.Add(Player.Level <= 3 ? 80 : 60 + Game.Ping / 2, () => Q.Cast(target.Position));
+            Utility.DelayAction.Add((int) (((Player.AttackDelay * 100) / 1.5) + QDelay), () => Q.Cast(target.Position));
         }
 
         public static bool GetBool(string item)
@@ -196,11 +198,11 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(
                 new MenuItem("UseROption", "When to Use R").SetValue(
                     new StringList(new[] { "Hard", "Easy", "Probably" })));
+            comboMenu.AddItem(new MenuItem("QExtraDelay", "Extra Q Delay").SetValue(new Slider(0, 0, 200)));
             comboMenu.AddItem(new MenuItem("DontEIntoWall", "Dont Headbutt Wall With E").SetValue(true));
             comboMenu.AddItem(new MenuItem("DontEInAARange", "Dont Use E if Target is in your AA range").SetValue(true));
             comboMenu.AddItem(new MenuItem("GapcloseQ", "Q Gapclose").SetValue(true));
             comboMenu.AddItem(new MenuItem("GapcloseE", "E Gapclose").SetValue(true));
-            //comboMenu.AddItem(new MenuItem("FollowTarget", "Follow Target").SetValue(false));
             Menu.AddSubMenu(comboMenu);
 
             var miscMenu = new Menu("Misc", "cmMisc");
