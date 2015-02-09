@@ -174,7 +174,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            Utility.DelayAction.Add((int) (((Player.AttackDelay * 100) / 1.5) + QDelay), () => Q.Cast(target.Position));
+            Utility.DelayAction.Add((int)(((Player.AttackDelay * 100) / 1.5) + QDelay + Game.Ping / 2f), () => Q.Cast(target.Position));
         }
 
         public static bool GetBool(string item)
