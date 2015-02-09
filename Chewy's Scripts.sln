@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsIrelia", "ChewyMoonsIrelia\ChewyMoonsIrelia.csproj", "{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanternCockBlocker", "LanternCockBlocker\LanternCockBlocker.csproj", "{A75B6255-9437-454C-A264-EAD48AF0F2F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irelia Reloaded", "Irelia Reloaded\Irelia Reloaded.csproj", "{2B1073BA-80F0-4C9B-B152-535CDF580D8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPeasyRivenSqueezy", "EasyPeasyRivenSqueezy\EasyPeasyRivenSqueezy.csproj", "{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
