@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
 
@@ -88,12 +89,36 @@ namespace EasyPeasyRivenSqueezy
             Game.OnGameUpdate += RivenCombo.OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
 
+            AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
+            Interrupter2.OnInterruptableTarget += Interrupter2OnOnInterruptableTarget;
+
             Utility.HpBarDamageIndicator.Enabled = true;
             Utility.HpBarDamageIndicator.DamageToUnit = RivenCombo.GetDamage;
 
             Utils.EnableConsoleEditMode();
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>EasyPeasyRivenSqueezy:</b></font> Loaded");
+        }
+
+        private static void Interrupter2OnOnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
+        {
+            if (!sender.IsValidTarget(EWRange) || !GetBool("InterruptEW"))
+            {
+                return;
+            }
+
+            E.Cast(sender.Position);
+            W.Cast();
+        }
+
+        private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (!gapcloser.Sender.IsValidTarget(W.Range) || !GetBool("GapcloserW"))
+            {
+                return;
+            }
+
+            W.Cast();
         }
 
         private static void DrawingOnOnDraw(EventArgs args)
@@ -169,13 +194,18 @@ namespace EasyPeasyRivenSqueezy
 
         private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
-            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo || !unit.IsMe)
+            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo || !unit.IsMe || !target.IsValidTarget())
             {
                 return;
             }
 
-            Utility.DelayAction.Add((int)(((Player.AttackCastDelay * 1000) + QDelay + Game.Ping / 2f)) / 2, () => Q.Cast(target.Position));
+            LastBeforeAttack = Environment.TickCount;
+
+            
+            Utility.DelayAction.Add(QDelay + 75 + Game.Ping / 2, () => Q.Cast(target.Position));
         }
+
+        public static int LastBeforeAttack { get; set; }
 
         public static bool GetBool(string item)
         {
@@ -209,9 +239,18 @@ namespace EasyPeasyRivenSqueezy
             var miscMenu = new Menu("Misc", "cmMisc");
             miscMenu.AddItem(new MenuItem("KeepQAlive", "Keep Q Alive").SetValue(true));
             miscMenu.AddItem(new MenuItem("KeepRAlive", "Keep R Alive").SetValue(true));
+            miscMenu.AddItem(new MenuItem("GapcloserW", "W On Gapcloser").SetValue(true));
+            miscMenu.AddItem(new MenuItem("InterruptEW", "Interrupt with EW").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKillable", "Ignite if Killable").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKS", "Ignite KS").SetValue(true));
             Menu.AddSubMenu(miscMenu);
+
+            var fleeMenu = new Menu("Flee", "cmFlee");
+            fleeMenu.AddItem(new MenuItem("UseQFlee", "Use Q").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("UseEFlee", "Use E").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("UseGattaGoFast", "Use Ghostblade").SetValue(true));
+            fleeMenu.AddItem(new MenuItem("FleeActive", "Flee!").SetValue(new KeyBind(84, KeyBindType.Press)));
+            Menu.AddSubMenu(fleeMenu);
 
             var drawMenu = new Menu("Drawing", "cmDraw");
             drawMenu.AddItem(new MenuItem("DrawEngageRange", "Draw Engage Range").SetValue(true));
@@ -235,8 +274,8 @@ namespace EasyPeasyRivenSqueezy
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 {
                     // Game.Ping / 2 + 75
-                    Utility.DelayAction.Add((int) (Q.Delay * 1000 - Game.Ping / 2f), () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
-                    Utility.DelayAction.Add((int)(Q.Delay * 1000 - Game.Ping / 2f), Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add((int) 140, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
+                    Utility.DelayAction.Add((int) 140, Orbwalking.ResetAutoAttackTimer);
                 }
             }
         }

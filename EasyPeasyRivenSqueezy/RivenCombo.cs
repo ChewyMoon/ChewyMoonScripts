@@ -44,12 +44,48 @@ namespace EasyPeasyRivenSqueezy
                 Riven.Q.Cast(Game.CursorPos);
             }
 
-            switch (Riven.Orbwalker.ActiveMode)
+            // TODO: make this for combo only when laneclear + jungle clear is made
+            if (
+                !(Orbwalking.CanAttack() &&
+                  ObjectManager.Get<Obj_AI_Hero>()
+                      .Any(x => x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(Riven.Player)))))
             {
-                case Orbwalking.OrbwalkingMode.Combo:
-                    DoCombo();
-                    break;
+                switch (Riven.Orbwalker.ActiveMode)
+                {
+                    case Orbwalking.OrbwalkingMode.Combo:
+                        DoCombo();
+                        break;
+                }
+            }          
+
+            if (Riven.Menu.Item("FleeActive").IsActive())
+            {
+                Flee();
             }
+        }
+
+        private static void Flee()
+        {
+            var useQ = Riven.GetBool("UseQFlee");
+            var useE = Riven.GetBool("UseEFlee");
+            var useGattaGoFast = Riven.GetBool("UseGattaGoFast");
+
+            Riven.Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+
+            if (useGattaGoFast && Ghostblade.IsReady())
+            {
+                Ghostblade.Cast();
+            }
+
+            if (useE && Riven.E.IsReady() && Riven.QCount == 0)
+            {
+                Riven.E.Cast(Game.CursorPos);
+            }
+
+            if (useQ && Riven.Q.IsReady())
+            {
+                Riven.Q.Cast(Game.CursorPos);
+            }        
         }
 
         private static void IgniteKillSecure()
@@ -290,8 +326,8 @@ namespace EasyPeasyRivenSqueezy
 
             if (Riven.Q.IsReady())
             {
-                dmg += Riven.Q.GetDamage(hero) * 3;
-                dmg += Riven.PassiveDmg * 3;
+                dmg += Riven.Q.GetDamage(hero) * 3 - Riven.QCount;
+                dmg += Riven.PassiveDmg * 3 - Riven.QCount;
                 dmg += (float) Riven.Player.GetAutoAttackDamage(hero, true) * 3;
             }
 
