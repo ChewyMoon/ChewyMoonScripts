@@ -228,7 +228,7 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(
                 new MenuItem("UseROption", "When to Use R").SetValue(
                     new StringList(new[] { "Hard", "Easy", "Probably" })));
-            comboMenu.AddItem(new MenuItem("QExtraDelay", "Extra Q Delay").SetValue(new Slider(300, 0, 1000)));
+            comboMenu.AddItem(new MenuItem("QExtraDelay", "Extra Q Delay").SetValue(new Slider(0, 0, 1000)));
             comboMenu.AddItem(new MenuItem("DontEIntoWall", "Dont Headbutt Wall With E").SetValue(true));
             comboMenu.AddItem(new MenuItem("DontEInAARange", "Dont Use E if Target is in your AA range").SetValue(true));
             comboMenu.AddItem(new MenuItem("GapcloseQ", "Q Gapclose").SetValue(true));
