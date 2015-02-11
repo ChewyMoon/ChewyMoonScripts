@@ -115,16 +115,9 @@ namespace Mid_or_Feed.Champions
                 {
                     spell.Cast(target, Packets);
                 }
-                else
+                else if(spell.Slot == SpellSlot.R && ShouldUseR(target))
                 {
-                    if (GetBool("UseRKillable") && ShouldUseR(target))
-                    {
-                        spell.Cast(target, Packets);
-                    }
-                    else
-                    {
-                        spell.Cast(target, Packets);
-                    }
+                    spell.CastOnUnit(target, Packets);
                 }
             }
         }
@@ -153,7 +146,6 @@ namespace Mid_or_Feed.Champions
             config.AddItem(new MenuItem("UseW", "Use W").SetValue(true));
             config.AddItem(new MenuItem("UseE", "Use E").SetValue(true));
             config.AddItem(new MenuItem("UseR", "Use R").SetValue(true));
-            config.AddItem(new MenuItem("UseRKillable", "Only R if killable").SetValue(true));
         }
 
         public override void Drawings(Menu config)
