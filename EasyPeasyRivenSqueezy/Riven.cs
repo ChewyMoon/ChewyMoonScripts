@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace EasyPeasyRivenSqueezy
 {
@@ -65,6 +66,8 @@ namespace EasyPeasyRivenSqueezy
 
         public static int QDelay { get; set; }
 
+        public static Obj_AI_Hero LastTarget { get; set; }
+
         public static void OnGameLoad(EventArgs args)
         {
             if (Player.ChampionName != "Riven")
@@ -85,7 +88,8 @@ namespace EasyPeasyRivenSqueezy
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
 
-            Orbwalking.OnAttack += OrbwalkingOnAfterAttack;
+            Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
+            Orbwalking.BeforeAttack += OrbwalkingOnBeforeAttack;
             Game.OnGameUpdate += RivenCombo.OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
 
@@ -98,6 +102,22 @@ namespace EasyPeasyRivenSqueezy
             Utils.EnableConsoleEditMode();
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>EasyPeasyRivenSqueezy:</b></font> Loaded");
+        }
+
+        private static void OrbwalkingOnBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            var unit = args.Unit;
+            var target = args.Target;
+
+            if (CanQ == false || !unit.IsMe || !target.IsValidTarget() || !Orbwalking.CanAttack() || !Q.IsReady())
+            {
+                return;
+            }
+
+            var time = (int) ((int) (Player.AttackCastDelay * 1000) + QDelay + Game.Ping / 2.5);
+            CanQ = false;
+
+            Utility.DelayAction.Add(time, () => Q.Cast(target.Position));
         }
 
         private static void Interrupter2OnOnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
@@ -166,8 +186,8 @@ namespace EasyPeasyRivenSqueezy
             if (args.SData.Name == "ItemTiamatCleave" &&
                 ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(W.Range)))
             {
-                Utility.DelayAction.Add(Game.Ping / 2, () => W.Cast());
-                Utility.DelayAction.Add((int) (Game.Ping / 1.5), Orbwalking.ResetAutoAttackTimer);
+                W.Cast();
+                Orbwalking.ResetAutoAttackTimer();
             }
 
             if (args.SData.Name == "RivenFengShuiEngine" && GetBool("KeepRAlive"))
@@ -192,20 +212,27 @@ namespace EasyPeasyRivenSqueezy
             }
         }
 
-        private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit target)
+        private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit leTarget)
         {
-            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo || !unit.IsMe || !target.IsValidTarget())
+            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo || !unit.IsMe || !leTarget.IsValidTarget())
             {
                 return;
             }
 
-            LastBeforeAttack = Environment.TickCount;
+            if (!unit.IsMe)
+            {
+                return;
+            }
 
-            
-            Utility.DelayAction.Add(QDelay + 75 + Game.Ping / 2, () => Q.Cast(target.Position));
+            CanQ = true;
+
+            if (Q.IsReady())
+            {
+                Utility.DelayAction.Add((int) (Q.Delay * 1000) + Game.Ping / 2, Orbwalking.ResetAutoAttackTimer);
+            }
         }
 
-        public static int LastBeforeAttack { get; set; }
+        public static bool CanQ { get; set; }
 
         public static bool GetBool(string item)
         {
@@ -273,9 +300,7 @@ namespace EasyPeasyRivenSqueezy
 
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 {
-                    // Game.Ping / 2 + 75
-                    Utility.DelayAction.Add((int) 140, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
-                    Utility.DelayAction.Add((int) 140, Orbwalking.ResetAutoAttackTimer);
+                    Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
                 }
             }
         }

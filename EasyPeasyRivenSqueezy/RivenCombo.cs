@@ -44,20 +44,13 @@ namespace EasyPeasyRivenSqueezy
                 Riven.Q.Cast(Game.CursorPos);
             }
 
-            // TODO: make this for combo only when laneclear + jungle clear is made
-            if (
-                !(Orbwalking.CanAttack() &&
-                  ObjectManager.Get<Obj_AI_Hero>()
-                      .Any(x => x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(Riven.Player)))))
+            switch (Riven.Orbwalker.ActiveMode)
             {
-                switch (Riven.Orbwalker.ActiveMode)
-                {
-                    case Orbwalking.OrbwalkingMode.Combo:
-                        DoCombo();
-                        break;
-                }
-            }          
-
+                case Orbwalking.OrbwalkingMode.Combo:
+                    DoCombo();
+                    break;
+            }
+                     
             if (Riven.Menu.Item("FleeActive").IsActive())
             {
                 Flee();
@@ -144,10 +137,19 @@ namespace EasyPeasyRivenSqueezy
                 Riven.E.Cast();
                 Riven.R.Cast(target, false, true);
             }
+            // Hydra/Tiamat + R
             else if (GetCircleThingDamage(target) + Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health)
             {
                 CastCircleThing();
                 Riven.R.Cast(target, false, true);
+            }
+            // Ignite + R
+            else if (Riven.Ignite.IsReady() &&
+                     Riven.Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) +
+                     Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health && Riven.Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Riven.Player))
+            {
+                Riven.Ignite.Cast(target);
+                Riven.R.Cast(target);
             }
             else if (Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health)
             {
@@ -178,6 +180,8 @@ namespace EasyPeasyRivenSqueezy
                 Riven.Orbwalker.SetOrbwalkingPoint(new Vector3());
                 return;
             }
+
+            Riven.LastTarget = target;
 
             if (Riven.GetBool("FollowTarget") && Orbwalking.CanMove(0))
             {
@@ -224,10 +228,6 @@ namespace EasyPeasyRivenSqueezy
                 {
                     Riven.R.Cast(Riven.Player);
                     Riven.W.Cast();
-                }
-                else if(target.Distance(Riven.Player) < Orbwalking.GetRealAutoAttackRange(Riven.Player))
-                {
-                    Riven.R.Cast(Riven.Player);
                 }
             }
 
