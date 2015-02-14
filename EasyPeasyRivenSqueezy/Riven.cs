@@ -114,7 +114,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            var time = (int) ((int) (Player.AttackCastDelay * 1000) + QDelay + Game.Ping / 2.5);
+            var time = (int) ((int) (Player.AttackCastDelay * 1000) + QDelay + 175 + Game.Ping / 2.5);
             CanQ = false;
 
             Utility.DelayAction.Add(time, () => Q.Cast(target.Position));
@@ -187,7 +187,11 @@ namespace EasyPeasyRivenSqueezy
                 ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(W.Range)))
             {
                 W.Cast();
-                Orbwalking.ResetAutoAttackTimer();
+
+                if (!Orbwalking.CanAttack())
+                {
+                    Orbwalking.ResetAutoAttackTimer();
+                }
             }
 
             if (args.SData.Name == "RivenFengShuiEngine" && GetBool("KeepRAlive"))
@@ -225,11 +229,6 @@ namespace EasyPeasyRivenSqueezy
             }
 
             CanQ = true;
-
-            if (Q.IsReady())
-            {
-                Utility.DelayAction.Add((int) (Q.Delay * 1000) + Game.Ping / 2, Orbwalking.ResetAutoAttackTimer);
-            }
         }
 
         public static bool CanQ { get; set; }
@@ -300,7 +299,8 @@ namespace EasyPeasyRivenSqueezy
 
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 {
-                    Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+                    Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
+                    Utility.DelayAction.Add(140, Orbwalking.ResetAutoAttackTimer);
                 }
             }
         }
