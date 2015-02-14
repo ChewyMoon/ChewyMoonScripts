@@ -83,13 +83,12 @@ namespace EasyPeasyRivenSqueezy
             R = new Spell(SpellSlot.R, 1100);
             Ignite = new Spell(Player.GetSpellSlot("summonerdot"), 600);
 
+            Q.SetSkillshot(0.5f, 100, 1400, false, SkillshotType.SkillshotCone);
             R.SetSkillshot(0.25f, 150, 2200, false, SkillshotType.SkillshotCone);
 
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
 
-            Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
-            Orbwalking.BeforeAttack += OrbwalkingOnBeforeAttack;
             Game.OnGameUpdate += RivenCombo.OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
 
@@ -102,22 +101,6 @@ namespace EasyPeasyRivenSqueezy
             Utils.EnableConsoleEditMode();
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>EasyPeasyRivenSqueezy:</b></font> Loaded");
-        }
-
-        private static void OrbwalkingOnBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
-        {
-            var unit = args.Unit;
-            var target = args.Target;
-
-            if (CanQ == false || !unit.IsMe || !target.IsValidTarget() || !Orbwalking.CanAttack() || !Q.IsReady())
-            {
-                return;
-            }
-
-            var time = (int) ((int) (Player.AttackCastDelay * 1000) + QDelay + 175 + Game.Ping / 2.5);
-            CanQ = false;
-
-            Utility.DelayAction.Add(time, () => Q.Cast(target.Position));
         }
 
         private static void Interrupter2OnOnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
@@ -216,21 +199,6 @@ namespace EasyPeasyRivenSqueezy
             }
         }
 
-        private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit leTarget)
-        {
-            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo || !unit.IsMe || !leTarget.IsValidTarget())
-            {
-                return;
-            }
-
-            if (!unit.IsMe)
-            {
-                return;
-            }
-
-            CanQ = true;
-        }
-
         public static bool CanQ { get; set; }
 
         public static bool GetBool(string item)
@@ -254,6 +222,9 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(
                 new MenuItem("UseROption", "When to Use R").SetValue(
                     new StringList(new[] { "Hard", "Easy", "Probably" })));
+            comboMenu.AddItem(new MenuItem("UseRPercent", "Dont R if target health percent less than ").SetValue(new Slider(1, 1)));
+            comboMenu.AddItem(
+                new MenuItem("UseRIfCantCancel", "Still use R if cannot cancel animation").SetValue(false));
             comboMenu.AddItem(new MenuItem("QExtraDelay", "Extra Q Delay").SetValue(new Slider(0, 0, 1000)));
             comboMenu.AddItem(new MenuItem("DontEIntoWall", "Dont Headbutt Wall With E").SetValue(true));
             comboMenu.AddItem(new MenuItem("DontEInAARange", "Dont Use E if Target is in your AA range").SetValue(true));
@@ -293,15 +264,25 @@ namespace EasyPeasyRivenSqueezy
             {
                 return;
             }
+
             if (args.Animation.Contains("Spell1"))
             {
                 LastQ = Environment.TickCount;
 
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 {
-                    Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
-                    Utility.DelayAction.Add(140, Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, GetBool("FollowTarget") ? LastTarget.ServerPosition : Game.CursorPos));
+                    Utility.DelayAction.Add((int)(100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
                 }
+            }
+
+            if (args.Animation.Contains("Attack") && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+            {
+                Utility.DelayAction.Add((int)(Player.AttackDelay * 100), () =>
+                {
+                    //Player.IssueOrder(GameObjectOrder.MoveTo, Q.GetPrediction(LastTarget).CastPosition);
+                    Q.Cast(Game.CursorPos);
+                });
             }
         }
     }

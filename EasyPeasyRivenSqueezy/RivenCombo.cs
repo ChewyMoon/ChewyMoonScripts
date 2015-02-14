@@ -141,7 +141,7 @@ namespace EasyPeasyRivenSqueezy
             else if (GetCircleThingDamage(target) + Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health)
             {
                 CastCircleThing();
-                Riven.R.Cast(target, false, true);
+                Utility.DelayAction.Add(100, () => Riven.R.Cast(target, false, true));
             }
             // Ignite + R
             else if (Riven.Ignite.IsReady() &&
@@ -202,7 +202,7 @@ namespace EasyPeasyRivenSqueezy
             }
 
             // Use R logic
-            if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady())
+            if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady() && target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value)
             {
                 // E -> R
                 if (Riven.E.IsReady())
@@ -228,6 +228,10 @@ namespace EasyPeasyRivenSqueezy
                 {
                     Riven.R.Cast(Riven.Player);
                     Riven.W.Cast();
+                }
+                else if (Riven.GetBool("UseRIfCantCancel"))
+                {
+                    Riven.R.Cast(Riven.Player);
                 }
             }
 
