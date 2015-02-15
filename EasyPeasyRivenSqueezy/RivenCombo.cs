@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Forms;
 using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
@@ -29,6 +30,8 @@ namespace EasyPeasyRivenSqueezy
             // Set the extra delay here to save time
             Riven.QDelay = Riven.Menu.Item("QExtraDelay").GetValue<Slider>().Value;
 
+            NotificationHandler.Update();
+
             if (Riven.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 Riven.Orbwalker.SetOrbwalkingPoint(new Vector3());
@@ -42,6 +45,7 @@ namespace EasyPeasyRivenSqueezy
                 !Riven.Player.IsRecalling() && Riven.GetBool("KeepQAlive"))
             {
                 Riven.Q.Cast(Game.CursorPos);
+                NotificationHandler.ShowInfo("Saved Q!");
             }
 
             switch (Riven.Orbwalker.ActiveMode)
@@ -49,11 +53,53 @@ namespace EasyPeasyRivenSqueezy
                 case Orbwalking.OrbwalkingMode.Combo:
                     DoCombo();
                     break;
+
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    DoWaveClear();
+                    break;
             }
                      
             if (Riven.Menu.Item("FleeActive").IsActive())
             {
                 Flee();
+            }
+        }
+
+        private static void DoWaveClear()
+        {
+            if (!(Riven.Orbwalker.GetTarget() is Obj_AI_Minion))
+            {
+                return;
+            }
+
+            var minion = (Obj_AI_Base) Riven.Orbwalker.GetTarget();
+            Riven.LastTarget = minion;
+
+            if (Riven.E.IsReady() && Riven.W.IsReady())
+            {
+                if (Riven.GetBool("UseItems"))
+                {
+                    Ghostblade.Cast();
+                }
+
+                var location =
+                    MinionManager.GetBestCircularFarmLocation(
+                        ObjectManager.Get<Obj_AI_Base>().Where(x => x.IsValidTarget(Riven.W.Range)).Select(x => x.ServerPosition.To2D()).ToList(),
+                        Riven.W.Range, Riven.EWRange);
+
+                Riven.E.Cast(location.Position);
+                CastCircleThing();
+                Riven.W.Cast();
+            }
+            else if (Riven.W.IsReady())
+            {
+                if (Riven.GetBool("UseItems"))
+                {
+                    Ghostblade.Cast();
+                }
+
+                CastCircleThing();
+                Riven.W.Cast();
             }
         }
 
@@ -97,6 +143,7 @@ namespace EasyPeasyRivenSqueezy
                 if (bestTarget != null)
                 {
                     Riven.Ignite.CastOnUnit(bestTarget);
+                    NotificationHandler.ShowInfo("Ignited " + bestTarget.ChampionName + "!");
                 }
             }
 
@@ -111,6 +158,7 @@ namespace EasyPeasyRivenSqueezy
                 if (bestTarget != null)
                 {
                     Riven.Ignite.CastOnUnit(bestTarget);
+                    NotificationHandler.ShowInfo("Ignited " + bestTarget.ChampionName + "!");
                 }
             }
         }
@@ -204,6 +252,8 @@ namespace EasyPeasyRivenSqueezy
             // Use R logic
             if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady() && target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value)
             {
+                NotificationHandler.ShowInfo("Using R!");
+
                 // E -> R
                 if (Riven.E.IsReady())
                 {
@@ -232,6 +282,10 @@ namespace EasyPeasyRivenSqueezy
                 else if (Riven.GetBool("UseRIfCantCancel"))
                 {
                     Riven.R.Cast(Riven.Player);
+                }
+                else
+                {
+                    NotificationHandler.ShowInfo("Could not use R! (CD)");
                 }
             }
 
@@ -289,7 +343,7 @@ namespace EasyPeasyRivenSqueezy
             }
         }
 
-        private static bool CanHardEngage(Obj_AI_Hero target)
+        public static bool CanHardEngage(Obj_AI_Hero target)
         {
             var dmg = GetDamage(target);
             switch (Riven.Menu.Item("UseROption").GetValue<StringList>().SelectedValue)
@@ -317,8 +371,24 @@ namespace EasyPeasyRivenSqueezy
 
         public static void CastCircleThing()
         {
-            if (ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
+            var minions = Riven.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo;
+
+            if (minions)
             {
+                if (!ObjectManager.Get<Obj_AI_Minion>().Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
+                {
+                    return;
+                }
+                Hydra.Cast();
+                Tiamat.Cast();
+            }
+            else
+            {
+                if (!ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
+                {
+                    return;
+                }
+
                 Hydra.Cast();
                 Tiamat.Cast();
             }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
 using Color = System.Drawing.Color;
 
 namespace EasyPeasyRivenSqueezy
@@ -66,7 +64,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static int QDelay { get; set; }
 
-        public static Obj_AI_Hero LastTarget { get; set; }
+        public static Obj_AI_Base LastTarget { get; set; }
 
         public static void OnGameLoad(EventArgs args)
         {
@@ -98,7 +96,7 @@ namespace EasyPeasyRivenSqueezy
             Utility.HpBarDamageIndicator.Enabled = true;
             Utility.HpBarDamageIndicator.DamageToUnit = RivenCombo.GetDamage;
 
-            Utils.EnableConsoleEditMode();
+            NotificationHandler.ShowWelcome();
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>EasyPeasyRivenSqueezy:</b></font> Loaded");
         }
@@ -107,11 +105,14 @@ namespace EasyPeasyRivenSqueezy
         {
             if (!sender.IsValidTarget(EWRange) || !GetBool("InterruptEW"))
             {
+                NotificationHandler.ShowInterrupterAlert(false);
                 return;
             }
 
             E.Cast(sender.Position);
             W.Cast();
+
+            NotificationHandler.ShowInterrupterAlert(true);
         }
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -121,7 +122,14 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            W.Cast();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && RivenCombo.CanHardEngage(gapcloser.Sender))
+            {
+                R.Cast();
+                RivenCombo.CastCircleThing();
+                W.Cast();
+            }
+            
+            NotificationHandler.ShowGapcloserAlert();
         }
 
         private static void DrawingOnOnDraw(EventArgs args)
@@ -167,7 +175,7 @@ namespace EasyPeasyRivenSqueezy
             }
 
             if (args.SData.Name == "ItemTiamatCleave" &&
-                ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(W.Range)))
+                ObjectManager.Get<Obj_AI_Base>().Any(x => x.IsValidTarget(W.Range)))
             {
                 W.Cast();
 
@@ -233,6 +241,11 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(new MenuItem("FollowTarget", "Follow Target(Magnet)").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
+            var farmMenu = new Menu("Wave Clear", "cmWC");
+            farmMenu.AddItem(new MenuItem("UseFastQ", "Use Fast Q").SetValue(true));
+            farmMenu.AddItem(new MenuItem("UseItems", "Use Items").SetValue(false));
+            Menu.AddSubMenu(farmMenu);
+
             var miscMenu = new Menu("Misc", "cmMisc");
             miscMenu.AddItem(new MenuItem("KeepQAlive", "Keep Q Alive").SetValue(true));
             miscMenu.AddItem(new MenuItem("KeepRAlive", "Keep R Alive").SetValue(true));
@@ -240,6 +253,7 @@ namespace EasyPeasyRivenSqueezy
             miscMenu.AddItem(new MenuItem("InterruptEW", "Interrupt with EW").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKillable", "Ignite if Killable").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKS", "Ignite KS").SetValue(true));
+            miscMenu.AddItem(new MenuItem("Notifications", "Use Notifications").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             var fleeMenu = new Menu("Flee", "cmFlee");
@@ -269,19 +283,27 @@ namespace EasyPeasyRivenSqueezy
             {
                 LastQ = Environment.TickCount;
 
-                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
-                    Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, GetBool("FollowTarget") ? LastTarget.ServerPosition : Game.CursorPos));
-                    Utility.DelayAction.Add((int)(100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
+                    // TODO: implement this
+                    var movePos =
+                        (ObjectManager.Player.Position.To2D() -
+                         (Player.BoundingRadius + 10) * ObjectManager.Player.Direction.To2D().Perpendicular()).To3D();
+                    
+                    Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
+                    Utility.DelayAction.Add((int)(QDelay + 100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
                 }
             }
 
-            if (args.Animation.Contains("Attack") && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+            if (args.Animation.Contains("Attack") && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
             {
-                Utility.DelayAction.Add((int)(Player.AttackDelay * 100), () =>
+                var aaDelay = Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear
+                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100 : Player.AttackCastDelay * 1000
+                    : Player.AttackDelay * 100;
+                Utility.DelayAction.Add((int)(QDelay + aaDelay), () =>
                 {
                     //Player.IssueOrder(GameObjectOrder.MoveTo, Q.GetPrediction(LastTarget).CastPosition);
-                    Q.Cast(Game.CursorPos);
+                    Q.Cast(LastTarget.Position);
                 });
             }
         }
