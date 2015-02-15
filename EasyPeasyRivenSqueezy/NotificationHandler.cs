@@ -33,7 +33,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static void ShowGapcloserAlert()
         {
-            if (Environment.TickCount - _lastGapcloserAlert <= NotificationDelay || !NotificationsEnabled)
+            if (Environment.TickCount - _lastGapcloserAlert >= NotificationDelay || !NotificationsEnabled)
             {
                 return;
             }
@@ -51,7 +51,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static void ShowInterrupterAlert(bool interrupted)
         {
-            if (Environment.TickCount - _lastInterrupterAlert <= NotificationDelay || !NotificationsEnabled)
+            if (Environment.TickCount - _lastInterrupterAlert >= NotificationDelay || !NotificationsEnabled)
             {
                 return;
             }
@@ -69,7 +69,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static void ShowWarningAlert(string text)
         {
-            if (Environment.TickCount - _lastWarningAlert <= NotificationDelay || !NotificationsEnabled)
+            if (Environment.TickCount - _lastWarningAlert >= NotificationDelay || !NotificationsEnabled)
             {
                 return;
             }
@@ -86,7 +86,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static void ShowInfo(string text)
         {
-            if (Environment.TickCount - _lastInfoNotification <= NotificationDelay || !NotificationsEnabled)
+            if (Environment.TickCount - _lastInfoNotification >= NotificationDelay || !NotificationsEnabled)
             {
                 return;
             }
