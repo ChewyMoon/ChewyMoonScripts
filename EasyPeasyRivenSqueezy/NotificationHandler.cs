@@ -105,11 +105,13 @@ namespace EasyPeasyRivenSqueezy
                 if (_modeNotification != null)
                 {
                     Notifications.RemoveNotification(_modeNotification);
+                    _modeNotification = null;
                 }
 
                 if (_rModeNotification != null)
                 {
                     Notifications.RemoveNotification(_rModeNotification);
+                    _rModeNotification = null;
                 }
 
                 return;
