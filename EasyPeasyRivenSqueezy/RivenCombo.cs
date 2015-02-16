@@ -84,7 +84,7 @@ namespace EasyPeasyRivenSqueezy
 
                 var location =
                     MinionManager.GetBestCircularFarmLocation(
-                        ObjectManager.Get<Obj_AI_Base>().Where(x => x.IsValidTarget(Riven.W.Range)).Select(x => x.ServerPosition.To2D()).ToList(),
+                        MinionManager.GetMinions(Riven.EWRange, MinionTypes.All, MinionTeam.NotAlly).Select(x => x.ServerPosition.To2D()).ToList(),
                         Riven.W.Range, Riven.EWRange);
 
                 Riven.E.Cast(location.Position);
