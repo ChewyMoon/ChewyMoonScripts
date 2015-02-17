@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irelia Reloaded", "Irelia R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPeasyRivenSqueezy", "EasyPeasyRivenSqueezy\EasyPeasyRivenSqueezy.csproj", "{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snitched", "Snitched\Snitched.csproj", "{B782B6E1-6541-41F1-99F3-E4F509C2957D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99E2909E-57C9-4B72-B9CD-C1D7B65A276E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B782B6E1-6541-41F1-99F3-E4F509C2957D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B782B6E1-6541-41F1-99F3-E4F509C2957D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B782B6E1-6541-41F1-99F3-E4F509C2957D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B782B6E1-6541-41F1-99F3-E4F509C2957D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
