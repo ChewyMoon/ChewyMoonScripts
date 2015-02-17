@@ -207,7 +207,7 @@ namespace Snitched
 
         private static void CreateMenu()
         {
-            Menu = new Menu("OneKeyBuffStealerAIO", "cmOneKeyBuffStealerAIO" + Player.ChampionName, true);
+            Menu = new Menu("Snitched", "cmSnitched" + Player.ChampionName, true);
 
             // Dragion and baron stealer
             var spellsMenu = new Menu("Drag/Baron Stealer", "epicStealz");
