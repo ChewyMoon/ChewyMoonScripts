@@ -182,7 +182,7 @@ namespace Snitched
             {
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Baron, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
-                    var time = (1000 * Player.Distance(Baron) / spell.Speed) + spell.Delay * 1000;
+                    var time = (Player.Distance(Baron) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(Baron, (int)time);
 
                     if (!(spell.GetDamage(Baron) > healthPrediciton))
@@ -200,7 +200,7 @@ namespace Snitched
             {
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
-                    var time = (1000 * Player.Distance(Dragon) / spell.Speed) + spell.Delay * 1000;
+                    var time = (Player.Distance(Dragon) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(Dragon, (int)time);
 
                     if (!(spell.GetDamage(Dragon) > healthPrediciton))
@@ -219,7 +219,7 @@ namespace Snitched
                 var blue1 = blue;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(blue1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
-                    var time = (1000 * Player.Distance(blue) / spell.Speed) + spell.Delay * 1000;
+                    var time = (Player.Distance(blue) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(blue, (int)time);
 
                     if (!(spell.GetDamage(blue) > healthPrediciton))
@@ -238,7 +238,7 @@ namespace Snitched
                 var red1 = red;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(red1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
-                    var time = (1000 * Player.Distance(red) / spell.Speed) + spell.Delay * 1000;
+                    var time = (Player.Distance(red) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(red, (int)time);
 
                     if (!(spell.GetDamage(red) > healthPrediciton))
@@ -257,7 +257,7 @@ namespace Snitched
                 var hero1 = hero;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(hero1, x.Range) && SkillEnabled("KS", x.Slot)))
                 {
-                    var time = (1000 * Player.Distance(hero) / spell.Speed) + spell.Delay * 1000;
+                    var time = (Player.Distance(hero) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(hero, (int)time);
 
                     if (!(spell.GetDamage(hero) > healthPrediciton))
