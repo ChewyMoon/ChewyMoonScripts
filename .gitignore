@@ -156,4 +156,4 @@ $RECYCLE.BIN/
 .DS_Store
 
 # Hide Solution
-Chewy's Scripts.sln
+*.sln
