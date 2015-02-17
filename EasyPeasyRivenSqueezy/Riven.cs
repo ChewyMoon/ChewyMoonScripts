@@ -178,11 +178,6 @@ namespace EasyPeasyRivenSqueezy
                 ObjectManager.Get<Obj_AI_Base>().Any(x => x.IsValidTarget(W.Range)))
             {
                 W.Cast();
-
-                if (!Orbwalking.CanAttack())
-                {
-                    Orbwalking.ResetAutoAttackTimer();
-                }
             }
 
             if (args.SData.Name == "RivenFengShuiEngine" && GetBool("KeepRAlive"))
