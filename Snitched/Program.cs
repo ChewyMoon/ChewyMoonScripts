@@ -9,11 +9,16 @@ namespace Snitched
 {
     class Program
     {
-        //TODO: Add notifications
 
         private static List<Spell> Spells { get; set; }
         private static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
-        private static Menu Menu { get; set; }
+        public static Menu Menu { get; set; }
+
+        private static Obj_AI_Minion Baron { get; set; }
+        private static Obj_AI_Minion Dragon { get; set; }
+
+        private static List<Obj_AI_Minion> Blues { get; set; }
+        private static List<Obj_AI_Minion> Reds { get; set; } 
 
         static void Main(string[] args)
         {
@@ -56,15 +61,92 @@ namespace Snitched
                 Spells.Add(spell);
             }
 
+            Blues = new List<Obj_AI_Minion>();
+            Reds = new List<Obj_AI_Minion>();
+
             CreateMenu();
 
+            GameObject.OnCreate += GameObjectOnOnCreate;
+            GameObject.OnDelete += GameObjectOnOnDelete;
             Game.OnGameUpdate += Game_OnGameUpdate;
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>Snitched:</b></font> Loaded");
         }
 
+
+        private static void GameObjectOnOnDelete(GameObject sender, EventArgs args)
+        {
+            if (!(sender is Obj_AI_Minion))
+            {
+                return;
+            }
+
+            var obj = (Obj_AI_Minion)sender;
+            var n = obj.BaseSkinName;
+
+            if (n == "SRU_Baron")
+            {
+                Baron = null;
+                return;
+            }
+
+            if (n == "SRU_Dragon")
+            {
+                Dragon = null;
+                return;
+            }
+
+            if (n == "SRU_Blue")
+            {
+                Blues.RemoveAll(x => x.NetworkId == obj.NetworkId);
+                return;
+            }
+
+            if (n == "SRU_Red")
+            {
+                Reds.RemoveAll(x => x.NetworkId == obj.NetworkId);
+            }
+        }
+
+        private static void GameObjectOnOnCreate(GameObject sender, EventArgs args)
+        {
+            if (!(sender is Obj_AI_Minion))
+            {
+                return;
+            }
+
+            var obj = (Obj_AI_Minion) sender;
+            var n = obj.BaseSkinName;
+
+            if (n == "SRU_Baron")
+            {
+                Baron = (Obj_AI_Minion) sender;
+                return;
+            }
+
+            if (n == "SRU_Dragon")
+            {
+                Dragon = (Obj_AI_Minion) sender;
+                return;
+            }
+
+            if (n == "SRU_Blue")
+            {
+                Blues.Add((Obj_AI_Minion) sender);
+                return;
+            }
+
+            if (n == "SRU_Red")
+            {
+                Reds.Add((Obj_AI_Minion) sender);
+            }
+        }
+
         static void Game_OnGameUpdate(EventArgs args)
         {
+            // Update the notification
+            NotificationHandler.Update();
+
             if (!(Menu.Item("Enabled").IsActive() || Menu.Item("EnabledKeybind").IsActive()))
             {
                 return;
@@ -95,56 +177,49 @@ namespace Snitched
                     break;
             }
 
-            // TODO: Cache baron & drag to increase preformance
             // Get baron
-            var baron = ObjectManager.Get<Obj_AI_Minion>().Where(x => !x.IsDead).FirstOrDefault(x => x.BaseSkinName == "SRU_Baron");
-            if (baron != null)
+            if (Baron != null)
             {
-                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(baron, x.Range) && SkillEnabled("Steal", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Baron, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
-                    var time = (Player.Distance(baron) / spell.Speed) + spell.Delay * 1000;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(baron, (int) time);
+                    var time = (1000 * Player.Distance(Baron) / spell.Speed) + spell.Delay * 1000;
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Baron, (int)time);
 
-                    if (!(spell.GetDamage(baron) > healthPrediciton))
+                    if (!(spell.GetDamage(Baron) > healthPrediciton))
                     {
                         continue;
                     }
 
-                    spell.Cast(baron.ServerPosition);
+                    spell.Cast(Baron.ServerPosition);
                     break;
                 }
             }
 
             // Get dragon
-            var dragon = ObjectManager.Get<Obj_AI_Minion>().Where(x => !x.IsDead).FirstOrDefault(x => x.BaseSkinName == "SRU_Dragon");
-            if (dragon != null)
+            if (Dragon != null)
             {
-                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
-                    var time = (Player.Distance(dragon) / spell.Speed) + spell.Delay * 1000;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(dragon, (int)time);
+                    var time = (1000 * Player.Distance(Dragon) / spell.Speed) + spell.Delay * 1000;
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Dragon, (int)time);
 
-                    if (!(spell.GetDamage(dragon) > healthPrediciton))
+                    if (!(spell.GetDamage(Dragon) > healthPrediciton))
                     {
                         continue;
                     }
 
-                    spell.Cast(dragon.ServerPosition);
+                    spell.Cast(Dragon.ServerPosition);
                     break;
                 }
             }
 
             // Get Blue
-            var blues = ObjectManager.Get<Obj_AI_Minion>()
-                .Where(x => !x.IsDead)
-                .Where(x => x.BaseSkinName == "SRU_Blue");
-
-            foreach (var blue in blues)
+            foreach (var blue in Blues.Where(x => !x.IsDead))
             {
                 var blue1 = blue;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(blue1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
-                    var time = (Player.Distance(blue) / spell.Speed) + spell.Delay * 1000;
+                    var time = (1000 * Player.Distance(blue) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(blue, (int)time);
 
                     if (!(spell.GetDamage(blue) > healthPrediciton))
@@ -158,16 +233,12 @@ namespace Snitched
             }
 
             // Get Red
-            var reds = ObjectManager.Get<Obj_AI_Minion>()
-                .Where(x => !x.IsDead)
-                .Where(x => x.BaseSkinName == "SRU_Red");
-
-            foreach (var red in reds)
+            foreach (var red in Reds)
             {
                 var red1 = red;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(red1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
-                    var time = (Player.Distance(red) / spell.Speed) + spell.Delay * 1000;
+                    var time = (1000 * Player.Distance(red) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(red, (int)time);
 
                     if (!(spell.GetDamage(red) > healthPrediciton))
@@ -181,12 +252,12 @@ namespace Snitched
             }
 
             // Kill SECURE
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget()))
+            foreach (var hero in HeroManager.Enemies.Where(x => x.IsValidTarget()))
             {
                 var hero1 = hero;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(hero1, x.Range) && SkillEnabled("KS", x.Slot)))
                 {
-                    var time = (Player.Distance(hero) / spell.Speed) + spell.Delay * 1000;
+                    var time = (1000 * Player.Distance(hero) / spell.Speed) + spell.Delay * 1000;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(hero, (int)time);
 
                     if (!(spell.GetDamage(hero) > healthPrediciton))
