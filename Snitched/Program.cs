@@ -178,7 +178,7 @@ namespace Snitched
             }
 
             // Get baron
-            if (Baron != null)
+            if (Baron != null && Baron.IsValid && Baron.Health > 0)
             {
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Baron, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
@@ -196,7 +196,7 @@ namespace Snitched
             }
 
             // Get dragon
-            if (Dragon != null)
+            if (Dragon != null && Dragon.IsValid && Dragon.Health > 0)
             {
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
@@ -214,7 +214,7 @@ namespace Snitched
             }
 
             // Get Blue
-            foreach (var blue in Blues.Where(x => !x.IsDead))
+            foreach (var blue in Blues.Where(x => x.IsValid && x.Health > 0))
             {
                 var blue1 = blue;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(blue1, x.Range) && SkillEnabled("Buff", x.Slot)))
@@ -233,7 +233,7 @@ namespace Snitched
             }
 
             // Get Red
-            foreach (var red in Reds)
+            foreach (var red in Reds.Where(x => x.IsValid && x.Health > 0))
             {
                 var red1 = red;
                 foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(red1, x.Range) && SkillEnabled("Buff", x.Slot)))
