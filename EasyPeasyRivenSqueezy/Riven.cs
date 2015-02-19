@@ -174,12 +174,6 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            if (args.SData.Name == "ItemTiamatCleave" &&
-                ObjectManager.Get<Obj_AI_Base>().Any(x => x.IsValidTarget(W.Range)))
-            {
-                W.Cast();
-            }
-
             if (args.SData.Name == "RivenFengShuiEngine" && GetBool("KeepRAlive"))
             {
                 Utility.DelayAction.Add(
@@ -293,7 +287,7 @@ namespace EasyPeasyRivenSqueezy
             if (args.Animation.Contains("Attack") && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
             {
                 var aaDelay = Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear
-                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100 : Player.AttackCastDelay * 1000
+                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100  + Game.Ping / 2f : Player.AttackCastDelay * 1000
                     : Player.AttackDelay * 100;
                 Utility.DelayAction.Add((int)(QDelay + aaDelay), () =>
                 {

@@ -301,19 +301,13 @@ namespace EasyPeasyRivenSqueezy
                 }
 
                 Riven.E.Cast(target.Position);
-
-                if (Hydra.IsReady() || Tiamat.IsReady())
-                {
-                    CastCircleThing();
-                }
-                else
-                {
-                    CastW();
-                }
+                CastCircleThing();
+                CastW();
             }
             else if ((Hydra.IsReady() || Tiamat.IsReady()) && Riven.W.IsReady())
             {
                 CastCircleThing();
+                CastW();
             }
             else if (Riven.W.IsReady())
             {
