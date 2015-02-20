@@ -187,7 +187,7 @@ namespace Snitched
                     var time = (1000 * Player.Distance(Baron) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(Baron, (int)time);
 
-                    if (!(spell.GetDamage(Baron) > healthPrediciton))
+                    if (!(spell.GetDamage(Baron) > Baron.Health))
                     {
                         continue;
                     }
@@ -205,7 +205,7 @@ namespace Snitched
                     var time = (1000 * Player.Distance(Dragon) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(Dragon, (int)time);
 
-                    if (!(spell.GetDamage(Dragon) > healthPrediciton))
+                    if (!(spell.GetDamage(Dragon) > Dragon.Health))
                     {
                         continue;
                     }
@@ -224,7 +224,7 @@ namespace Snitched
                     var time = (1000 * Player.Distance(blue) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(blue, (int)time);
 
-                    if (!(spell.GetDamage(blue) > healthPrediciton))
+                    if (!(spell.GetDamage(blue) > blue.Health))
                     {
                         continue;
                     }
@@ -243,7 +243,7 @@ namespace Snitched
                     var time = (1000 * Player.Distance(red) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(red, (int)time);
 
-                    if (!(spell.GetDamage(red) > healthPrediciton))
+                    if (!(spell.GetDamage(red) > red.Health))
                     {
                         continue;
                     }
@@ -262,7 +262,7 @@ namespace Snitched
                     var time = (1000 * Player.Distance(hero) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
                     var healthPrediciton = HealthPrediction.GetHealthPrediction(hero, (int)time);
 
-                    if (!(spell.GetDamage(hero) > healthPrediciton))
+                    if (!(spell.GetDamage(hero) > hero.Health))
                     {
                         continue;
                     }
