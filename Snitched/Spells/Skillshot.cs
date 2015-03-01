@@ -27,7 +27,7 @@ using GamePath = System.Collections.Generic.List<SharpDX.Vector2>;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public enum SkillShotType
     {

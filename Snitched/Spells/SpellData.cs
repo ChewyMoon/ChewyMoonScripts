@@ -20,7 +20,7 @@ using LeagueSharp;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public class SpellData
     {

@@ -16,14 +16,17 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using Path = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public static class Evader
     {

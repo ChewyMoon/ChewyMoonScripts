@@ -21,7 +21,7 @@ using LeagueSharp.Common;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public enum SpellValidTargets
     {

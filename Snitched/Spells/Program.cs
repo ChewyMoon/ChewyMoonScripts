@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -27,7 +28,7 @@ using GamePath = System.Collections.Generic.List<SharpDX.Vector2>;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     internal class Program
     {
@@ -80,15 +81,15 @@ namespace Snitched.Spells
             }
         }
 
-        //private static void Main(string[] args)
-        //{
-        //    if (Game.Mode == GameMode.Running)
-        //    {
-        //        Game_OnGameStart(new EventArgs());
-        //    }
+        private static void Main(string[] args)
+        {
+            if (Game.Mode == GameMode.Running)
+            {
+                Game_OnGameStart(new EventArgs());
+            }
            
-        //    Game.OnGameStart += Game_OnGameStart;
-        //}
+            Game.OnGameStart += Game_OnGameStart;
+        }
 
         private static bool IsSpellShielded(Obj_AI_Hero unit)
         {
@@ -159,7 +160,7 @@ namespace Snitched.Spells
                     {
                         Console.WriteLine(
                              "Slot  " + spell.Slot + " " + spell.SData.Name + " w:" + spell.SData.LineWidth + " s:" + spell.SData.MissileSpeed + " r: " +
-                            spell.SData.CastRange[0]);
+                            spell.SData.CastRangeArray[0]);
                     }
                 }
                 Console.WriteLine(ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name);

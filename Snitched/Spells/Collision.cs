@@ -25,7 +25,7 @@ using SharpDX;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public enum CollisionObjectTypes
     {

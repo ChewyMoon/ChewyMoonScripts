@@ -23,7 +23,7 @@ using LeagueSharp.Common;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     internal static class Config
     {

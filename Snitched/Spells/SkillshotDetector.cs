@@ -24,7 +24,7 @@ using SharpDX;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     internal static class SkillshotDetector
     {
@@ -101,7 +101,7 @@ namespace Snitched.Spells
             Console.WriteLine(
                 Utils.TickCount + " Projectile Created: " + missile.SData.Name + " distance: " +
                 missile.StartPosition.Distance(missile.EndPosition) + "Radius: " +
-                missile.SData.CastRadiusSecondary[0] + " Speed: " + missile.SData.MissileSpeed);
+                missile.SData.CastRadiusSecondaryArray[0] + " Speed: " + missile.SData.MissileSpeed);
 
 #endif
 

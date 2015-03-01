@@ -23,7 +23,7 @@ using LeagueSharp;
 
 #endregion
 
-namespace Snitched.Spells
+namespace Evade
 {
     public static class SpellDatabase
     {
@@ -1513,7 +1513,7 @@ namespace Snitched.Spells
                     Slot = SpellSlot.R,
                     Type = SkillShotType.SkillshotCircle,
                     Delay = 250,
-                    Range = 700,
+                    Range = 450,
                     Radius = 270,
                     MissileSpeed = int.MaxValue,
                     FixedRange = false,
@@ -3065,6 +3065,25 @@ namespace Snitched.Spells
                 new SpellData
                 {
                     ChampionName = "Veigar",
+                    SpellName = "VeigarBalefulStrike",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotMissileLine,
+                    Delay = 250,
+                    Range = 850,
+                    Radius = 70,
+                    MissileSpeed = 1750,
+                    FixedRange = true,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "VeigarBalefulStrikeMis",
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall },
+                });
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Veigar",
                     SpellName = "VeigarDarkMatter",
                     Slot = SpellSlot.W,
                     Type = SkillShotType.SkillshotCircle,
@@ -3086,8 +3105,8 @@ namespace Snitched.Spells
                     SpellName = "VeigarEventHorizon",
                     Slot = SpellSlot.E,
                     Type = SkillShotType.SkillshotRing,
-                    Delay = 250,
-                    Range = 600,
+                    Delay = 750,
+                    Range = 700,
                     Radius = 80,
                     MissileSpeed = int.MaxValue,
                     FixedRange = false,
@@ -3096,7 +3115,7 @@ namespace Snitched.Spells
                     IsDangerous = true,
                     DontAddExtraDuration = true,
                     RingRadius = 350,
-                    ExtraDuration = 3000,
+                    ExtraDuration = 3300,
                     DontCross = true,
                     MissileSpellName = "",
                 });
@@ -3543,6 +3562,29 @@ namespace Snitched.Spells
                 });
 
             #endregion Ziggs
+
+            #region Zilean
+
+            Spells.Add(
+                new SpellData
+                {
+                    ChampionName = "Zilean",
+                    SpellName = "ZileanQ",
+                    Slot = SpellSlot.Q,
+                    Type = SkillShotType.SkillshotCircle,
+                    Delay = 300,
+                    Range = 900,
+                    Radius = 210,
+                    MissileSpeed = 2000,
+                    FixedRange = false,
+                    AddHitbox = true,
+                    DangerValue = 2,
+                    IsDangerous = false,
+                    MissileSpellName = "ZileanQMissile",
+                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall }
+                });
+
+            #endregion Zilean
 
             #region Zyra
 
