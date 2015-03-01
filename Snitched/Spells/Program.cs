@@ -81,15 +81,15 @@ namespace Evade
             }
         }
 
-        private static void Main(string[] args)
-        {
-            if (Game.Mode == GameMode.Running)
-            {
-                Game_OnGameStart(new EventArgs());
-            }
+        //private static void Main(string[] args)
+        //{
+        //    if (Game.Mode == GameMode.Running)
+         //   {
+          ///      Game_OnGameStart(new EventArgs());
+          //  }
            
-            Game.OnGameStart += Game_OnGameStart;
-        }
+        //    Game.OnGameStart += Game_OnGameStart;
+      //  }
 
         private static bool IsSpellShielded(Obj_AI_Hero unit)
         {

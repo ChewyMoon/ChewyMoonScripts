@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Evade;
 using LeagueSharp;
 using LeagueSharp.Common;
-using Snitched.Spells;
 
 namespace Snitched
 {
