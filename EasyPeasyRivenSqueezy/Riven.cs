@@ -117,7 +117,7 @@ namespace EasyPeasyRivenSqueezy
 
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if (!gapcloser.Sender.IsValidTarget(W.Range) || !GetBool("GapcloserW"))
+            if (!gapcloser.Sender.IsValidTarget() || !GetBool("HandleGapclosers"))
             {
                 return;
             }
@@ -126,6 +126,14 @@ namespace EasyPeasyRivenSqueezy
             {
                 R.Cast();
                 RivenCombo.CastCircleThing();
+                W.Cast();
+            }
+            else if(gapcloser.Sender.IsValidTarget(Q.Range + Player.BoundingRadius) && QCount == 2)
+            {
+                Q.Cast(gapcloser.Sender.ServerPosition);
+            }
+            else if (gapcloser.Sender.IsValidTarget(W.Range))
+            {
                 W.Cast();
             }
             
@@ -238,7 +246,7 @@ namespace EasyPeasyRivenSqueezy
             var miscMenu = new Menu("Misc", "cmMisc");
             miscMenu.AddItem(new MenuItem("KeepQAlive", "Keep Q Alive").SetValue(true));
             miscMenu.AddItem(new MenuItem("KeepRAlive", "Keep R Alive").SetValue(true));
-            miscMenu.AddItem(new MenuItem("GapcloserW", "W On Gapcloser").SetValue(true));
+            miscMenu.AddItem(new MenuItem("HandleGapclosers", "Handle Gapclosers").SetValue(true));
             miscMenu.AddItem(new MenuItem("InterruptEW", "Interrupt with EW").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKillable", "Ignite if Killable").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKS", "Ignite KS").SetValue(true));
