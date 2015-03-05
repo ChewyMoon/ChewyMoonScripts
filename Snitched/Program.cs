@@ -7,22 +7,20 @@ using LeagueSharp.Common;
 
 namespace Snitched
 {
-    internal class Program
+    class Program
     {
+
         private static List<Spell> Spells { get; set; }
-
-        private static Obj_AI_Hero Player
-        {
-            get { return ObjectManager.Player; }
-        }
-
+        private static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
         public static Menu Menu { get; set; }
+
         private static Obj_AI_Minion Baron { get; set; }
         private static Obj_AI_Minion Dragon { get; set; }
-        private static List<Obj_AI_Minion> Blues { get; set; }
-        private static List<Obj_AI_Minion> Reds { get; set; }
 
-        private static void Main(string[] args)
+        private static List<Obj_AI_Minion> Blues { get; set; }
+        private static List<Obj_AI_Minion> Reds { get; set; } 
+
+        static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
         }
@@ -61,9 +59,7 @@ namespace Snitched
                         break;
                 }
 
-                spell.SetSkillshot(
-                    skillshot.Delay / 1000f, skillshot.Radius, skillshot.MissileSpeed,
-                    skillshot.CollisionObjects.Contains(CollisionObjectTypes.Champions), type);
+                spell.SetSkillshot(skillshot.Delay / 1000f, skillshot.Radius, skillshot.MissileSpeed, skillshot.CollisionObjects.Contains(CollisionObjectTypes.Champions), type);
                 Spells.Add(spell);
             }
 
@@ -79,6 +75,7 @@ namespace Snitched
             Game.PrintChat("<font color=\"#7CFC00\"><b>Snitched:</b></font> Loaded");
         }
 
+
         private static void GameObjectOnOnDelete(GameObject sender, EventArgs args)
         {
             if (!(sender is Obj_AI_Minion))
@@ -86,23 +83,30 @@ namespace Snitched
                 return;
             }
 
-            var obj = (Obj_AI_Minion) sender;
+            var obj = (Obj_AI_Minion)sender;
             var n = obj.BaseSkinName;
 
-            switch (n)
+            if (n == "SRU_Baron")
             {
-                case "SRU_Baron":
-                    Baron = null;
-                    return;
-                case "SRU_Dragon":
-                    Dragon = null;
-                    return;
-                case "SRU_Blue":
-                    Blues.RemoveAll(x => x.NetworkId == obj.NetworkId);
-                    return;
-                case "SRU_Red":
-                    Reds.RemoveAll(x => x.NetworkId == obj.NetworkId);
-                    break;
+                Baron = null;
+                return;
+            }
+
+            if (n == "SRU_Dragon")
+            {
+                Dragon = null;
+                return;
+            }
+
+            if (n == "SRU_Blue")
+            {
+                Blues.RemoveAll(x => x.NetworkId == obj.NetworkId);
+                return;
+            }
+
+            if (n == "SRU_Red")
+            {
+                Reds.RemoveAll(x => x.NetworkId == obj.NetworkId);
             }
         }
 
@@ -116,24 +120,31 @@ namespace Snitched
             var obj = (Obj_AI_Minion) sender;
             var n = obj.BaseSkinName;
 
-            switch (n)
+            if (n == "SRU_Baron")
             {
-                case "SRU_Baron":
-                    Baron = (Obj_AI_Minion) sender;
-                    return;
-                case "SRU_Dragon":
-                    Dragon = (Obj_AI_Minion) sender;
-                    return;
-                case "SRU_Blue":
-                    Blues.Add((Obj_AI_Minion) sender);
-                    return;
-                case "SRU_Red":
-                    Reds.Add((Obj_AI_Minion) sender);
-                    break;
+                Baron = (Obj_AI_Minion) sender;
+                return;
+            }
+
+            if (n == "SRU_Dragon")
+            {
+                Dragon = (Obj_AI_Minion) sender;
+                return;
+            }
+
+            if (n == "SRU_Blue")
+            {
+                Blues.Add((Obj_AI_Minion) sender);
+                return;
+            }
+
+            if (n == "SRU_Red")
+            {
+                Reds.Add((Obj_AI_Minion) sender);
             }
         }
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        static void Game_OnGameUpdate(EventArgs args)
         {
             // Update the notification
             NotificationHandler.Update();
@@ -171,14 +182,12 @@ namespace Snitched
             // Get baron
             if (Baron != null && Baron.IsValid && Baron.Health > 0)
             {
-                foreach (
-                    var spell in
-                        Spells.Where(x => x.IsReady() && x.IsInRange(Baron, x.Range) && SkillEnabled("Steal", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Baron, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
                     var time = (1000 * Player.Distance(Baron) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Baron, (int) time);
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Baron, (int)time);
 
-                    if (!(spell.GetDamage(Baron) + Player.Distance(Baron) / HeroesInRange(Baron) > Baron.Health))
+                    if (!(spell.GetDamage(Baron) > Baron.Health))
                     {
                         continue;
                     }
@@ -191,14 +200,12 @@ namespace Snitched
             // Get dragon
             if (Dragon != null && Dragon.IsValid && Dragon.Health > 0)
             {
-                foreach (
-                    var spell in
-                        Spells.Where(x => x.IsReady() && x.IsInRange(Dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(Dragon, x.Range) && SkillEnabled("Steal", x.Slot)))
                 {
                     var time = (1000 * Player.Distance(Dragon) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Dragon, (int) time);
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(Dragon, (int)time);
 
-                    if (!(spell.GetDamage(Dragon) + Player.Distance(Dragon) / HeroesInRange(Dragon) > Dragon.Health))
+                    if (!(spell.GetDamage(Dragon) > Dragon.Health))
                     {
                         continue;
                     }
@@ -212,14 +219,12 @@ namespace Snitched
             foreach (var blue in Blues.Where(x => x.IsValid && x.Health > 0))
             {
                 var blue1 = blue;
-                foreach (
-                    var spell in
-                        Spells.Where(x => x.IsReady() && x.IsInRange(blue1, x.Range) && SkillEnabled("Buff", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(blue1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
                     var time = (1000 * Player.Distance(blue) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(blue, (int) time);
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(blue, (int)time);
 
-                    if (!(spell.GetDamage(blue) + Player.Distance(blue) / HeroesInRange(blue) > blue.Health))
+                    if (!(spell.GetDamage(blue) > blue.Health))
                     {
                         continue;
                     }
@@ -233,14 +238,12 @@ namespace Snitched
             foreach (var red in Reds.Where(x => x.IsValid && x.Health > 0))
             {
                 var red1 = red;
-                foreach (
-                    var spell in
-                        Spells.Where(x => x.IsReady() && x.IsInRange(red1, x.Range) && SkillEnabled("Buff", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(red1, x.Range) && SkillEnabled("Buff", x.Slot)))
                 {
                     var time = (1000 * Player.Distance(red) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(red, (int) time);
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(red, (int)time);
 
-                    if (!(spell.GetDamage(red) + Player.Distance(red) / HeroesInRange(red) > red.Health))
+                    if (!(spell.GetDamage(red) > red.Health))
                     {
                         continue;
                     }
@@ -254,14 +257,12 @@ namespace Snitched
             foreach (var hero in HeroManager.Enemies.Where(x => x.IsValidTarget()))
             {
                 var hero1 = hero;
-                foreach (
-                    var spell in
-                        Spells.Where(x => x.IsReady() && x.IsInRange(hero1, x.Range) && SkillEnabled("KS", x.Slot)))
+                foreach (var spell in Spells.Where(x => x.IsReady() && x.IsInRange(hero1, x.Range) && SkillEnabled("KS", x.Slot)))
                 {
                     var time = (1000 * Player.Distance(hero) / spell.Speed) + spell.Delay * 1000 + Game.Ping / 2f;
-                    var healthPrediciton = HealthPrediction.GetHealthPrediction(hero, (int) time);
+                    var healthPrediciton = HealthPrediction.GetHealthPrediction(hero, (int)time);
 
-                    if (!(spell.GetDamage(hero) + Player.Distance(hero) / HeroesInRange(hero) > hero.Health))
+                    if (!(spell.GetDamage(hero) > hero.Health))
                     {
                         continue;
                     }
@@ -270,11 +271,6 @@ namespace Snitched
                     break;
                 }
             }
-        }
-
-        private static int HeroesInRange(Obj_AI_Base target)
-        {
-            return HeroManager.AllHeroes.Count(x => x.IsValidTarget(1000, false, target.ServerPosition));
         }
 
         private static bool SkillEnabled(string mode, SpellSlot slot)
@@ -298,8 +294,7 @@ namespace Snitched
             var buffsMenu = new Menu("Buffs", "epicBuffzStealz");
             foreach (var name in Spells)
             {
-                buffsMenu.AddItem(
-                    new MenuItem("Buff" + name.Slot, "Use " + name.Slot).SetValue(name.Slot != SpellSlot.R));
+                buffsMenu.AddItem(new MenuItem("Buff" + name.Slot, "Use " + name.Slot).SetValue(name.Slot != SpellSlot.R));
             }
             Menu.AddSubMenu(buffsMenu);
 
@@ -313,8 +308,7 @@ namespace Snitched
 
             Menu.AddItem(
                 new MenuItem("SortRule", "Sort Spell Priority").SetValue(
-                    new StringList(
-                        new[] { "Most Damage", "Least Damage", "Biggest Range", "Smallest Range", "Smallest Cast Time" })));
+                    new StringList(new[] { "Most Damage", "Least Damage", "Biggest Range", "Smallest Range", "Smallest Cast Time" })));
 
             Menu.AddItem(new MenuItem("Enabled", "Enabled (Toggle)").SetValue(true));
             Menu.AddItem(new MenuItem("EnabledKeybind", "Enabled (Press)").SetValue(new KeyBind(84, KeyBindType.Press)));
