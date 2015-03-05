@@ -27,7 +27,7 @@ namespace Mid_or_Feed.Champions
             E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 3340);
 
-            Q.SetSkillshot(0.5f, 70, 1200, false, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.25f, 80, 1200, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.5f, 150, 1200, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.5f, 275, 1300, false, SkillshotType.SkillshotCircle);
             R.SetSkillshot(1.75f, 190, 3000, false, SkillshotType.SkillshotLine);
@@ -44,7 +44,7 @@ namespace Mid_or_Feed.Champions
             GameObject.OnDelete += delegate(GameObject sender, EventArgs args)
             {
                 //Noticed a different E game object name while looking through Kurisu's oracle, credits to him.
-                if (sender.Name.Contains("LuxLightstrike_tar_green") || sender.Name.Contains("LuxLightstrike_tar_red"))
+                if (sender.Name.Contains("LuxLightstrike_tar_"))
                 {
                     EGameObject = null;
                 }
