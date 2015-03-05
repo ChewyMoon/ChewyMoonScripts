@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsIrelia", "ChewyMoonsIrelia\ChewyMoonsIrelia.csproj", "{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsLux", "ChewyMoonsLux\ChewyMoonsLux.csproj", "{8B0C967E-913C-4C1E-BB51-E818227109BF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsShaco", "ChewyMoonsShaco\ChewyMoonsShaco.csproj", "{0B92A1BA-5086-46EE-81FD-21830CB10E54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mid or Feed", "Mid or Feed\Mid or Feed.csproj", "{9EB6DEE7-5BE9-46EC-B049-E32664455DDA}"
@@ -16,8 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Golderino", "Golderino\Golderino.csproj", "{A7642EAD-070F-4468-A973-6681F5DA66BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cya Nerds", "Cya Nerds\Cya Nerds.csproj", "{C9BC0D42-9B17-4905-B153-D1669874F76E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanternCockBlocker", "LanternCockBlocker\LanternCockBlocker.csproj", "{A75B6255-9437-454C-A264-EAD48AF0F2F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irelia Reloaded", "Irelia Reloaded\Irelia Reloaded.csproj", "{2B1073BA-80F0-4C9B-B152-535CDF580D8E}"
 EndProject
@@ -35,10 +31,6 @@ Global
 		{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B0C967E-913C-4C1E-BB51-E818227109BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B92A1BA-5086-46EE-81FD-21830CB10E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,10 +51,6 @@ Global
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9BC0D42-9B17-4905-B153-D1669874F76E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A75B6255-9437-454C-A264-EAD48AF0F2F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B1073BA-80F0-4C9B-B152-535CDF580D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU

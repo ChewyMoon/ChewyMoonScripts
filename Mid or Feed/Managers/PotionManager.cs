@@ -26,7 +26,7 @@ namespace Mid_or_Feed.Managers
 
             _menu = config;
 
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
         }
 
         private static void GameOnOnGameUpdate(EventArgs args)

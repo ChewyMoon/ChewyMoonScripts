@@ -27,7 +27,7 @@ namespace Mid_or_Feed.Champions
 
             PrintChat("Malzahar loaded.");
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;

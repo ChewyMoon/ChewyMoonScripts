@@ -70,7 +70,7 @@ namespace Snitched
 
             GameObject.OnCreate += GameObjectOnOnCreate;
             GameObject.OnDelete += GameObjectOnOnDelete;
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>Snitched:</b></font> Loaded");
         }

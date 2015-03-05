@@ -55,7 +55,7 @@ namespace Irelia_Reloaded
             Utility.HpBarDamageIndicator.Enabled = true;
 
             // Subscribe to needed events
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;

@@ -128,7 +128,7 @@ namespace Evade
         private static void Game_OnGameStart(EventArgs args)
         {
             //Add the game events.
-            Game.OnGameUpdate += Game_OnOnGameUpdate;
+            Game.OnUpdate += Game_OnOnGameUpdate;
             Obj_AI_Hero.OnIssueOrder += ObjAiHeroOnOnIssueOrder;
             Spellbook.OnCastSpell += Spellbook_OnCastSpell;
             //Set up the OnDetectSkillshot Event.

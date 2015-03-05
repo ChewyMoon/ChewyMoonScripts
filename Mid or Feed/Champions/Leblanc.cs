@@ -46,7 +46,7 @@ namespace Mid_or_Feed.Champions
             Dfg = ItemData.Deathfire_Grasp.GetItem();
 
             // Setup Events
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += Interrupter_OnPossibleToInterrupt;
             Drawing.OnDraw += Drawing_OnDraw;

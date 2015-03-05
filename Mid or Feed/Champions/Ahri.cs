@@ -4,7 +4,6 @@ using System;
 using System.Drawing;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LeagueSharp.Common.Data;
 
 #endregion
 
@@ -28,9 +27,7 @@ namespace Mid_or_Feed.Champions
             Q.SetSkillshot(0.25f, 100, 2500, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.25f, 60, 1500, true, SkillshotType.SkillshotLine);
 
-            Dfg = ItemData.Deathfire_Grasp.GetItem();
-
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += DrawingOnOnDraw;

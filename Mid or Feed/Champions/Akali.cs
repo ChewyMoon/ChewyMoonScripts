@@ -30,7 +30,7 @@ namespace Mid_or_Feed.Champions
             Gunblade = ItemData.Hextech_Gunblade.GetItem();
             Cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
 
             PrintChat("Akali loaded!");

@@ -62,7 +62,7 @@ namespace ChewyMoonsIrelia
             Cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
             // IreliaUpdater.CheckForUpdates();
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;

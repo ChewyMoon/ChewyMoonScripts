@@ -41,7 +41,7 @@ namespace ChewyMoonsShaco
             Tiamat = ItemData.Tiamat_Melee_Only.GetItem();
             Hydra = ItemData.Ravenous_Hydra_Melee_Only.GetItem();
 
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
 

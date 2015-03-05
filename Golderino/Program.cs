@@ -47,7 +47,7 @@ namespace Golderino
 
             UpdateDrawings();
 
-            Game.OnGameProcessPacket += Game_OnGameProcessPacket;
+            Game.OnProcessPacket += Game_OnGameProcessPacket;
             Game.PrintChat("Golderino by ChewyMoon loaded.");
         }
 

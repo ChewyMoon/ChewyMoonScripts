@@ -32,7 +32,7 @@ namespace Mid_or_Feed.Champions
 
             PrintChat("Yasuo loaded!");
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             Drawing.OnDraw += DrawingOnOnDraw;

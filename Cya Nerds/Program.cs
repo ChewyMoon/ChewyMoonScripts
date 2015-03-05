@@ -71,7 +71,7 @@ namespace Cya_Nerds
             _menu.AddToMainMenu();
 
             GameObject.OnCreate += GameObjectOnOnCreate;
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             Game.PrintChat("Cya Nerds by ChewyMoon loaded.");
         }
 

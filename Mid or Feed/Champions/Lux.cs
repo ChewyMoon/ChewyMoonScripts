@@ -50,7 +50,7 @@ namespace Mid_or_Feed.Champions
                 }
             };
 
-            Game.OnGameUpdate += GameOnOnGameUpdate;
+            Game.OnUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
             Obj_AI_Base.OnTeleport += ObjAiHeroOnOnTeleport;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;

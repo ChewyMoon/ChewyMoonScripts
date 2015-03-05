@@ -87,7 +87,7 @@ namespace EasyPeasyRivenSqueezy
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
 
-            Game.OnGameUpdate += RivenCombo.OnGameUpdate;
+            Game.OnUpdate += RivenCombo.OnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
 
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
