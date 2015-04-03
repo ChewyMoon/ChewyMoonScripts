@@ -1,4 +1,4 @@
-﻿#region
+#region
 
 using System;
 using System.Drawing;
@@ -310,11 +310,13 @@ namespace ChewyMoonsIrelia
             var useEStun = _menu.Item("useEStun").GetValue<bool>();
             var target = TargetSelector.GetTarget(_q.Range, TargetSelector.DamageType.Physical);
 
+            
+
             if (target == null)
             {
                 GapCloseCombo();
             }
-            if (target == null || !target.IsValid)
+            if (target == null || !target.IsValid || target.IsInvulnerable)
             {
                 return;
             }
