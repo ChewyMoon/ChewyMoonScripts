@@ -26,7 +26,7 @@ namespace Mid_or_Feed
                 return;
             }
 
-            Activator.CreateInstance(plugin);
+            DynamicActivator.New(plugin, null);
         }
 
         private static void CurrentDomainOnUnhandledException(object sender,
