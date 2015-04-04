@@ -63,6 +63,7 @@ namespace OneKeyToFish
             var miscMenu = new Menu("Misc", "miscerino");
             miscMenu.AddItem(
                 new MenuItem("UseWWhen", "Use W: ").SetValue(new StringList(new[] { "Before Q", "After Q" })));
+            miscMenu.AddItem(new MenuItem("UseETower", "Dodge tower shots with E").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             // Drawing
@@ -172,6 +173,11 @@ namespace OneKeyToFish
 
         private static void ObjAiBaseOnOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
+            if (sender is Obj_AI_Turret && args.Target.IsMe && E.IsReady() && Menu.Item("UseETower").IsActive())
+            {
+                E.Cast(Game.CursorPos);
+            }
+
             if (!sender.IsMe)
             {
                 return;
