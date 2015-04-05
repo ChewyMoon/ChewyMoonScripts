@@ -157,7 +157,7 @@ namespace Mid_or_Feed.Champions
 
             if (useE && E.IsReady() && !EActivated)
             {
-                var farmLoc = Q.GetCircularFarmLocation(MinionManager.GetMinions(E.Range + Player.BoundingRadius));
+                var farmLoc = E.GetCircularFarmLocation(MinionManager.GetMinions(E.Range + Player.BoundingRadius));
 
                 if (farmLoc.MinionsHit > 1)
                 {
