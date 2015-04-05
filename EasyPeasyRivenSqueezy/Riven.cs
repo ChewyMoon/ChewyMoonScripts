@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using Color = System.Drawing.Color;
 
 namespace EasyPeasyRivenSqueezy
 {
@@ -27,7 +27,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static float EWRange
         {
-            get { return E.Range + W.Range + Player.BoundingRadius; }
+            get { return E.Range + W.Range / 2 + Player.BoundingRadius; }
         }
 
         public static Spell Q { get; internal set; }
@@ -63,8 +63,8 @@ namespace EasyPeasyRivenSqueezy
         }
 
         public static int QDelay { get; set; }
-
         public static Obj_AI_Base LastTarget { get; set; }
+        public static bool CanQ { get; set; }
 
         public static void OnGameLoad(EventArgs args)
         {
@@ -101,7 +101,8 @@ namespace EasyPeasyRivenSqueezy
             Game.PrintChat("<font color=\"#7CFC00\"><b>EasyPeasyRivenSqueezy:</b></font> Loaded");
         }
 
-        private static void Interrupter2OnOnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
+        private static void Interrupter2OnOnInterruptableTarget(Obj_AI_Hero sender,
+            Interrupter2.InterruptableTargetEventArgs args)
         {
             if (!sender.IsValidTarget(EWRange) || !GetBool("InterruptEW"))
             {
@@ -128,7 +129,7 @@ namespace EasyPeasyRivenSqueezy
                 RivenCombo.CastCircleThing();
                 W.Cast();
             }
-            else if(gapcloser.Sender.IsValidTarget(Q.Range + Player.BoundingRadius) && QCount == 2)
+            else if (gapcloser.Sender.IsValidTarget(Q.Range + Player.BoundingRadius) && QCount == 2)
             {
                 Q.Cast(gapcloser.Sender.ServerPosition);
             }
@@ -136,7 +137,7 @@ namespace EasyPeasyRivenSqueezy
             {
                 W.Cast();
             }
-            
+
             NotificationHandler.ShowGapcloserAlert();
         }
 
@@ -204,8 +205,6 @@ namespace EasyPeasyRivenSqueezy
             }
         }
 
-        public static bool CanQ { get; set; }
-
         public static bool GetBool(string item)
         {
             return Menu.Item(item).GetValue<bool>();
@@ -227,7 +226,8 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(
                 new MenuItem("UseROption", "When to Use R").SetValue(
                     new StringList(new[] { "Hard", "Easy", "Probably" })));
-            comboMenu.AddItem(new MenuItem("UseRPercent", "Dont R if target health percent less than ").SetValue(new Slider(1, 1)));
+            comboMenu.AddItem(
+                new MenuItem("UseRPercent", "Dont R if target health percent less than ").SetValue(new Slider(1, 1)));
             comboMenu.AddItem(
                 new MenuItem("UseRIfCantCancel", "Still use R if cannot cancel animation").SetValue(false));
             comboMenu.AddItem(new MenuItem("QExtraDelay", "Extra Q Delay").SetValue(new Slider(0, 0, 1000)));
@@ -280,28 +280,33 @@ namespace EasyPeasyRivenSqueezy
             {
                 LastQ = Environment.TickCount;
 
-                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
+                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
+                    Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
                     // TODO: implement this
                     var movePos =
                         (ObjectManager.Player.Position.To2D() -
                          (Player.BoundingRadius + 10) * ObjectManager.Player.Direction.To2D().Perpendicular()).To3D();
-                    
+
                     Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
-                    Utility.DelayAction.Add((int)(QDelay + 100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add(
+                        (int) (QDelay + 100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
                 }
             }
 
-            if (args.Animation.Contains("Attack") && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
+            if (args.Animation.Contains("Attack") &&
+                (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
+                 Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
             {
                 var aaDelay = Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear
-                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100  + Game.Ping / 2f : Player.AttackCastDelay * 1000
+                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100 + Game.Ping / 2f : Player.AttackCastDelay * 1000
                     : Player.AttackDelay * 100;
-                Utility.DelayAction.Add((int)(QDelay + aaDelay), () =>
-                {
-                    //Player.IssueOrder(GameObjectOrder.MoveTo, Q.GetPrediction(LastTarget).CastPosition);
-                    Q.Cast(LastTarget.Position);
-                });
+                Utility.DelayAction.Add(
+                    (int) (QDelay + aaDelay), () =>
+                    {
+                        //Player.IssueOrder(GameObjectOrder.MoveTo, Q.GetPrediction(LastTarget).CastPosition);
+                        Q.Cast(LastTarget.Position);
+                    });
             }
         }
     }

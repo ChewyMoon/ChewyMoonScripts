@@ -5,29 +5,26 @@ using SharpDX;
 
 namespace EasyPeasyRivenSqueezy
 {
-    class NotificationHandler
+    internal class NotificationHandler
     {
+        private const int NotificationDelay = 1000;
         private static Notification _modeNotification;
         private static Notification _rModeNotification;
-
         private static int _lastInfoNotification;
         private static int _lastGapcloserAlert;
         private static int _lastInterrupterAlert;
         private static int _lastWarningAlert;
 
-        private const int NotificationDelay = 1000;
-
         private static bool NotificationsEnabled
         {
-            get
-            {
-                return Riven.GetBool("Notifications");
-            }
+            get { return Riven.GetBool("Notifications"); }
         }
 
         public static void ShowWelcome()
         {
-            var notification = new Notification("EasyPeasyRivenSqueezy v" + Assembly.GetExecutingAssembly().GetName().Version + " loaded!", 10000);
+            var notification =
+                new Notification(
+                    "EasyPeasyRivenSqueezy v" + Assembly.GetExecutingAssembly().GetName().Version + " loaded!", 10000);
             Notifications.AddNotification(notification);
         }
 
@@ -38,10 +35,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            var notification = new Notification("GAPCLOSER!", 2500)
-            {
-                TextColor = new ColorBGRA(255, 0, 0, 255)
-            };
+            var notification = new Notification("GAPCLOSER!", 2500) { TextColor = new ColorBGRA(255, 0, 0, 255) };
 
             notification.Flash(500);
             Notifications.AddNotification(notification);
@@ -74,10 +68,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            var notification = new Notification(text, 5000)
-            {
-                TextColor = new ColorBGRA(255, 255, 0, 255)
-            };
+            var notification = new Notification(text, 5000) { TextColor = new ColorBGRA(255, 255, 0, 255) };
 
             Notifications.AddNotification(notification);
 
@@ -129,10 +120,11 @@ namespace EasyPeasyRivenSqueezy
 
             if (_rModeNotification == null)
             {
-                _rModeNotification = new Notification("R Mode: " + Riven.Menu.Item("UseROption").GetValue<StringList>().SelectedValue)
-                {
-                    TextColor = new ColorBGRA(0, 153, 250, 255)
-                };
+                _rModeNotification =
+                    new Notification("R Mode: " + Riven.Menu.Item("UseROption").GetValue<StringList>().SelectedValue)
+                    {
+                        TextColor = new ColorBGRA(0, 153, 250, 255)
+                    };
 
                 Notifications.AddNotification(_rModeNotification);
             }

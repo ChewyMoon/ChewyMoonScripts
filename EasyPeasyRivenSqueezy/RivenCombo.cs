@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Forms;
 using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
@@ -54,11 +53,15 @@ namespace EasyPeasyRivenSqueezy
                     DoCombo();
                     break;
 
+                case Orbwalking.OrbwalkingMode.Mixed:
+                    DoCombo(false);
+                    break;
+
                 case Orbwalking.OrbwalkingMode.LaneClear:
                     DoWaveClear();
                     break;
             }
-                     
+
             if (Riven.Menu.Item("FleeActive").IsActive())
             {
                 Flee();
@@ -84,8 +87,9 @@ namespace EasyPeasyRivenSqueezy
 
                 var location =
                     MinionManager.GetBestCircularFarmLocation(
-                        MinionManager.GetMinions(Riven.EWRange, MinionTypes.All, MinionTeam.NotAlly).Select(x => x.ServerPosition.To2D()).ToList(),
-                        Riven.W.Range, Riven.EWRange);
+                        MinionManager.GetMinions(Riven.EWRange, MinionTypes.All, MinionTeam.NotAlly)
+                            .Select(x => x.ServerPosition.To2D())
+                            .ToList(), Riven.W.Range, Riven.EWRange);
 
                 Riven.E.Cast(location.Position);
                 CastCircleThing();
@@ -124,7 +128,7 @@ namespace EasyPeasyRivenSqueezy
             if (useQ && Riven.Q.IsReady())
             {
                 Riven.Q.Cast(Game.CursorPos);
-            }        
+            }
         }
 
         private static void IgniteKillSecure()
@@ -194,7 +198,8 @@ namespace EasyPeasyRivenSqueezy
             // Ignite + R
             else if (Riven.Ignite.IsReady() &&
                      Riven.Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) +
-                     Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health && Riven.Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Riven.Player))
+                     Riven.Player.GetSpellDamage(target, SpellSlot.R) > target.Health &&
+                     Riven.Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(Riven.Player))
             {
                 Riven.Ignite.Cast(target);
                 Riven.R.Cast(target);
@@ -219,8 +224,8 @@ namespace EasyPeasyRivenSqueezy
             return 0;
         }
 
-        private static void DoCombo()
-        {           
+        private static void DoCombo(bool useR = true)
+        {
             var target = TargetSelector.GetTarget(Riven.EWRange, TargetSelector.DamageType.Physical);
 
             if (!target.IsValidTarget())
@@ -244,13 +249,14 @@ namespace EasyPeasyRivenSqueezy
                 Ghostblade.Cast();
             }
 
-            if (Riven.RActivated && Riven.CanWindSlash)
+            if (Riven.RActivated && Riven.CanWindSlash && useR)
             {
                 UseWindSlash(target);
             }
 
             // Use R logic
-            if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady() && target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value)
+            if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady() &&
+                target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value && useR)
             {
                 NotificationHandler.ShowInfo("Using R!");
 
@@ -267,13 +273,13 @@ namespace EasyPeasyRivenSqueezy
                     Riven.E.Cast(target.ServerPosition);
                     Riven.R.Cast(Riven.Player);
                 }
-                    // Q -> Q -> E -> R -> Q
+                // Q -> Q -> E -> R -> Q
                 else if (Riven.QCount == 2 && Riven.Q.IsReady() && Riven.E.IsReady())
                 {
                     Riven.E.Cast();
                     Riven.R.Cast(target);
                 }
-                    // R -> W
+                // R -> W
                 else if (Riven.W.IsReady() && ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(Riven.W.Range)))
                 {
                     Riven.R.Cast(Riven.Player);
@@ -369,7 +375,9 @@ namespace EasyPeasyRivenSqueezy
 
             if (minions)
             {
-                if (!ObjectManager.Get<Obj_AI_Minion>().Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
+                if (
+                    !ObjectManager.Get<Obj_AI_Minion>()
+                        .Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
                 {
                     return;
                 }
@@ -378,7 +386,9 @@ namespace EasyPeasyRivenSqueezy
             }
             else
             {
-                if (!ObjectManager.Get<Obj_AI_Hero>().Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
+                if (
+                    !ObjectManager.Get<Obj_AI_Hero>()
+                        .Any(x => x.IsValidTarget(ItemData.Ravenous_Hydra_Melee_Only.Range)))
                 {
                     return;
                 }

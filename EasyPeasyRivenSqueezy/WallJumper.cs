@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSharp;
+﻿using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
 namespace EasyPeasyRivenSqueezy
 {
-    class WallJumper
+    internal class WallJumper
     {
-
         public static void DoWallJump()
         {
-            
             if (Riven.QCount != 2)
             {
                 NotificationHandler.ShowWarningAlert("You need 2 Q's!");
@@ -31,24 +24,21 @@ namespace EasyPeasyRivenSqueezy
 
             if (Riven.E.IsReady())
             {
-                Riven.E.Cast((Vector2)point);
+                Riven.E.Cast((Vector2) point);
             }
             else
             {
                 Riven.Player.IssueOrder(
-               GameObjectOrder.MoveTo,
-               Riven.Player.ServerPosition.Extend((Vector3)point, Riven.Player.BoundingRadius + 20));
+                    GameObjectOrder.MoveTo,
+                    Riven.Player.ServerPosition.Extend((Vector3) point, Riven.Player.BoundingRadius + 20));
             }
 
-            Utility.DelayAction.Add(500, () => Riven.Q.Cast((Vector2)point));
-            
-
+            Utility.DelayAction.Add(500, () => Riven.Q.Cast((Vector2) point));
         }
-
     }
 
     // Credits to hellsing who let me borrow this
-    class VectorHelper
+    internal class VectorHelper
     {
         public static Vector2? GetFirstWallPoint(Vector3 from, Vector3 to, float step = 25)
         {
