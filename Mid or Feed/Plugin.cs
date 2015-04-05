@@ -69,6 +69,11 @@ namespace Mid_or_Feed
             Harass(harassMenu);
             Menu.AddSubMenu(harassMenu);
 
+            // Wave Clear
+            var waveClearMenu = new Menu("Wave Clear", "mofWaveClear");
+            WaveClear(waveClearMenu);
+            Menu.AddSubMenu(waveClearMenu);
+
             // Items
             var itemsMenu = new Menu("Items", "mofItems");
             ItemMenu(itemsMenu);
@@ -133,6 +138,8 @@ namespace Mid_or_Feed
         public virtual void Combo(Menu config) {}
 
         public virtual void Harass(Menu config) {}
+
+        public virtual void WaveClear(Menu config) {}
 
         public virtual void ItemMenu(Menu config) {}
 

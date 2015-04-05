@@ -27,7 +27,7 @@ namespace Mid_or_Feed.Champions
             E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 3340);
 
-            Q.SetSkillshot(0.25f, 80, 1200, false, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.5f, 80, 1200, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.5f, 150, 1200, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(0.5f, 275, 1300, false, SkillshotType.SkillshotCircle);
             R.SetSkillshot(1.75f, 190, 3000, false, SkillshotType.SkillshotLine);
@@ -111,6 +111,10 @@ namespace Mid_or_Feed.Champions
                 case Orbwalking.OrbwalkingMode.Combo:
                     DoCombo();
                     break;
+
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    DoLaneClear();
+                    break;
             }
 
             if (GetBool("autoW"))
@@ -132,6 +136,47 @@ namespace Mid_or_Feed.Champions
             if (GetValue<KeyBind>("AutoSteal").Active || GetValue<KeyBind>("KeySteal").Active)
             {
                 StealRed(GetBool("StealAllyRed"), GetBool("StealEnemyRed"));
+            }
+        }
+
+        private void DoLaneClear()
+        {
+            var useQ = GetBool("UseQWaveClear");
+            var useE = GetBool("UseEWaveClear");
+            var useR = GetBool("UseRWaveClear");
+
+            if (useQ && Q.IsReady())
+            {
+                var farmLoc = Q.GetLineFarmLocation(MinionManager.GetMinions(Q.Range + Player.BoundingRadius));
+
+                if (farmLoc.MinionsHit > 1)
+                {
+                    Q.Cast(farmLoc.Position);
+                }
+            }
+
+            if (useE && E.IsReady() && !EActivated)
+            {
+                var farmLoc = Q.GetCircularFarmLocation(MinionManager.GetMinions(E.Range + Player.BoundingRadius));
+
+                if (farmLoc.MinionsHit > 1)
+                {
+                    E.Cast(farmLoc.Position);
+                }
+            }
+            else if(EActivated)
+            {
+                E.Cast();
+            }
+
+            if (useR && R.IsReady())
+            {
+                var farmLoc = R.GetLineFarmLocation(MinionManager.GetMinions(R.Range + Player.BoundingRadius));
+
+                if (farmLoc.MinionsHit > 1)
+                {
+                    R.Cast(farmLoc.Position);
+                }
             }
         }
 
@@ -425,6 +470,13 @@ namespace Mid_or_Feed.Champions
         {
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
+        }
+
+        public override void WaveClear(Menu config)
+        {
+            config.AddItem(new MenuItem("UseQWaveClear", "Use Q").SetValue(true));
+            config.AddItem(new MenuItem("UseEWaveClear", "Use E").SetValue(true));
+            config.AddItem(new MenuItem("UseRWaveClear", "Use R").SetValue(false));
         }
 
         public override void Misc(Menu miscMenu)
