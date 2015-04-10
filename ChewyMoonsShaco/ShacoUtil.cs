@@ -21,23 +21,7 @@ namespace ChewyMoonsShaco
 
         public static Vector2 GetShortestWayPoint(List<Vector2> waypoints)
         {
-            var shortestPos = new Vector2();
-            foreach (var waypoint in waypoints)
-            {
-                if (shortestPos == new Vector2())
-                {
-                    shortestPos = waypoint;
-                }
-                else
-                {
-                    if (waypoint.Distance(ObjectManager.Player) < shortestPos.Distance(ObjectManager.Player))
-                    {
-                        shortestPos = waypoint;
-                    }
-                }
-            }
-
-            return shortestPos;
+            return waypoints.MinOrDefault(x => x.Distance(ObjectManager.Player));
         }
     }
 }

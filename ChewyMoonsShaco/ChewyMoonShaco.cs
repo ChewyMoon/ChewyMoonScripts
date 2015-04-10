@@ -37,6 +37,7 @@ namespace ChewyMoonsShaco
             SpellList = new List<Spell> { Q, E, W };
 
             CreateMenu();
+            Illuminati.Init();
 
             Tiamat = ItemData.Tiamat_Melee_Only.GetItem();
             Hydra = ItemData.Ravenous_Hydra_Melee_Only.GetItem();
@@ -56,6 +57,7 @@ namespace ChewyMoonsShaco
             {
                 return;
             }
+
             if (!(target is Obj_AI_Hero))
             {
                 return;
@@ -108,12 +110,27 @@ namespace ChewyMoonsShaco
             ksMenu.AddItem(new MenuItem("ksE", "Use E").SetValue(true));
             Menu.AddSubMenu(ksMenu);
 
+            // ILLUMINATI
+            var illuminatiMenu = new Menu("Illuminati", "cmShacoTriangleIlluminatiSp00ky");
+            illuminatiMenu.AddItem(new MenuItem("PlaceBox", "Place Box").SetValue(new KeyBind(73, KeyBindType.Press)));
+            illuminatiMenu.AddItem(
+                new MenuItem("RepairTriangle", "Repair Triangle & Auto Form Triangle").SetValue(true));
+            illuminatiMenu.AddItem(new MenuItem("BoxDistance", "Box Distance").SetValue(new Slider(600, 101, 1200)));
+
+            illuminatiMenu.Item("BoxDistance").ValueChanged +=
+                delegate(object sender, OnValueChangeEventArgs args)
+                {
+                    Illuminati.TriangleLegDistance = args.GetNewValue<Slider>().Value;
+                };
+
+            Menu.AddSubMenu(illuminatiMenu);
+
             // Drawing
             var drawingMenu = new Menu("Drawings", "cmShacoDrawing");
-            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(new Circle(true, Color.Khaki)));
-            drawingMenu.AddItem(new MenuItem("drawQPos", "Draw Q Pos").SetValue(new Circle(true, Color.Magenta)));
-            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(new Circle(true, Color.Khaki)));
-            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(new Circle(true, Color.Khaki)));
+            drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawQPos", "Draw Q Pos").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
+            drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
             Menu.AddSubMenu(drawingMenu);
 
             // Misc
@@ -121,43 +138,44 @@ namespace ChewyMoonsShaco
             miscMenu.AddItem(new MenuItem("usePackets", "Use packets").SetValue(true));
             miscMenu.AddItem(new MenuItem("stuff", "Let me know of any"));
             miscMenu.AddItem(new MenuItem("stuff2", "other misc features you want"));
-            miscMenu.AddItem(new MenuItem("stuff3", "on the thead or IRC"));
+            miscMenu.AddItem(new MenuItem("stuff3", "on the thread or IRC"));
             Menu.AddSubMenu(miscMenu);
         }
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            var qCircle = Menu.Item("drawQ").GetValue<Circle>();
-            var wCircle = Menu.Item("drawW").GetValue<Circle>();
-            var eCircle = Menu.Item("drawE").GetValue<Circle>();
-            var qPosCircle = Menu.Item("drawQPos").GetValue<Circle>();
+            var qCircle = Menu.Item("drawQ").GetValue<bool>();
+            var wCircle = Menu.Item("drawW").GetValue<bool>();
+            var eCircle = Menu.Item("drawE").GetValue<bool>();
+            var qPosCircle = Menu.Item("drawQPos").GetValue<bool>();
 
             var pos = ObjectManager.Player.Position;
 
-            if (qCircle.Active)
+            if (qCircle)
             {
-                Render.Circle.DrawCircle(pos, Q.Range, qCircle.Color);
+                Render.Circle.DrawCircle(pos, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
             }
 
-            if (wCircle.Active)
+            if (wCircle)
             {
-                Render.Circle.DrawCircle(pos, W.Range, wCircle.Color);
+                Render.Circle.DrawCircle(pos, W.Range, W.IsReady() ? Color.Aqua : Color.Red);
             }
 
-            if (eCircle.Active)
+            if (eCircle)
             {
-                Render.Circle.DrawCircle(pos, E.Range, eCircle.Color);
+                Render.Circle.DrawCircle(pos, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
             }
 
-            if (!qPosCircle.Active)
+            if (!qPosCircle)
             {
                 return;
             }
+
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget()))
             {
                 Drawing.DrawLine(
                     Drawing.WorldToScreen(enemy.Position), Drawing.WorldToScreen(ShacoUtil.GetQPos(enemy, false)), 2,
-                    qPosCircle.Color);
+                    Color.Aquamarine);
             }
         }
 
@@ -166,6 +184,11 @@ namespace ChewyMoonsShaco
             if (Menu.Item("ksE").GetValue<bool>())
             {
                 KillSecure();
+            }
+
+            if (Menu.Item("PlaceBox").IsActive())
+            {
+                Illuminati.PlaceInitialBox();
             }
 
             switch (Orbwalker.ActiveMode)
