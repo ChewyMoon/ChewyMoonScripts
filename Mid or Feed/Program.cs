@@ -18,7 +18,6 @@ namespace Mid_or_Feed
 
         private static void Game_OnGameLoad(EventArgs args)
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             var plugin = Type.GetType("Mid_or_Feed.Champions." + ObjectManager.Player.ChampionName);
 
             if (plugin == null)
@@ -28,13 +27,15 @@ namespace Mid_or_Feed
             }
 
             DynamicInitializer.NewInstance(plugin);
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
         }
 
         private static void CurrentDomainOnUnhandledException(object sender,
             UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             Console.WriteLine(((Exception) unhandledExceptionEventArgs.ExceptionObject).Message);
-            Plugin.PrintChat("encountered an error! ChewyMoon dun goofed again gg");
+            Plugin.PrintChat("encountered an error! (This error may have been caused by another assembly)");
         }
     }
 
