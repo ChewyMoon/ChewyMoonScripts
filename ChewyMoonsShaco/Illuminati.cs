@@ -17,6 +17,9 @@ namespace ChewyMoonsShaco
 
         public static void Init()
         {
+            // Add all existing boxes
+            Boxes.AddRange(ObjectManager.Get<Obj_AI_Minion>().Where(x => x.BaseSkinName == "shacobox"));
+
             GameObject.OnCreate += (sender, args) =>
             {
                 if (!(sender is Obj_AI_Minion))
