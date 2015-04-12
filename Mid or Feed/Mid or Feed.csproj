@@ -61,9 +61,11 @@
   <ItemGroup>
     <Compile Include="Champions\Ahri.cs" />
     <Compile Include="Champions\Akali.cs" />
+    <Compile Include="Champions\Katarina.cs" />
     <Compile Include="Champions\Leblanc.cs" />
     <Compile Include="Champions\Lux.cs" />
     <Compile Include="Champions\Malzahar.cs" />
+    <Compile Include="Champions\Xerath.cs" />
     <Compile Include="Champions\Yasuo.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Plugin.cs" />
