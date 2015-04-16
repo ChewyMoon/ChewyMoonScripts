@@ -27,7 +27,6 @@ namespace Mid_or_Feed.Champions
         public static Spell E;
         public static Spell R;
         public static List<Spell> SpellList;
-        public static Items.Item Dfg;
 
         public Leblanc()
         {
@@ -41,9 +40,6 @@ namespace Mid_or_Feed.Champions
 
             // Populate spell list
             SpellList = new List<Spell> { Q, W, E, R };
-
-            // Create DFG item
-            Dfg = ItemData.Deathfire_Grasp.GetItem();
 
             // Setup Events
             Game.OnUpdate += GameOnOnGameUpdate;
@@ -248,11 +244,6 @@ namespace Mid_or_Feed.Champions
                 return;
             }
 
-            if (Dfg.IsReady() && GetBool("useDFG"))
-            {
-                Dfg.Cast(target);
-            }
-
             foreach (var spell in SpellList.Where(x => x.IsReady()).Where(spell => GetBool("use" + spell.Slot)))
             {
                 if (spell.Slot == SpellSlot.Q)
@@ -370,13 +361,6 @@ namespace Mid_or_Feed.Champions
                 dmg += Player.GetSpellDamage(target, SpellSlot.R);
             }
 
-            if (!Dfg.IsReady())
-            {
-                return (float) dmg;
-            }
-            dmg += Player.GetItemDamage(target, Damage.DamageItems.Dfg);
-            dmg += dmg * 0.2;
-
             return (float) dmg;
         }
 
@@ -395,11 +379,6 @@ namespace Mid_or_Feed.Champions
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useWHarass", "Use W").SetValue(true));
             harassMenu.AddItem(new MenuItem("useWBackHarass", "W Back").SetValue(true));
-        }
-
-        public override void ItemMenu(Menu itemsMenu)
-        {
-            itemsMenu.AddItem(new MenuItem("useDFG", "Use DFG").SetValue(true));
         }
 
         public override void Misc(Menu miscMenu)
