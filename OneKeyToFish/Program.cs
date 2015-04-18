@@ -92,6 +92,11 @@ namespace OneKeyToFish
 
         private static void GameOnOnGameLoad(EventArgs args)
         {
+            if (Player.BaseSkinName != "Fizz")
+            {
+                return;
+            }
+
             Q = new Spell(SpellSlot.Q, 550);
             W = new Spell(SpellSlot.W, Orbwalking.GetRealAutoAttackRange(Player));
             E = new Spell(SpellSlot.E, 400);
