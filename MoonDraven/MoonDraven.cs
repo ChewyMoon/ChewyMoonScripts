@@ -1,17 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace MoonDraven
 {
     internal class MoonDraven
     {
+        internal class QRecticle
+        {
+            public GameObject Object { get; set; }
+            public int ExpireTime { get; set; }
+
+            public Vector3 Position { get { return Object.Position; } }
+
+            public QRecticle(GameObject rectice, int expireTime)
+            {
+                Object = rectice;
+                ExpireTime = expireTime;
+            }    
+        }
+
         public Spell E;
         public Spell Q;
-        public List<GameObject> QReticles = new List<GameObject>();
+        public List<QRecticle> QReticles = new List<QRecticle>();
         public Spell R;
         public Spell W;
         public Orbwalking.Orbwalker Orbwalker { get; set; }
@@ -32,6 +47,9 @@ namespace MoonDraven
             }
         }
 
+        // Jodus pls
+        public float ManaPercent { get { return Player.Mana / Player.MaxMana * 100; } }
+
         public void Load()
         {
             // Create spells
@@ -41,7 +59,7 @@ namespace MoonDraven
             R = new Spell(SpellSlot.R);
 
             E.SetSkillshot(0.25f, 130, 1400, false, SkillshotType.SkillshotLine);
-            R.SetSkillshot(0.4f, 160, 2000, false, SkillshotType.SkillshotLine);
+            R.SetSkillshot(0.4f, 160, 2000, true, SkillshotType.SkillshotLine);
 
             CreateMenu();
 
@@ -82,7 +100,7 @@ namespace MoonDraven
                     Render.Circle.DrawCircle(bestAxe.Position, 120, Color.LimeGreen);
                 }
 
-                foreach (var axe in QReticles.Where(x => x.NetworkId != (bestAxe == null ? 0 : bestAxe.NetworkId)))
+                foreach (var axe in QReticles.Where(x => x.Object.NetworkId != (bestAxe == null ? 0 : bestAxe.Object.NetworkId)))
                 {
                     Render.Circle.DrawCircle(axe.Position, 120, Color.Yellow);
                 }
@@ -126,7 +144,7 @@ namespace MoonDraven
                 return;
             }
 
-            QReticles.RemoveAll(x => x.NetworkId == sender.NetworkId);
+            QReticles.RemoveAll(x => x.Object.NetworkId == sender.NetworkId);
         }
 
         private void GameObjectOnOnCreate(GameObject sender, EventArgs args)
@@ -136,8 +154,8 @@ namespace MoonDraven
                 return;
             }
 
-            QReticles.Add(sender);
-            Utility.DelayAction.Add(1800, () => QReticles.RemoveAll(x => x.NetworkId == sender.NetworkId));
+            QReticles.Add(new QRecticle(sender, Environment.TickCount + 1800));
+            Utility.DelayAction.Add(1800, () => QReticles.RemoveAll(x => x.Object.NetworkId == sender.NetworkId));
         }
 
         private void GameOnOnUpdate(EventArgs args)
@@ -148,26 +166,39 @@ namespace MoonDraven
                 (catchOption == 1 && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) || catchOption == 2)
             {
                 var bestReticle =
-                    QReticles.Select(x => x.Position)
-                        .Where(x => x.Distance(Game.CursorPos) < Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => x.Distance(Game.CursorPos))
+                    QReticles
+                        .Where(x => x.Object.Position.Distance(Game.CursorPos) < Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
+                        .OrderBy(x => x.Object.Position.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
-                if (QReticles.Any() && bestReticle.Distance(Player.ServerPosition) > 120)
+                if (bestReticle != null && bestReticle.Object.Position.Distance(Player.ServerPosition) > 110)
                 {
+                    var eta = 1000* (Player.Distance(bestReticle.Position)/Player.MoveSpeed);
+                    var expireTime = bestReticle.ExpireTime - Environment.TickCount;
+
+                    if (eta >= expireTime && Menu.Item("UseWForQ").IsActive())
+                    {
+                        W.Cast();
+                    }
+
                     if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
                     {
-                        Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle);
+                        Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
                     }
                     else
                     {
-                        Orbwalker.SetOrbwalkingPoint(bestReticle);
+                        Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
                     }
                 }
                 else
                 {
                     Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
                 }
+            }
+
+            if (W.IsReady() && Menu.Item("UseWSlow").IsActive() && Player.HasBuffOfType(BuffType.Slow))
+            {
+                W.Cast();
             }
 
             switch (Orbwalker.ActiveMode)
@@ -209,7 +240,7 @@ namespace MoonDraven
                 Q.Cast();
             }
 
-            if (useW && W.IsReady())
+            if (useW && W.IsReady() && ManaPercent > Menu.Item("UseWManaPercent").GetValue<Slider>().Value)
             {
                 if (Menu.Item("UseWSetting").IsActive())
                 {
@@ -238,7 +269,7 @@ namespace MoonDraven
             var killableTarget =
                 HeroManager.Enemies.Where(x => x.IsValidTarget(2000))
                     .FirstOrDefault(
-                        x => Player.GetSpellDamage(x, SpellSlot.R) > x.Health && !Orbwalker.InAutoAttackRange(x));
+                        x => Player.GetSpellDamage(x, SpellSlot.R) * 2 > x.Health && (!Orbwalker.InAutoAttackRange(x) || Player.CountEnemiesInRange(E.Range) > 2));
 
             if (killableTarget != null)
             {
@@ -252,13 +283,18 @@ namespace MoonDraven
             var useW = Menu.Item("UseWWaveClear").IsActive();
             var useE = Menu.Item("UseEWaveClear").IsActive();
 
+            if (ManaPercent < Menu.Item("WaveClearManaPercent").GetValue<Slider>().Value)
+            {
+                return;
+            }
+
             if (useQ && QCount < 2 && Q.IsReady() && Orbwalker.GetTarget() is Obj_AI_Minion &&
                 !Player.Spellbook.IsAutoAttacking)
             {
                 Q.Cast();
             }
 
-            if (useW && W.IsReady())
+            if (useW && W.IsReady() && ManaPercent > Menu.Item("UseWManaPercent").GetValue<Slider>().Value)
             {
                 if (Menu.Item("UseWSetting").IsActive())
                 {
@@ -335,6 +371,7 @@ namespace MoonDraven
             laneClearMenu.AddItem(new MenuItem("UseQWaveClear", "Use Q").SetValue(true));
             laneClearMenu.AddItem(new MenuItem("UseWWaveClear", "Use W").SetValue(true));
             laneClearMenu.AddItem(new MenuItem("UseEWaveClear", "Use E").SetValue(false));
+            laneClearMenu.AddItem(new MenuItem("WaveClearManaPercent", "Mana Percent").SetValue(new Slider(50)));
             Menu.AddSubMenu(laneClearMenu);
 
             // Axe Menu
@@ -343,6 +380,7 @@ namespace MoonDraven
                 new MenuItem("AxeMode", "Catch Axe on Mode:").SetValue(new StringList(new[] {"Combo", "Any", "Always"},
                     2)));
             axeMenu.AddItem(new MenuItem("CatchAxeRange", "Catch Axe Range").SetValue(new Slider(800, 120, 1500)));
+            axeMenu.AddItem(new MenuItem("UseWForQ", "Use W if Axe too far").SetValue(true));
             Menu.AddSubMenu(axeMenu);
 
             // Drawing
@@ -357,6 +395,8 @@ namespace MoonDraven
             miscMenu.AddItem(new MenuItem("UseWSetting", "Use W Instantly(When Available)").SetValue(false));
             miscMenu.AddItem(new MenuItem("UseEGapcloser", "Use E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("UseEInterrupt", "Use E to Interrupt").SetValue(true));
+            miscMenu.AddItem(new MenuItem("UseWManaPercent", "Use W Mana Percent").SetValue(new Slider(50)));
+            miscMenu.AddItem(new MenuItem("UseWSlow", "Use W if Slowed").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             Menu.AddToMainMenu();
