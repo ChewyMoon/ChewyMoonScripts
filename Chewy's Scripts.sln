@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneKeyToFish", "OneKeyToFis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snitched Reloaded", "Snitched Reloaded\Snitched Reloaded.csproj", "{6DC1429B-AF0E-4DFB-861E-FADF31CE28BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonDraven", "MoonDraven\MoonDraven.csproj", "{DB818DA8-FBB5-415C-90DA-7DF923A84968}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{6DC1429B-AF0E-4DFB-861E-FADF31CE28BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DC1429B-AF0E-4DFB-861E-FADF31CE28BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DC1429B-AF0E-4DFB-861E-FADF31CE28BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
