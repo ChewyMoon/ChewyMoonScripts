@@ -74,7 +74,7 @@ namespace MoonDraven
                             x =>
                                 x.Position.Distance(Game.CursorPos) <
                                 Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => Player.Distance(x.Position)).ThenBy(x => x.Position.Distance(Game.CursorPos))
+                        .OrderBy(x => x.Position.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
                 if (bestAxe != null)
@@ -150,8 +150,7 @@ namespace MoonDraven
                 var bestReticle =
                     QReticles.Select(x => x.Position)
                         .Where(x => x.Distance(Game.CursorPos) < Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => x.Distance(Player.ServerPosition))
-                        .ThenBy(x => x.Distance(Game.CursorPos))
+                        .OrderBy(x => x.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
                 if (QReticles.Any() && bestReticle.Distance(Player.ServerPosition) > 120)
