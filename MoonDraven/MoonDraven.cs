@@ -10,20 +10,6 @@ namespace MoonDraven
 {
     internal class MoonDraven
     {
-        internal class QRecticle
-        {
-            public GameObject Object { get; set; }
-            public int ExpireTime { get; set; }
-
-            public Vector3 Position { get { return Object.Position; } }
-
-            public QRecticle(GameObject rectice, int expireTime)
-            {
-                Object = rectice;
-                ExpireTime = expireTime;
-            }    
-        }
-
         public Spell E;
         public Spell Q;
         public List<QRecticle> QReticles = new List<QRecticle>();
@@ -41,14 +27,17 @@ namespace MoonDraven
         {
             get
             {
-                return Player.HasBuff("dravenspinningattack")
-                    ? Player.Buffs.First(x => x.Name == "dravenspinningattack").Count + QReticles.Count
-                    : 0;
+                return (Player.HasBuff("dravenspinningattack")
+                    ? Player.Buffs.First(x => x.Name == "dravenspinningattack").Count
+                    : 0) + QReticles.Count;
             }
         }
 
         // Jodus pls
-        public float ManaPercent { get { return Player.Mana / Player.MaxMana * 100; } }
+        public float ManaPercent
+        {
+            get { return Player.Mana/Player.MaxMana*100; }
+        }
 
         public void Load()
         {
@@ -101,7 +90,9 @@ namespace MoonDraven
                     Render.Circle.DrawCircle(bestAxe.Position, 120, Color.LimeGreen);
                 }
 
-                foreach (var axe in QReticles.Where(x => x.Object.NetworkId != (bestAxe == null ? 0 : bestAxe.Object.NetworkId)))
+                foreach (
+                    var axe in
+                        QReticles.Where(x => x.Object.NetworkId != (bestAxe == null ? 0 : bestAxe.Object.NetworkId)))
                 {
                     Render.Circle.DrawCircle(axe.Position, 120, Color.Yellow);
                 }
@@ -168,14 +159,17 @@ namespace MoonDraven
             {
                 var bestReticle =
                     QReticles
-                        .Where(x => x.Object.Position.Distance(Game.CursorPos) < Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
+                        .Where(
+                            x =>
+                                x.Object.Position.Distance(Game.CursorPos) <
+                                Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
                         .OrderBy(x => x.Position.Distance(Player.ServerPosition))
                         .ThenBy(x => x.Position.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
                 if (bestReticle != null && bestReticle.Object.Position.Distance(Player.ServerPosition) > 110)
                 {
-                    var eta = 1000* (Player.Distance(bestReticle.Position)/Player.MoveSpeed);
+                    var eta = 1000*(Player.Distance(bestReticle.Position)/Player.MoveSpeed);
                     var expireTime = bestReticle.ExpireTime - Environment.TickCount;
 
                     if (eta >= expireTime && Menu.Item("UseWForQ").IsActive())
@@ -236,7 +230,8 @@ namespace MoonDraven
             var useE = Menu.Item("UseECombo").IsActive();
             var useR = Menu.Item("UseRCombo").IsActive();
 
-            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() && Orbwalker.InAutoAttackRange(target) &&
+            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() &&
+                Orbwalker.InAutoAttackRange(target) &&
                 !Player.Spellbook.IsAutoAttacking)
             {
                 Q.Cast();
@@ -271,7 +266,9 @@ namespace MoonDraven
             var killableTarget =
                 HeroManager.Enemies.Where(x => x.IsValidTarget(2000))
                     .FirstOrDefault(
-                        x => Player.GetSpellDamage(x, SpellSlot.R) * 2 > x.Health && (!Orbwalker.InAutoAttackRange(x) || Player.CountEnemiesInRange(E.Range) > 2));
+                        x =>
+                            Player.GetSpellDamage(x, SpellSlot.R)*2 > x.Health &&
+                            (!Orbwalker.InAutoAttackRange(x) || Player.CountEnemiesInRange(E.Range) > 2));
 
             if (killableTarget != null)
             {
@@ -290,7 +287,8 @@ namespace MoonDraven
                 return;
             }
 
-            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() && Orbwalker.GetTarget() is Obj_AI_Minion &&
+            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() &&
+                Orbwalker.GetTarget() is Obj_AI_Minion &&
                 !Player.Spellbook.IsAutoAttacking)
             {
                 Q.Cast();
@@ -403,6 +401,23 @@ namespace MoonDraven
             Menu.AddSubMenu(miscMenu);
 
             Menu.AddToMainMenu();
+        }
+
+        internal class QRecticle
+        {
+            public QRecticle(GameObject rectice, int expireTime)
+            {
+                Object = rectice;
+                ExpireTime = expireTime;
+            }
+
+            public GameObject Object { get; set; }
+            public int ExpireTime { get; set; }
+
+            public Vector3 Position
+            {
+                get { return Object.Position; }
+            }
         }
     }
 }
