@@ -142,7 +142,7 @@ namespace Cya_Nerds
                 return;
             }
 
-            if (!_plugin.WardJumpSpell.IsReady())
+            if (!_plugin.WardJumpSpell.IsReady() || _plugin.WardJumpSpell.Instance.SData.Name == "blindmonkwtwo")
             {
                 return;
             }
