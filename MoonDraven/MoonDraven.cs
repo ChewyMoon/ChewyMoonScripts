@@ -42,7 +42,7 @@ namespace MoonDraven
             get
             {
                 return Player.HasBuff("dravenspinningattack")
-                    ? Player.Buffs.First(x => x.Name == "dravenspinningattack").Count
+                    ? Player.Buffs.First(x => x.Name == "dravenspinningattack").Count + QReticles.Count
                     : 0;
             }
         }
@@ -92,7 +92,8 @@ namespace MoonDraven
                             x =>
                                 x.Position.Distance(Game.CursorPos) <
                                 Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => x.Position.Distance(Game.CursorPos))
+                        .OrderBy(x => x.Position.Distance(Player.ServerPosition))
+                        .ThenBy(x => x.Position.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
                 if (bestAxe != null)
@@ -168,7 +169,8 @@ namespace MoonDraven
                 var bestReticle =
                     QReticles
                         .Where(x => x.Object.Position.Distance(Game.CursorPos) < Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => x.Object.Position.Distance(Game.CursorPos))
+                        .OrderBy(x => x.Position.Distance(Player.ServerPosition))
+                        .ThenBy(x => x.Position.Distance(Game.CursorPos))
                         .FirstOrDefault();
 
                 if (bestReticle != null && bestReticle.Object.Position.Distance(Player.ServerPosition) > 110)
@@ -234,7 +236,7 @@ namespace MoonDraven
             var useE = Menu.Item("UseECombo").IsActive();
             var useR = Menu.Item("UseRCombo").IsActive();
 
-            if (useQ && QCount < 2 && Q.IsReady() && Orbwalker.InAutoAttackRange(target) &&
+            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() && Orbwalker.InAutoAttackRange(target) &&
                 !Player.Spellbook.IsAutoAttacking)
             {
                 Q.Cast();
@@ -288,7 +290,7 @@ namespace MoonDraven
                 return;
             }
 
-            if (useQ && QCount < 2 && Q.IsReady() && Orbwalker.GetTarget() is Obj_AI_Minion &&
+            if (useQ && QCount < Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && Q.IsReady() && Orbwalker.GetTarget() is Obj_AI_Minion &&
                 !Player.Spellbook.IsAutoAttacking)
             {
                 Q.Cast();
@@ -380,6 +382,7 @@ namespace MoonDraven
                 new MenuItem("AxeMode", "Catch Axe on Mode:").SetValue(new StringList(new[] {"Combo", "Any", "Always"},
                     2)));
             axeMenu.AddItem(new MenuItem("CatchAxeRange", "Catch Axe Range").SetValue(new Slider(800, 120, 1500)));
+            axeMenu.AddItem(new MenuItem("MaxAxes", "Maximum Axes").SetValue(new Slider(2, 1, 3)));
             axeMenu.AddItem(new MenuItem("UseWForQ", "Use W if Axe too far").SetValue(true));
             Menu.AddSubMenu(axeMenu);
 
