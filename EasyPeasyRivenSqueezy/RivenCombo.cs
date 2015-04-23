@@ -40,7 +40,7 @@ namespace EasyPeasyRivenSqueezy
             {
                 IgniteKillSecure();
             }
-            if (Environment.TickCount - Riven.LastQ >= 4000 - Game.Ping / 2 - Riven.Q.Delay * 1000 && Riven.QCount != 0 &&
+            if (Environment.TickCount - Riven.LastQ >= 4000 - Game.Ping/2 - Riven.Q.Delay*1000 && Riven.QCount != 0 &&
                 !Riven.Player.IsRecalling() && Riven.GetBool("KeepQAlive"))
             {
                 Riven.Q.Cast(Game.CursorPos);
@@ -78,7 +78,8 @@ namespace EasyPeasyRivenSqueezy
             var minion = (Obj_AI_Base) Riven.Orbwalker.GetTarget();
             Riven.LastTarget = minion;
 
-            if (Riven.E.IsReady() && Riven.W.IsReady())
+            if (Riven.E.IsReady() && Riven.W.IsReady() && Riven.GetBool("UseEWaveClear") &&
+                Riven.GetBool("UseWWaveClear"))
             {
                 if (Riven.GetBool("UseItems"))
                 {
@@ -95,7 +96,7 @@ namespace EasyPeasyRivenSqueezy
                 CastCircleThing();
                 Riven.W.Cast();
             }
-            else if (Riven.W.IsReady())
+            else if (Riven.W.IsReady() && Riven.GetBool("UseWWaveClear"))
             {
                 if (Riven.GetBool("UseItems"))
                 {
@@ -155,7 +156,7 @@ namespace EasyPeasyRivenSqueezy
             {
                 var bestTarget =
                     objAiHeroes.Where(
-                        x => Riven.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) / 5 > x.Health)
+                        x => Riven.Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite)/5 > x.Health)
                         .OrderByDescending(x => x.Distance(Riven.Player))
                         .FirstOrDefault();
 
@@ -256,7 +257,8 @@ namespace EasyPeasyRivenSqueezy
 
             // Use R logic
             if (CanHardEngage(target) && !Riven.RActivated && Riven.R.IsReady() &&
-                target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value && useR)
+                target.HealthPercentage() > Riven.Menu.Item("UseRPercent").GetValue<Slider>().Value && useR &&
+                Riven.GetBool("UseR" + Riven.Orbwalker.ActiveMode))
             {
                 NotificationHandler.ShowInfo("Using R!");
 
@@ -297,7 +299,8 @@ namespace EasyPeasyRivenSqueezy
 
             if (target.Distance(Riven.Player) < Riven.EWRange &&
                 (!Riven.Q.IsReady() || target.Distance(Riven.Player) > Riven.Q.Range) && Riven.E.IsReady() &&
-                Riven.W.IsReady())
+                Riven.W.IsReady() && Riven.GetBool("UseE" + Riven.Orbwalker.ActiveMode) &&
+                Riven.GetBool("UseW" + Riven.Orbwalker.ActiveMode))
             {
                 var distE = Riven.Player.ServerPosition.Extend(target.Position, Riven.E.Range);
 
@@ -310,12 +313,13 @@ namespace EasyPeasyRivenSqueezy
                 CastCircleThing();
                 CastW();
             }
-            else if ((Hydra.IsReady() || Tiamat.IsReady()) && Riven.W.IsReady())
+            else if ((Hydra.IsReady() || Tiamat.IsReady()) && Riven.W.IsReady() &&
+                     Riven.GetBool("UseW" + Riven.Orbwalker.ActiveMode))
             {
                 CastCircleThing();
                 CastW();
             }
-            else if (Riven.W.IsReady())
+            else if (Riven.W.IsReady() && Riven.GetBool("UseW" + Riven.Orbwalker.ActiveMode))
             {
                 CastW();
             }
@@ -355,7 +359,7 @@ namespace EasyPeasyRivenSqueezy
                     return dmg > target.Health;
 
                 case "Probably":
-                    return dmg * 2 > target.Health;
+                    return dmg*2 > target.Health;
             }
 
             return false;
@@ -404,9 +408,9 @@ namespace EasyPeasyRivenSqueezy
 
             if (Riven.Q.IsReady())
             {
-                dmg += Riven.Q.GetDamage(hero) * 3 - Riven.QCount;
-                dmg += Riven.PassiveDmg * 3 - Riven.QCount;
-                dmg += (float) Riven.Player.GetAutoAttackDamage(hero, true) * 3;
+                dmg += Riven.Q.GetDamage(hero)*3 - Riven.QCount;
+                dmg += Riven.PassiveDmg*3 - Riven.QCount;
+                dmg += (float) Riven.Player.GetAutoAttackDamage(hero, true)*3;
             }
 
             if (Riven.E.IsReady())

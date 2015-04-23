@@ -27,7 +27,7 @@ namespace EasyPeasyRivenSqueezy
 
         public static float EWRange
         {
-            get { return E.Range + W.Range / 2 + Player.BoundingRadius; }
+            get { return E.Range + W.Range/2 + Player.BoundingRadius; }
         }
 
         public static Spell Q { get; internal set; }
@@ -51,8 +51,8 @@ namespace EasyPeasyRivenSqueezy
         {
             get
             {
-                double[] dmgMult = { 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5 };
-                var dmg = (Player.FlatPhysicalDamageMod + Player.BaseAttackDamage) * dmgMult[Player.Level / 3];
+                double[] dmgMult = {0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
+                var dmg = (Player.FlatPhysicalDamageMod + Player.BaseAttackDamage)*dmgMult[Player.Level/3];
                 return (float) dmg;
             }
         }
@@ -75,9 +75,9 @@ namespace EasyPeasyRivenSqueezy
 
             CreateMenu();
 
-            Q = new Spell(SpellSlot.Q, 260) { Delay = 0.5f };
+            Q = new Spell(SpellSlot.Q, 260) {Delay = 0.5f};
             W = new Spell(SpellSlot.W, 260);
-            E = new Spell(SpellSlot.E, 250) { Delay = 0.3f, Speed = 1450 };
+            E = new Spell(SpellSlot.E, 250) {Delay = 0.3f, Speed = 1450};
             R = new Spell(SpellSlot.R, 1100);
             Ignite = new Spell(Player.GetSpellSlot("summonerdot"), 600);
 
@@ -186,7 +186,7 @@ namespace EasyPeasyRivenSqueezy
             if (args.SData.Name == "RivenFengShuiEngine" && GetBool("KeepRAlive"))
             {
                 Utility.DelayAction.Add(
-                    (int) (15000 - Game.Ping / 2 - R.Delay * 1000), delegate
+                    (int) (15000 - Game.Ping/2 - R.Delay*1000), delegate
                     {
                         if (CanWindSlash)
                         {
@@ -222,10 +222,17 @@ namespace EasyPeasyRivenSqueezy
             TargetSelector.AddToMenu(tsMenu);
             Menu.AddSubMenu(tsMenu);
 
-            var comboMenu = new Menu("Combo", "comboerinokurisuishot");
+            var comboMenu = new Menu("Combo", "combo_kek");
+            var comboSpellsMenu = new Menu("Spells", "combo_spells");
+            comboSpellsMenu.AddItem(new MenuItem("UseQCombo", "Use Q").SetValue(true));
+            comboSpellsMenu.AddItem(new MenuItem("UseWCombo", "Use W").SetValue(true));
+            comboSpellsMenu.AddItem(new MenuItem("UseECombo", "Use E").SetValue(true));
+            comboSpellsMenu.AddItem(new MenuItem("UseRCombo", "Use R").SetValue(true));
+            comboMenu.AddSubMenu(comboSpellsMenu);
+
             comboMenu.AddItem(
                 new MenuItem("UseROption", "When to Use R").SetValue(
-                    new StringList(new[] { "Hard", "Easy", "Probably" })));
+                    new StringList(new[] {"Hard", "Easy", "Probably"})));
             comboMenu.AddItem(
                 new MenuItem("UseRPercent", "Dont R if target health percent less than ").SetValue(new Slider(1, 1)));
             comboMenu.AddItem(
@@ -238,7 +245,19 @@ namespace EasyPeasyRivenSqueezy
             comboMenu.AddItem(new MenuItem("FollowTarget", "Follow Target(Magnet)").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
+            var harassMenu = new Menu("Harass", "harass");
+            harassMenu.AddItem(new MenuItem("UseQMixed", "Use Q").SetValue(true));
+            harassMenu.AddItem(new MenuItem("UseWMixed", "Use W").SetValue(true));
+            harassMenu.AddItem(new MenuItem("UseEMixed", "Use E").SetValue(true));
+            Menu.AddSubMenu(harassMenu);
+
             var farmMenu = new Menu("Wave Clear", "cmWC");
+            var farmSpellsMenu = new Menu("Spells", "farm_spells");
+            farmSpellsMenu.AddItem(new MenuItem("UseQWaveClear", "Use Q").SetValue(true));
+            farmSpellsMenu.AddItem(new MenuItem("UseWWaveClear", "Use W").SetValue(true));
+            farmSpellsMenu.AddItem(new MenuItem("UseEWaveClear", "Use E").SetValue(true));
+            farmMenu.AddSubMenu(farmSpellsMenu);
+
             farmMenu.AddItem(new MenuItem("UseFastQ", "Use Fast Q").SetValue(true));
             farmMenu.AddItem(new MenuItem("UseItems", "Use Items").SetValue(false));
             Menu.AddSubMenu(farmMenu);
@@ -251,6 +270,7 @@ namespace EasyPeasyRivenSqueezy
             miscMenu.AddItem(new MenuItem("IgniteKillable", "Ignite if Killable").SetValue(true));
             miscMenu.AddItem(new MenuItem("IgniteKS", "Ignite KS").SetValue(true));
             miscMenu.AddItem(new MenuItem("Notifications", "Use Notifications").SetValue(true));
+            miscMenu.AddItem(new MenuItem("CancelQAnimation", "Block Q Animation (Everyone)").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             var fleeMenu = new Menu("Flee", "cmFlee");
@@ -280,32 +300,44 @@ namespace EasyPeasyRivenSqueezy
             {
                 LastQ = Environment.TickCount;
 
+                if (GetBool("CancelQAnimation"))
+                {
+                    Game.Say("/l");
+                }
+
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
-                    Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
+                    Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear ||
+                    Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
                 {
                     // TODO: implement this
                     var movePos =
                         (ObjectManager.Player.Position.To2D() -
-                         (Player.BoundingRadius + 10) * ObjectManager.Player.Direction.To2D().Perpendicular()).To3D();
+                         (Player.BoundingRadius + 10)*ObjectManager.Player.Direction.To2D().Perpendicular()).To3D();
 
                     Utility.DelayAction.Add(100, () => Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos));
                     Utility.DelayAction.Add(
-                        (int) (QDelay + 100 + Player.AttackDelay * 100), Orbwalking.ResetAutoAttackTimer);
+                        (int) (QDelay + 100 + Player.AttackDelay*100), Orbwalking.ResetAutoAttackTimer);
                 }
             }
 
             if (args.Animation.Contains("Attack") &&
                 (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
-                 Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
+                 Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear ||
+                 Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed))
             {
                 var aaDelay = Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear
-                    ? GetBool("UseFastQ") ? Player.AttackDelay * 100 + Game.Ping / 2f : Player.AttackCastDelay * 1000
-                    : Player.AttackDelay * 100;
+                    ? GetBool("UseFastQ") ? Player.AttackDelay*100 + Game.Ping/2f : Player.AttackCastDelay*1000
+                    : Player.AttackDelay*100;
+
                 Utility.DelayAction.Add(
                     (int) (QDelay + aaDelay), () =>
                     {
-                        //Player.IssueOrder(GameObjectOrder.MoveTo, Q.GetPrediction(LastTarget).CastPosition);
-                        Q.Cast(LastTarget.Position);
+                        if ((GetBool("UseQCombo") && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) ||
+                            (GetBool("UseQMixed") && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed) ||
+                            (GetBool("UseQWaveClear") && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear))
+                        {
+                            Q.Cast(LastTarget.Position);
+                        }
                     });
             }
         }

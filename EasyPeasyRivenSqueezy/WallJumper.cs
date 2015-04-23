@@ -51,11 +51,11 @@ namespace EasyPeasyRivenSqueezy
 
             for (float d = 0; d < from.Distance(to); d = d + step)
             {
-                var testPoint = from + d * direction;
+                var testPoint = from + d*direction;
                 var flags = NavMesh.GetCollisionFlags(testPoint.X, testPoint.Y);
                 if (flags.HasFlag(CollisionFlags.Wall) || flags.HasFlag(CollisionFlags.Building))
                 {
-                    return from + (d - step) * direction;
+                    return from + (d - step)*direction;
                 }
             }
 

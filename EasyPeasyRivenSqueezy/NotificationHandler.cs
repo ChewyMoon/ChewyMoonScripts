@@ -35,7 +35,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            var notification = new Notification("GAPCLOSER!", 2500) { TextColor = new ColorBGRA(255, 0, 0, 255) };
+            var notification = new Notification("GAPCLOSER!", 2500) {TextColor = new ColorBGRA(255, 0, 0, 255)};
 
             notification.Flash(500);
             Notifications.AddNotification(notification);
@@ -68,7 +68,7 @@ namespace EasyPeasyRivenSqueezy
                 return;
             }
 
-            var notification = new Notification(text, 5000) { TextColor = new ColorBGRA(255, 255, 0, 255) };
+            var notification = new Notification(text, 5000) {TextColor = new ColorBGRA(255, 255, 0, 255)};
 
             Notifications.AddNotification(notification);
 
