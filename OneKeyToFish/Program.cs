@@ -242,6 +242,14 @@ namespace OneKeyToFish
             }
         }
 
+        public static void CastRSmart(Obj_AI_Hero target)
+        {
+            var castPosition = R.GetPrediction(target).CastPosition;
+            castPosition = Player.ServerPosition.Extend(castPosition, R.Range);
+
+            R.Cast(castPosition);
+        }
+
         private static void DoCombo()
         {
             var target = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
@@ -254,7 +262,7 @@ namespace OneKeyToFish
             if (Menu.Item("UseREGapclose").IsActive() && CanKillWithUltCombo(target) && Q.IsReady() && W.IsReady() &&
                 E.IsReady() && R.IsReady() && (Player.Distance(target) < Q.Range + E.Range * 2))
             {
-                R.Cast(target);
+                CastRSmart(target);
 
                 E.Cast(Player.ServerPosition.Extend(target.ServerPosition, E.Range - 1));
                 E.Cast(Player.ServerPosition.Extend(target.ServerPosition, E.Range - 1));
@@ -268,22 +276,22 @@ namespace OneKeyToFish
                 {
                     if (Player.GetSpellDamage(target, SpellSlot.R) > target.Health)
                     {
-                        R.Cast(target);
+                        CastRSmart(target);
                     }
 
                     if (DamageToUnit(target) > target.Health)
                     {
-                        R.Cast(target);
+                        CastRSmart(target);
                     }
 
                     if ((Q.IsReady() || E.IsReady()))
                     {
-                        R.Cast(target);
+                        CastRSmart(target);
                     }
 
                     if (Orbwalker.InAutoAttackRange(target))
                     {
-                        R.Cast(target);
+                        CastRSmart(target);
                     }
                 }
 
