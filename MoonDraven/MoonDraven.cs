@@ -176,15 +176,45 @@ namespace MoonDraven
                     {
                         W.Cast();
                     }
-
-                    if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                    
+                    if (Menu.Item("DontCatchUnderTurret").IsActive())
                     {
-                        Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                        // If we're under the turret as well as the axe, catch the axe
+                        if (Player.UnderTurret(true) && bestReticle.Object.Position.UnderTurret(true))
+                        {
+                            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                            {
+                                Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                            }
+                            else
+                            {
+                                Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                            }
+                        }
+                        // Catch axe if not under turret
+                        else if (!bestReticle.Position.UnderTurret(true))
+                        {
+                            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                            {
+                                Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                            }
+                            else
+                            {
+                                Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                            }      
+                        }
                     }
                     else
                     {
-                        Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                    }
+                        if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                        {
+                            Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                        }
+                        else
+                        {
+                            Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                        } 
+                    }            
                 }
                 else
                 {
@@ -382,6 +412,7 @@ namespace MoonDraven
             axeMenu.AddItem(new MenuItem("CatchAxeRange", "Catch Axe Range").SetValue(new Slider(800, 120, 1500)));
             axeMenu.AddItem(new MenuItem("MaxAxes", "Maximum Axes").SetValue(new Slider(2, 1, 3)));
             axeMenu.AddItem(new MenuItem("UseWForQ", "Use W if Axe too far").SetValue(true));
+            axeMenu.AddItem(new MenuItem("DontCatchUnderTurret", "Don't Catch Axe Under Turret").SetValue(true));
             Menu.AddSubMenu(axeMenu);
 
             // Drawing
