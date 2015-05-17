@@ -216,10 +216,10 @@ namespace MoonDraven
                         } 
                     }            
                 }
-                else
-                {
-                    Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
-                }
+            }
+            else
+            {
+                Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
             }
 
             if (W.IsReady() && Menu.Item("UseWSlow").IsActive() && Player.HasBuffOfType(BuffType.Slow))
