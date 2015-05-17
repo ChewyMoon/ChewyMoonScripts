@@ -216,6 +216,10 @@ namespace MoonDraven
                         } 
                     }            
                 }
+                else
+                {
+                    Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+                }
             }
             else
             {
