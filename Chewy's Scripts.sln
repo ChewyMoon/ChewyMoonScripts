@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsIrelia", "ChewyMoonsIrelia\ChewyMoonsIrelia.csproj", "{E7ED83B1-B486-4798-AA58-0B05B3DB51E0}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snitched Reloaded", "Snitched Reloaded\Snitched Reloaded.csproj", "{6DC1429B-AF0E-4DFB-861E-FADF31CE28BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonDraven", "MoonDraven\MoonDraven.csproj", "{DB818DA8-FBB5-415C-90DA-7DF923A84968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyVayne", "ChewyVayne\ChewyVayne.csproj", "{806A2198-3AA8-4190-BF87-EC1610F8C935}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB818DA8-FBB5-415C-90DA-7DF923A84968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
