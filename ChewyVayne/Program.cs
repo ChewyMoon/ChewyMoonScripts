@@ -469,6 +469,11 @@ namespace ChewyVayne
                 }
             }
 
+            if (!(target is Obj_AI_Hero) && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LaneClear)
+            {
+                return;
+            }
+
             Utility.DelayAction.Add(
                 (int)(Player.AttackDelay * 100 + Game.Ping / 2f), 
                 () =>
