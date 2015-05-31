@@ -470,7 +470,7 @@ namespace ChewyVayne
             }
 
             Utility.DelayAction.Add(
-                (int)(Player.AttackDelay * 100), 
+                (int)(Player.AttackDelay * 100 + Game.Ping / 2f), 
                 () =>
                     {
                         Q.Cast(Game.CursorPos);
