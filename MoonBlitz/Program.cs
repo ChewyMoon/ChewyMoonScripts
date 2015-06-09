@@ -22,6 +22,7 @@
 namespace MoonBlitz
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
@@ -201,33 +202,11 @@ namespace MoonBlitz
                            };
             }
 
-            var polygon = new Geometry.Polygon.Rectangle(Player.ServerPosition, fixedPred, input.Radius);
-            var units =
-                ObjectManager.Get<Obj_AI_Base>().Where(x => x.Team != Player.Team && polygon.IsInside(x)).ToList();
+            var positions = new List<Vector3> { position.To3D2(), fixedPred, unit.ServerPosition};
+            var collision = LeagueSharp.Common.Collision.GetCollision(positions, input);
+            collision.RemoveAll(x => x.NetworkId == input.Unit.NetworkId);
 
-            // Add the target since he *should* be hit by this spell
-            units.Add(unit);
-
-            // Sort them in correct order, closest to farthest
-            units.OrderBy(x => x.Distance(Player));
-
-            var hitUnit = units.FirstOrDefault();
-             
-            // ?????????
-            if (hitUnit == null)
-            {
-                return new PredictionOutput()
-                           {
-                               UnitPosition = new Vector3(position.X, position.Y, unit.ServerPosition.Z), 
-                               CastPosition = new Vector3(fixedPred.X, fixedPred.Y, unit.ServerPosition.Z), 
-                               Hitchance = hitChance
-                           };
-            }
-
-            if (hitUnit.NetworkId != unit.NetworkId)
-            {
-                hitChance = HitChance.Collision;
-            }
+            hitChance = collision.Count > 0 ? HitChance.Collision : hitChance;
 
             return new PredictionOutput()
                        {
