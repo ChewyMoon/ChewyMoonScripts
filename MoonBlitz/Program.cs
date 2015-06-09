@@ -212,7 +212,8 @@ namespace MoonBlitz
             units.OrderBy(x => x.Distance(Player));
 
             var hitUnit = units.FirstOrDefault();
-
+             
+            // ?????????
             if (hitUnit == null)
             {
                 return new PredictionOutput()
@@ -599,7 +600,7 @@ namespace MoonBlitz
                 return;
             }
 
-            if (HeroManager.Enemies.Any(x => x.Distance(Player) > R.Range && R.GetDamage(x) > x.Health))
+            if (HeroManager.Enemies.Any(x => x.Distance(Player) < R.Range && R.GetDamage(x) > x.Health))
             {
                 R.Cast();
             }
