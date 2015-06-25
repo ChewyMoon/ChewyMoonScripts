@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonDraven", "MoonDraven\Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyVayne", "ChewyVayne\ChewyVayne.csproj", "{806A2198-3AA8-4190-BF87-EC1610F8C935}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonBlitz", "MoonBlitz\MoonBlitz.csproj", "{38D6B912-AE60-442B-94E8-85A14838AC4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsaneEzreal", "InsaneEzreal\InsaneEzreal.csproj", "{E6FCBA6A-3DC3-4EAA-8F46-819B2D0E0FBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{806A2198-3AA8-4190-BF87-EC1610F8C935}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D6B912-AE60-442B-94E8-85A14838AC4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D6B912-AE60-442B-94E8-85A14838AC4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D6B912-AE60-442B-94E8-85A14838AC4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D6B912-AE60-442B-94E8-85A14838AC4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6FCBA6A-3DC3-4EAA-8F46-819B2D0E0FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6FCBA6A-3DC3-4EAA-8F46-819B2D0E0FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6FCBA6A-3DC3-4EAA-8F46-819B2D0E0FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6FCBA6A-3DC3-4EAA-8F46-819B2D0E0FBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

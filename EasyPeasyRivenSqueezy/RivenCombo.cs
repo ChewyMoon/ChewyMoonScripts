@@ -4,6 +4,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
 using SharpDX;
+using ItemData = LeagueSharp.Common.Data.ItemData;
 
 namespace EasyPeasyRivenSqueezy
 {

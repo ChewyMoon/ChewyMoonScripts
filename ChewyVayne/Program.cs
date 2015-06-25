@@ -33,6 +33,7 @@ namespace ChewyVayne
     using SharpDX;
 
     using Color = System.Drawing.Color;
+    using ItemData = LeagueSharp.Common.Data.ItemData;
 
     /// <summary>
     ///     The program class.
@@ -475,7 +476,7 @@ namespace ChewyVayne
             }
 
             Utility.DelayAction.Add(
-                (int)(Player.AttackDelay * 100 + Game.Ping / 2f), 
+                (int)(Player.AttackCastDelay * 1000 + Game.Ping / 2f), 
                 () =>
                     {
                         Q.Cast(Game.CursorPos);
