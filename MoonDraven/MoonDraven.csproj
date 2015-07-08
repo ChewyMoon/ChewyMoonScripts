@@ -37,22 +37,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LeagueSharp">
-      <HintPath>E:\Justin\Desktop\LeagueSharp\System\LeagueSharp.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
-    <Reference Include="LeagueSharp.Common">
-      <HintPath>E:\Justin\Desktop\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
+    <Reference Include="LeagueSharp.SDK">
+      <HintPath>C:\Program Files (x86)\LeagueSharp\System\LeagueSharp.SDK.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Justin\Desktop\LeagueSharp\System\SharpDX.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Justin\Desktop\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,6 +64,7 @@
     <Compile Include="MoonDraven.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Render.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
