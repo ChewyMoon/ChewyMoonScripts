@@ -195,12 +195,12 @@ namespace Sophies_Soraka
 
             if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady())
             {
-                Q.Cast(unit, Packets);
+                Q.Cast(gapcloser.End, Packets);
             }
 
             if (Menu.Item("useEGapcloser").GetValue<bool>() && unit.IsValidTarget(E.Range) && E.IsReady())
             {
-                E.Cast(unit, Packets);
+                E.Cast(gapcloser.End, Packets);
             }
         }
 
