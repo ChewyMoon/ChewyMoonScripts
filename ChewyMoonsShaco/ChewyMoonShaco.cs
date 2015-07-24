@@ -31,7 +31,6 @@ namespace ChewyMoonsShaco
         public static Obj_AI_Hero player = ObjectManager.Player;
         public static void OnGameLoad(EventArgs args)
         {
-
             if (player.BaseSkinName != "Shaco")
             {
                 return;
@@ -66,6 +65,7 @@ namespace ChewyMoonsShaco
 
         static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
+            if(!Menu.Item("Evade").GetValue<bool>())return;
             if (sender.IsAlly) return;
             if (!sender.IsChampion()) return;
 
@@ -157,6 +157,7 @@ namespace ChewyMoonsShaco
             var escapeMenu = new Menu("Escape", "esc");
             escapeMenu.AddItem(new MenuItem("Escape", "Escape").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
             escapeMenu.AddItem(new MenuItem("EscapeR", "Escape With Ultimate").SetValue(new KeyBind(226, KeyBindType.Press)));
+            escapeMenu.AddItem(new MenuItem("Evade", "Evade With Ultimate").SetValue(false));
 
             Menu.AddSubMenu(escapeMenu);
 
