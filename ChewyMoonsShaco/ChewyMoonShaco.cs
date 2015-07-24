@@ -8,7 +8,6 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
 using SharpDX;
-using SpellDetector.Targeted;
 using Color = System.Drawing.Color;
 using ItemData = LeagueSharp.Common.Data.ItemData;
 using SpellSlot = LeagueSharp.SpellSlot;
