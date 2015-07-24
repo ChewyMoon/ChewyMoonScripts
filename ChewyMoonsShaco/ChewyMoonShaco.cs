@@ -2,15 +2,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LeagueSharp.Common.Data;
-using SharpDX;
 using Color = System.Drawing.Color;
 using ItemData = LeagueSharp.Common.Data.ItemData;
-using SpellSlot = LeagueSharp.SpellSlot;
 
 #endregion
 
@@ -41,7 +37,7 @@ namespace ChewyMoonsShaco
             E = new Spell(SpellSlot.E, 625);
             R = new Spell(SpellSlot.R, 200);
 
-            SpellList = new List<Spell> { Q, E, W };
+            SpellList = new List<Spell> { Q, E, W, R };
 
             CreateMenu();
             Illuminati.Init();
@@ -68,6 +64,8 @@ namespace ChewyMoonsShaco
             if(!Menu.Item("Evade").GetValue<bool>())return;
             if (sender.IsAlly) return;
             if (!sender.IsChampion()) return;
+
+            //Need to calc Delay/Time for misille to hit !
 
             if (DangerDB.TargetedList.Contains(args.SData.Name))
             {
