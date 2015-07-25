@@ -283,13 +283,7 @@ namespace ChewyMoonsShaco
 
             }
 
-            foreach (var spell in player.Spellbook.Spells)
-            {
-                if (player.Level > 5)
-                {
-                    Console.WriteLine(spell.Name);
-                }
-            }
+            
         }
 
         public static Obj_AI_Base UltActive()
