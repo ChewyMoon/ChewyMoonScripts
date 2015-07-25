@@ -273,7 +273,7 @@ namespace ChewyMoonsShaco
             Q.Cast(Game.CursorPos);
             player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
 
-            var clone = UltActive();
+            var clone = getClone();
 
             if (clone != null)
             {
@@ -286,7 +286,7 @@ namespace ChewyMoonsShaco
             
         }
 
-        public static Obj_AI_Base UltActive()
+        public static Obj_AI_Base getClone()
         {
             Obj_AI_Base Clone = null;
             foreach (var unit in ObjectManager.Get<Obj_AI_Base>().Where(clone => !clone.IsMe && clone.Name == player.Name))
@@ -319,13 +319,12 @@ namespace ChewyMoonsShaco
 
         private static void Combo()
         {
-            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
+            var target = TargetSelector.GetTarget(E.Range , TargetSelector.DamageType.Physical);
 
             var useQ = Menu.Item("useQ").GetValue<bool>();
             var useW = Menu.Item("useW").GetValue<bool>();
             var useE = Menu.Item("useE").GetValue<bool>();
             var packets = Menu.Item("usePackets").GetValue<bool>();
-
 
             foreach (var spell in SpellList.Where(x => x.IsReady()))
             {
@@ -341,7 +340,8 @@ namespace ChewyMoonsShaco
                 }
 
 
-                if (spell.Slot == SpellSlot.R && target.IsValidTarget() && player.Distance(target) < 300 &&
+                if(target!=null)
+                if (spell.Slot == SpellSlot.R && target.IsValidTarget() && player.Distance(target) < 400 &&
                     player.HasBuff("Deceive") && Menu.Item("useR").GetValue<bool>())
                 {
                     R.Cast();
@@ -373,10 +373,16 @@ namespace ChewyMoonsShaco
 
             if (!Menu.Item("cloneOrb").GetValue<bool>()) return;
             if(!hasClone())return;
+            Obj_AI_Base clone = getClone();
+
                 if (Environment.TickCount > cloneAct + 200)
                 {
                     if (target != null)
+                    {
+                        if (clone.IsWindingUp)
+                            return;
                         R.Cast(target);
+                    }
                     else
                     {
                         R.Cast(Game.CursorPos);
