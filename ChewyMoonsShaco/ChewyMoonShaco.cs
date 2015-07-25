@@ -282,6 +282,14 @@ namespace ChewyMoonsShaco
                 R.Cast(pos);
 
             }
+
+            foreach (var spell in player.Spellbook.Spells)
+            {
+                if (player.Level > 5)
+                {
+                    Console.WriteLine(spell.Name);
+                }
+            }
         }
 
         public static Obj_AI_Base UltActive()
@@ -339,7 +347,7 @@ namespace ChewyMoonsShaco
                 }
 
 
-                if (spell.Slot == SpellSlot.R && player.Distance(target) < 300 &&
+                if (spell.Slot == SpellSlot.R && target.IsValidTarget() && player.Distance(target) < 300 &&
                     player.HasBuff("Deceive") && Menu.Item("useR").GetValue<bool>())
                 {
                     R.Cast();
@@ -370,20 +378,18 @@ namespace ChewyMoonsShaco
             }
 
             if (!Menu.Item("cloneOrb").GetValue<bool>()) return;
-            Obj_AI_Base clone = UltActive();
-            if (clone != null)
-            {
-                if (Environment.TickCount > cloneAct + 300)
+            if(!hasClone())return;
+                if (Environment.TickCount > cloneAct + 200)
                 {
                     if (target != null)
-                        R.Cast(Game.CursorPos);
+                        R.Cast(target);
                     else
                     {
                         R.Cast(Game.CursorPos);
                     }
                     cloneAct = Environment.TickCount;
                 }
-            }
+            
         }
 
         private static void Harass()
@@ -402,5 +408,9 @@ namespace ChewyMoonsShaco
             }
         }
 
+        public static bool hasClone()
+        {
+            return player.GetSpell(SpellSlot.R).Name.Equals("hallucinateguide");
+        }
     }
 }
