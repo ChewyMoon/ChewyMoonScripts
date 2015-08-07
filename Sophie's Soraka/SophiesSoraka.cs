@@ -69,7 +69,7 @@ namespace Sophies_Soraka
         {
             get
             {
-                return Menu.Item("packets").GetValue<bool>();
+                return false;
             }
         }
 
@@ -130,6 +130,7 @@ namespace Sophies_Soraka
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Game.OnUpdate += GameOnOnGameUpdate;
             Drawing.OnDraw += DrawingOnOnDraw;
+            Orbwalking.BeforeAttack += OrbwalkingOnBeforeAttack;
         }
 
         /// <summary>
@@ -278,6 +279,22 @@ namespace Sophies_Soraka
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
             Menu.AddSubMenu(harassMenu);
 
+            // Healing
+            var healingMenu = new Menu("Healing", "ssHeal");
+
+            var wMenu = new Menu("W Settings", "WSettings");
+            wMenu.AddItem(new MenuItem("autoW", "Use W").SetValue(true));
+            wMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
+            wMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
+            wMenu.AddSubMenu(wMenu);
+
+            var rMenu = new Menu("R Settings", "RSettings");
+            rMenu.AddItem(new MenuItem("autoR", "Use R").SetValue(true));
+            rMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15, 1)));
+            rMenu.AddSubMenu(rMenu);
+
+            Menu.AddSubMenu(healingMenu);
+
             // Drawing
             var drawingMenu = new Menu("Drawing", "ssDrawing");
             drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
@@ -287,15 +304,11 @@ namespace Sophies_Soraka
 
             // Misc
             var miscMenu = new Menu("Misc", "ssMisc");
-            miscMenu.AddItem(new MenuItem("packets", "Use Packets").SetValue(true));
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoW", "Auto use W").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
-            miscMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
-            miscMenu.AddItem(new MenuItem("autoR", "Auto use R").SetValue(true));
-            miscMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15, 1)));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
+            miscMenu.AddItem(new MenuItem("AttackMinions", "Attack Minions").SetValue(false));
+            miscMenu.AddItem(new MenuItem("AttackChampions", "Attack Champions").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             Menu.AddToMainMenu();
@@ -417,6 +430,34 @@ namespace Sophies_Soraka
             }
 
             E.Cast(unit, Packets);
+        }
+
+        /// <summary>
+        ///     Called before the orbwalker attacks a unit.
+        /// </summary>
+        /// <param name="args">The <see cref="Orbwalking.BeforeAttackEventArgs" /> instance containing the event data.</param>
+        private static void OrbwalkingOnBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            if (args.Target.IsValid<Obj_AI_Minion>()
+                && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed
+                    || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LastHit)
+                && Menu.Item("AttackMinions").GetValue<bool>())
+            {
+                if (ObjectManager.Player.CountAlliesInRange(1200) != 0)
+                {
+                    args.Process = false;
+                }
+            }
+
+            if (!args.Target.IsValid<Obj_AI_Hero>() || !Menu.Item("AttackChampions").GetValue<bool>())
+            {
+                return;
+            }
+
+            if (ObjectManager.Player.CountAlliesInRange(1200) != 0)
+            {
+                args.Process = false;
+            }
         }
 
         #endregion
