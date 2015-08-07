@@ -286,12 +286,12 @@ namespace Sophies_Soraka
             wMenu.AddItem(new MenuItem("autoW", "Use W").SetValue(true));
             wMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
             wMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
-            wMenu.AddSubMenu(wMenu);
+            healingMenu.AddSubMenu(wMenu);
 
             var rMenu = new Menu("R Settings", "RSettings");
             rMenu.AddItem(new MenuItem("autoR", "Use R").SetValue(true));
             rMenu.AddItem(new MenuItem("autoRPercent", "% Percent").SetValue(new Slider(15, 1)));
-            rMenu.AddSubMenu(rMenu);
+            healingMenu.AddSubMenu(rMenu);
 
             Menu.AddSubMenu(healingMenu);
 
