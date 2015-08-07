@@ -32,32 +32,33 @@ namespace Sophies_Soraka
     /// <summary>
     ///     The sophies soraka.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
+        Justification = "Reviewed. Suppression is OK here.")]
     internal class SophiesSoraka
     {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the e.
+        ///     Gets or sets the e.
         /// </summary>
         /// <value>
-        /// The e.
+        ///     The e.
         /// </value>
         public static Spell E { get; set; }
 
         /// <summary>
-        /// Gets or sets the menu.
+        ///     Gets or sets the menu.
         /// </summary>
         /// <value>
-        /// The menu.
+        ///     The menu.
         /// </value>
         public static Menu Menu { get; set; }
 
         /// <summary>
-        /// Gets or sets the orbwalker.
+        ///     Gets or sets the orbwalker.
         /// </summary>
         /// <value>
-        /// The orbwalker.
+        ///     The orbwalker.
         /// </value>
         public static Orbwalking.Orbwalker Orbwalker { get; set; }
 
@@ -73,26 +74,26 @@ namespace Sophies_Soraka
         }
 
         /// <summary>
-        /// Gets or sets the q.
+        ///     Gets or sets the q.
         /// </summary>
         /// <value>
-        /// The q.
+        ///     The q.
         /// </value>
         public static Spell Q { get; set; }
 
         /// <summary>
-        /// Gets or sets the r.
+        ///     Gets or sets the r.
         /// </summary>
         /// <value>
-        /// The r.
+        ///     The r.
         /// </value>
         public static Spell R { get; set; }
 
         /// <summary>
-        /// Gets or sets the w.
+        ///     Gets or sets the w.
         /// </summary>
         /// <value>
-        /// The w.
+        ///     The w.
         /// </value>
         public static Spell W { get; set; }
 
@@ -123,7 +124,7 @@ namespace Sophies_Soraka
 
             CreateMenu();
 
-            PrintChat("Loaded ! Definitely created by Sophie AND NOT CHEWYMOON :3");
+            PrintChat("loaded.");
 
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
@@ -150,7 +151,8 @@ namespace Sophies_Soraka
         /// <param name="gapcloser">
         ///     The gapcloser.
         /// </param>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
+            Justification = "Reviewed. Suppression is OK here.")]
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             var unit = gapcloser.Sender;
@@ -176,15 +178,16 @@ namespace Sophies_Soraka
                 return;
             }
 
-            if (ObjectManager.Get<Obj_AI_Hero>()
-                .Where(x => x.IsAlly)
-                .Where(x => !x.IsDead)
-                .Where(x => !x.IsZombie)
-                .Select(x => (int)x.Health / x.MaxHealth * 100)
-                .Select(
-                    friendHealth => new { friendHealth, health = Menu.Item("autoRPercent").GetValue<Slider>().Value })
-                .Where(x => x.friendHealth <= x.health)
-                .Select(x => x.friendHealth).Any())
+            if (
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsAlly && x.IsValidTarget(float.MaxValue, false))
+                    .Select(x => (int)x.Health / x.MaxHealth * 100)
+                    .Select(
+                        friendHealth =>
+                        new { friendHealth, health = Menu.Item("autoRPercent").GetValue<Slider>().Value })
+                    .Where(x => x.friendHealth <= x.health)
+                    .Select(x => x.friendHealth)
+                    .Any())
             {
                 R.Cast(Packets);
             }
@@ -206,17 +209,18 @@ namespace Sophies_Soraka
                 return;
             }
 
-            foreach (var friend in
+            var ally =
                 ObjectManager.Get<Obj_AI_Hero>()
-                    .Where(x => !x.IsEnemy)
-                    .Where(x => !x.IsMe)
-                    .Where(friend => W.IsInRange(friend.ServerPosition, W.Range))
+                    .Where(x => x.IsAlly && !x.IsMe && x.IsValidTarget(W.Range, false))
                     .Select(friend => new { friend, friendHealth = friend.Health / friend.MaxHealth * 100 })
                     .Select(@t => new { @t, healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value })
                     .Where(@t => @t.@t.friendHealth <= @t.healthPercent)
-                    .Select(@t => @t.@t.friend))
+                    .Select(@t => @t.@t.friend)
+                    .FirstOrDefault();
+
+            if (ally != null)
             {
-                W.CastOnUnit(friend, Packets);
+                W.CastOnUnit(ally, Packets);
             }
         }
 
