@@ -441,7 +441,7 @@ namespace Sophies_Soraka
             if (args.Target.IsValid<Obj_AI_Minion>()
                 && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed
                     || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LastHit)
-                && !Menu.Item("AttackMinions").GetValue<bool>())
+                && Menu.Item("AttackMinions").GetValue<bool>())
             {
                 if (ObjectManager.Player.CountAlliesInRange(1200) != 0)
                 {
@@ -449,7 +449,7 @@ namespace Sophies_Soraka
                 }
             }
 
-            if (!args.Target.IsValid<Obj_AI_Hero>() || Menu.Item("AttackChampions").GetValue<bool>())
+            if (!args.Target.IsValid<Obj_AI_Hero>() || !Menu.Item("AttackChampions").GetValue<bool>())
             {
                 return;
             }
