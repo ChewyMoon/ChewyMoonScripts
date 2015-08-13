@@ -210,18 +210,38 @@ namespace Sophies_Soraka
                 return;
             }
 
-            var ally =
-                ObjectManager.Get<Obj_AI_Hero>()
-                    .Where(x => x.IsAlly && !x.IsMe && x.IsValidTarget(W.Range, false))
-                    .Select(friend => new { friend, friendHealth = friend.Health / friend.MaxHealth * 100 })
-                    .Select(@t => new { @t, healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value })
-                    .Where(@t => @t.@t.friendHealth <= @t.healthPercent)
-                    .Select(@t => @t.@t.friend)
-                    .FirstOrDefault();
-
-            if (ally != null)
+            var dontWInFountain = Menu.Item("DontWInFountain").GetValue<bool>();
+            if (dontWInFountain && ObjectManager.Player.InFountain())
             {
-                W.CastOnUnit(ally, Packets);
+                return;
+            }
+
+            var healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value;
+
+            var canidates = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly && x.HealthPercent < healthPercent);
+            var wMode = Menu.Item("HealingPriority").GetValue<StringList>().SelectedValue;
+
+            switch (wMode)
+            {
+                case "Most AD":
+                    canidates = canidates.OrderByDescending(x => x.TotalAttackDamage);
+                    break;
+                case "Most AP":
+                    canidates = canidates.OrderByDescending(x => x.TotalMagicalDamage);
+                    break;
+                case "Least Health":
+                    canidates = canidates.OrderBy(x => x.Health);
+                    break;
+                case "Least Health (Prioritize Squishies)":
+                    canidates = canidates.OrderBy(x => x.Health).ThenBy(x => x.Armor + x.SpellBlock);
+                    break;
+            }
+
+            var target = dontWInFountain ? canidates.FirstOrDefault(x => !x.InFountain()) : canidates.FirstOrDefault();
+
+            if (target != null)
+            {
+                W.CastOnUnit(target);
             }
         }
 
@@ -286,6 +306,12 @@ namespace Sophies_Soraka
             wMenu.AddItem(new MenuItem("autoW", "Use W").SetValue(true));
             wMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
             wMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
+            wMenu.AddItem(new MenuItem("DontWInFountain", "Dont W in Fountain").SetValue(true));
+            wMenu.AddItem(
+                new MenuItem("HealingPriority", "Healing Priority").SetValue(
+                    new StringList(
+                        new[] { "Most AD", "Most AP", "Least Health", "Least Health (Prioritize Squishies)" }, 
+                        3)));
             healingMenu.AddSubMenu(wMenu);
 
             var rMenu = new Menu("R Settings", "RSettings");
@@ -307,8 +333,8 @@ namespace Sophies_Soraka
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
-            miscMenu.AddItem(new MenuItem("AttackMinions", "Attack Minions").SetValue(false));
-            miscMenu.AddItem(new MenuItem("AttackChampions", "Attack Champions").SetValue(true));
+            miscMenu.AddItem(new MenuItem("AttackMinions", "Dont Attack Minions").SetValue(false));
+            miscMenu.AddItem(new MenuItem("AttackChampions", "Dont Attack Champions").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             Menu.AddToMainMenu();
