@@ -233,7 +233,7 @@ namespace Sophies_Soraka
                     canidates = canidates.OrderBy(x => x.Health);
                     break;
                 case "Least Health (Prioritize Squishies)":
-                    canidates = canidates.OrderBy(x => x.Health).ThenBy(x => x.Armor + x.SpellBlock);
+                    canidates = canidates.OrderBy(x => x.Health).ThenBy(x => x.MaxHealth);
                     break;
             }
 
