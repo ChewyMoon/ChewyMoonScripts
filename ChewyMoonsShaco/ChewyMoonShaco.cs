@@ -1,12 +1,11 @@
-﻿#region
+#region
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LeagueSharp.Common.Data;
+using Color = System.Drawing.Color;
 using ItemData = LeagueSharp.Common.Data.ItemData;
 
 #endregion
@@ -18,15 +17,17 @@ namespace ChewyMoonsShaco
         public static Spell Q;
         public static Spell W;
         public static Spell E;
+        public static Spell R;
         public static Menu Menu;
         public static Orbwalking.Orbwalker Orbwalker;
         public static List<Spell> SpellList;
         public static Items.Item Tiamat;
         public static Items.Item Hydra;
-
+        public static int cloneAct = 0;
+        public static Obj_AI_Hero player = ObjectManager.Player;
         public static void OnGameLoad(EventArgs args)
         {
-            if (ObjectManager.Player.BaseSkinName != "Shaco")
+            if (player.BaseSkinName != "Shaco")
             {
                 return;
             }
@@ -34,8 +35,9 @@ namespace ChewyMoonsShaco
             Q = new Spell(SpellSlot.Q, 400);
             W = new Spell(SpellSlot.W, 425);
             E = new Spell(SpellSlot.E, 625);
+            R = new Spell(SpellSlot.R, 200);
 
-            SpellList = new List<Spell> { Q, E, W };
+            SpellList = new List<Spell> { Q, E, W, R };
 
             CreateMenu();
             Illuminati.Init();
@@ -47,10 +49,45 @@ namespace ChewyMoonsShaco
             Drawing.OnDraw += Drawing_OnDraw;
             Orbwalking.AfterAttack += OrbwalkingOnAfterAttack;
 
+
+
             Game.PrintChat(
                 "<font color=\"#6699ff\"><b>ChewyMoon's Shaco:</b></font> <font color=\"#FFFFFF\">" + "loaded!" +
                 "</font>");
+
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
         }
+
+
+        static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if(!Menu.Item("Evade").GetValue<bool>())return;
+            if (sender.IsAlly) return;
+            if (!sender.IsChampion()) return;
+
+            //Need to calc Delay/Time for misille to hit !
+
+            if (DangerDB.TargetedList.Contains(args.SData.Name))
+            {
+                if (args.Target.IsMe)
+                    R.Cast();
+            }
+
+            if (DangerDB.CircleSkills.Contains(args.SData.Name))
+            {
+                if (player.Distance(args.End) < args.SData.LineWidth)
+                    R.Cast();
+            }
+
+            if (DangerDB.Skillshots.Contains(args.SData.Name))
+            {
+                if (new Geometry.Polygon.Rectangle(args.Start, args.End, args.SData.LineWidth).IsInside(player))
+                {
+                    R.Cast();
+                }
+            }
+        }
+
 
         private static void OrbwalkingOnAfterAttack(AttackableUnit unit, AttackableUnit target)
         {
@@ -98,6 +135,9 @@ namespace ChewyMoonsShaco
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useW", "Use W").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
+            comboMenu.AddItem(new MenuItem("useR", "Use R").SetValue(true));
+            comboMenu.AddItem(new MenuItem("cloneOrb", "Clone Orbwalking").SetValue(true));
+
             comboMenu.AddItem(new MenuItem("useItems", "Use items").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
@@ -110,6 +150,14 @@ namespace ChewyMoonsShaco
             var ksMenu = new Menu("KS", "cmShacoKS");
             ksMenu.AddItem(new MenuItem("ksE", "Use E").SetValue(true));
             Menu.AddSubMenu(ksMenu);
+
+            //Escape
+            var escapeMenu = new Menu("Escape", "esc");
+            escapeMenu.AddItem(new MenuItem("Escape", "Escape").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
+            escapeMenu.AddItem(new MenuItem("EscapeR", "Escape With Ultimate").SetValue(new KeyBind(226, KeyBindType.Press)));
+            escapeMenu.AddItem(new MenuItem("Evade", "Evade With Ultimate").SetValue(false));
+
+            Menu.AddSubMenu(escapeMenu);
 
             // ILLUMINATI
             var illuminatiMenu = new Menu("Illuminati", "cmShacoTriangleIlluminatiSp00ky");
@@ -140,6 +188,7 @@ namespace ChewyMoonsShaco
             miscMenu.AddItem(new MenuItem("stuff", "Let me know of any"));
             miscMenu.AddItem(new MenuItem("stuff2", "other misc features you want"));
             miscMenu.AddItem(new MenuItem("stuff3", "on the thread or IRC"));
+            miscMenu.AddItem(new MenuItem("stuff4", "Modded by XcxooxL"));
             Menu.AddSubMenu(miscMenu);
         }
 
@@ -150,7 +199,7 @@ namespace ChewyMoonsShaco
             var eCircle = Menu.Item("drawE").GetValue<bool>();
             var qPosCircle = Menu.Item("drawQPos").GetValue<bool>();
 
-            var pos = ObjectManager.Player.Position;
+            var pos = player.Position;
 
             if (qCircle)
             {
@@ -182,6 +231,21 @@ namespace ChewyMoonsShaco
 
         private static void GameOnOnGameUpdate(EventArgs args)
         {
+            if (Menu.Item("EscapeR").GetValue<KeyBind>().Active)
+            {
+                if (R.IsReady() && Q.IsReady())
+                {
+                    R.Cast();
+                }
+                Escape();
+            }
+
+            if (Menu.Item("Escape").GetValue<KeyBind>().Active)
+            {
+                Escape();
+            }
+
+
             if (Menu.Item("ksE").GetValue<bool>())
             {
                 KillSecure();
@@ -204,6 +268,36 @@ namespace ChewyMoonsShaco
             }
         }
 
+        public static void Escape()
+        {
+            Q.Cast(Game.CursorPos);
+            player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+
+            var clone = getClone();
+
+            if (clone != null)
+            {
+
+                var pos = Game.CursorPos.Extend(clone.Position, clone.Distance(Game.CursorPos) + 2000);
+                R.Cast(pos);
+
+            }
+
+            
+        }
+
+        public static Obj_AI_Base getClone()
+        {
+            Obj_AI_Base Clone = null;
+            foreach (var unit in ObjectManager.Get<Obj_AI_Base>().Where(clone => !clone.IsMe && clone.Name == player.Name))
+            {
+                Clone = unit;
+            }
+
+            return Clone;
+
+        }
+
         private static void KillSecure()
         {
             if (!E.IsReady())
@@ -215,8 +309,8 @@ namespace ChewyMoonsShaco
                 ObjectManager.Get<Obj_AI_Hero>()
                     .Where(x => x.IsEnemy)
                     .Where(x => !x.IsDead)
-                    .Where(x => x.Distance(ObjectManager.Player) <= E.Range)
-                    .Where(target => ObjectManager.Player.GetSpellDamage(target, SpellSlot.E) > target.Health))
+                    .Where(x => x.Distance(player) <= E.Range)
+                    .Where(target => player.GetSpellDamage(target, SpellSlot.E) > target.Health))
             {
                 E.CastOnUnit(target, Menu.Item("usePackets").GetValue<bool>());
                 return;
@@ -225,7 +319,7 @@ namespace ChewyMoonsShaco
 
         private static void Combo()
         {
-            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
+            var target = TargetSelector.GetTarget(E.Range , TargetSelector.DamageType.Physical);
 
             var useQ = Menu.Item("useQ").GetValue<bool>();
             var useW = Menu.Item("useW").GetValue<bool>();
@@ -243,6 +337,14 @@ namespace ChewyMoonsShaco
 
                     var pos = ShacoUtil.GetQPos(target, true);
                     Q.Cast(pos, packets);
+                }
+
+
+                if(target!=null)
+                if (spell.Slot == SpellSlot.R && target.IsValidTarget() && player.Distance(target) < 400 &&
+                    player.HasBuff("Deceive") && Menu.Item("useR").GetValue<bool>())
+                {
+                    R.Cast();
                 }
 
                 if (spell.Slot == SpellSlot.W && useW)
@@ -268,6 +370,26 @@ namespace ChewyMoonsShaco
 
                 E.CastOnUnit(target);
             }
+
+            if (!Menu.Item("cloneOrb").GetValue<bool>()) return;
+            if(!hasClone())return;
+            Obj_AI_Base clone = getClone();
+
+                if (Environment.TickCount > cloneAct + 200)
+                {
+                    if (target != null)
+                    {
+                        if (clone.IsWindingUp)
+                            return;
+                        R.Cast(target);
+                    }
+                    else
+                    {
+                        R.Cast(Game.CursorPos);
+                    }
+                    cloneAct = Environment.TickCount;
+                }
+            
         }
 
         private static void Harass()
@@ -284,6 +406,11 @@ namespace ChewyMoonsShaco
             {
                 E.CastOnUnit(target);
             }
+        }
+
+        public static bool hasClone()
+        {
+            return player.GetSpell(SpellSlot.R).Name.Equals("hallucinateguide");
         }
     }
 }
