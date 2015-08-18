@@ -141,6 +141,14 @@ namespace Night_Stalker_Azir
         /// </value>
         private static Spell W { get; set; }
 
+        /// <summary>
+        /// Gets or sets the flash.
+        /// </summary>
+        /// <value>
+        /// The flash.
+        /// </value>
+        private static Spell Flash { get; set; }
+
         #endregion
 
         #region Methods
@@ -339,31 +347,59 @@ namespace Night_Stalker_Azir
                 return;
             }
 
-            if (R.IsInRange(target))
+            if (!Q.IsInRange(target))
             {
-                var nearestUnit =
-                    ObjectManager.Get<Obj_AI_Base>()
-                        .OrderBy(x => x.Distance(Player))
-                        .FirstOrDefault(x => !x.IsMe || !x.CharData.BaseSkinName.Equals("AzirSoldier"));
-
-                if (nearestUnit != null)
-                {
-                    R.Cast(Player.ServerPosition.Extend(nearestUnit.ServerPosition, R.Range));
-                }
+                return;
             }
 
-            if (W.IsReady() && E.IsReady() && (Q.IsReady() || Q.Instance.State == SpellState.Surpressed) && R.IsReady())
+            if (W.IsReady() && E.IsReady() && (Q.IsReady() || Q.Instance.State == SpellState.Surpressed) && R.IsReady()
+                && Flash.IsReady())
             {
                 W.Cast(Player.ServerPosition.Extend(target.ServerPosition, W.Range));
 
                 Utility.DelayAction.Add(
-                    (int)(W.Delay * 1000), 
+                    (int)(W.Delay * 1000),
                     () =>
                         {
                             E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault());
+
                             Utility.DelayAction.Add(
-                                (int)(E.Delay * 1000), 
-                                () => Q.Cast(Player.ServerPosition.Extend(target.ServerPosition, Q.Range)));
+                                (int)(E.Delay * 1000),
+                                () =>
+                                    {
+                                        Q.Cast(Player.ServerPosition.Extend(target.ServerPosition, Q.Range));
+
+                                        Utility.DelayAction.Add(
+                                            (int)(Q.Delay * 1000 + Player.Distance(target) / 2500 * 1000),
+                                            () =>
+                                                {
+                                                    Flash.Cast(
+                                                        Player.ServerPosition.Extend(
+                                                            target.ServerPosition, Flash.Range));
+
+                                                    Utility.DelayAction.Add(
+                                                        0,
+                                                        () =>
+                                                            {
+                                                                var nearestUnit =
+                                                                    ObjectManager.Get<Obj_AI_Base>()
+                                                                        .OrderBy(x => x.Distance(Player))
+                                                                        .FirstOrDefault(
+                                                                            x =>
+                                                                            !x.IsMe
+                                                                            || !x.CharData.BaseSkinName.Equals(
+                                                                                "AzirSoldier"));
+
+                                                                if (nearestUnit != null)
+                                                                {
+                                                                    R.Cast(
+                                                                        Player.ServerPosition.Extend(
+                                                                            nearestUnit.ServerPosition,
+                                                                            R.Range));
+                                                                }
+                                                            });
+                                                });
+                                    });
                         });
             }
         }
@@ -495,10 +531,16 @@ namespace Night_Stalker_Azir
         /// <param name="args">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private static void Game_OnGameLoad(EventArgs args)
         {
+            if (Player.CharData.BaseSkinName != "Azir")
+            {
+                return;
+            }
+
             Q = new Spell(SpellSlot.Q, 800 + AzirSoldierAutoAttackRange);
             W = new Spell(SpellSlot.W, 450);
             E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 250);
+            Flash = new Spell(Player.GetSpellSlot("summonerflash"), 425);
 
             Q.SetSkillshot(7.5f / 30, 70, 1000, false, SkillshotType.SkillshotLine);
             E.SetSkillshot(7.5f / 30, 100, 2000, true, SkillshotType.SkillshotLine);
