@@ -285,6 +285,17 @@ namespace Night_Stalker_Azir
             {
                 R.Cast(target);
             }
+
+            var aaSoldier =
+                SandSoldiers.FirstOrDefault(
+                    x => HeroManager.Enemies.Any(y => y.Distance(x) < AzirSoldierAutoAttackRange));
+
+            if (aaSoldier != null && Orbwalking.CanAttack())
+            {
+                aaSoldier.IssueOrder(
+                    GameObjectOrder.AttackUnit,
+                    TargetSelector.GetTarget(aaSoldier, AzirSoldierAutoAttackRange, TargetSelector.DamageType.Physical));
+            }
         }
 
         /// <summary>
@@ -547,7 +558,7 @@ namespace Night_Stalker_Azir
 
             CreateMenu();
 
-            Game.PrintChat("<font color=\"#7CFC00\"><b>Night Stalker Azir:</b></font> by ChewyMoon loaded");
+            Game.PrintChat("<font color=\"#7CFC00\"><b>Night Stalker Azir:</b></font> by ChewyMoon & Shiver loaded");
 
             Game.OnUpdate += Game_OnUpdate;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
@@ -556,10 +567,10 @@ namespace Night_Stalker_Azir
         }
 
         /// <summary>
-        ///     TODO The game_ on update.
+        ///     The game on update.
         /// </summary>
         /// <param name="args">
-        ///     TODO The args.
+        ///     The args.
         /// </param>
         private static void Game_OnUpdate(EventArgs args)
         {
