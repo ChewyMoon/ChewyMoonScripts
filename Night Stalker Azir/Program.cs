@@ -552,12 +552,43 @@ namespace Night_Stalker_Azir
 
             CreateMenu();
 
+            Utility.HpBarDamageIndicator.DamageToUnit = DamageToUnit;
+            Utility.HpBarDamageIndicator.Enabled = true;
+
             Game.PrintChat("<font color=\"#7CFC00\"><b>Night Stalker Azir:</b></font> by ChewyMoon & Shiver loaded");
 
             Game.OnUpdate += Game_OnUpdate;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;
+        }
+
+        /// <summary>
+        /// Gets the damages to unit.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>The damage.</returns>
+        private static float DamageToUnit(Obj_AI_Hero target)
+        {
+            var damage = 0f;
+
+            if (Q.IsReady())
+            {
+                damage += Q.GetDamage(target);
+            }
+
+            if (Orbwalking.CanAttack())
+            {
+                damage += SandSoldiers.Where(x => target.Distance(x) < AzirSoldierAutoAttackRange).Sum(soldier => W.GetDamage(target));
+                damage += (float)Player.GetAutoAttackDamage(target);
+            }        
+
+            if (R.IsReady())
+            {
+                damage += R.GetDamage(target);
+            }
+
+            return damage;
         }
 
         /// <summary>
