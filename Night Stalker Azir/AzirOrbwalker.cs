@@ -277,6 +277,7 @@ namespace Night_Stalker_Azir
             var d = soldierAttack
                         ? ObjectManager.Player.GetSpellDamage(target, SpellSlot.W)
                         : ObjectManager.Player.GetAutoAttackDamage(target);
+            
             return target.Health / (float)d;
         }
 
