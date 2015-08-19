@@ -35,6 +35,26 @@ namespace Night_Stalker_Azir
     /// </summary>
     internal class Program
     {
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the sand soldiers.
+        /// </summary>
+        /// <value>
+        ///     The sand soldiers.
+        /// </value>
+        public static IEnumerable<Obj_AI_Base> SandSoldiers
+        {
+            get
+            {
+                return
+                    ObjectManager.Get<Obj_AI_Base>()
+                        .Where(x => x.IsAlly && x.CharData.BaseSkinName.Equals("AzirSoldier"));
+            }
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -62,6 +82,14 @@ namespace Night_Stalker_Azir
         private static Spell E { get; set; }
 
         /// <summary>
+        ///     Gets or sets the flash.
+        /// </summary>
+        /// <value>
+        ///     The flash.
+        /// </value>
+        private static Spell Flash { get; set; }
+
+        /// <summary>
         ///     Gets or sets the last insec notifcation.
         /// </summary>
         /// <value>
@@ -87,7 +115,7 @@ namespace Night_Stalker_Azir
         /// </value>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
             Justification = "Reviewed. Suppression is OK here.")]
-        private static Orbwalking.Orbwalker Orbwalker { get; set; }
+        private static AzirOrbwalker Orbwalker { get; set; }
 
         /// <summary>
         ///     Gets the player.
@@ -120,34 +148,12 @@ namespace Night_Stalker_Azir
         private static Spell R { get; set; }
 
         /// <summary>
-        ///     Gets the sand soldiers.
-        /// </summary>
-        /// <value>
-        ///     The sand soldiers.
-        /// </value>
-        private static IEnumerable<Obj_AI_Base> SandSoldiers
-        {
-            get
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(x => x.CharData.BaseSkinName.Equals("AzirSoldier"));
-            }
-        }
-
-        /// <summary>
         ///     Gets or sets the w.
         /// </summary>
         /// <value>
         ///     The w.
         /// </value>
         private static Spell W { get; set; }
-
-        /// <summary>
-        /// Gets or sets the flash.
-        /// </summary>
-        /// <value>
-        /// The flash.
-        /// </value>
-        private static Spell Flash { get; set; }
 
         #endregion
 
@@ -184,7 +190,7 @@ namespace Night_Stalker_Azir
             Menu.AddSubMenu(targetSelectorMenu);
 
             var orbalkerMenu = new Menu("Orbwalker", "Orbwalker");
-            Orbwalker = new Orbwalking.Orbwalker(orbalkerMenu);
+            Orbwalker = new AzirOrbwalker(orbalkerMenu);
             Menu.AddSubMenu(orbalkerMenu);
 
             var comboMenu = new Menu("Combo Settings", "Combo");
@@ -285,17 +291,6 @@ namespace Night_Stalker_Azir
             {
                 R.Cast(target);
             }
-
-            var aaSoldier =
-                SandSoldiers.FirstOrDefault(
-                    x => HeroManager.Enemies.Any(y => y.Distance(x) < AzirSoldierAutoAttackRange));
-
-            if (aaSoldier != null && Orbwalking.CanAttack())
-            {
-                aaSoldier.IssueOrder(
-                    GameObjectOrder.AttackUnit,
-                    TargetSelector.GetTarget(aaSoldier, AzirSoldierAutoAttackRange, TargetSelector.DamageType.Physical));
-            }
         }
 
         /// <summary>
@@ -369,27 +364,26 @@ namespace Night_Stalker_Azir
                 W.Cast(Player.ServerPosition.Extend(target.ServerPosition, W.Range));
 
                 Utility.DelayAction.Add(
-                    (int)(W.Delay * 1000),
+                    (int)(W.Delay * 1000), 
                     () =>
                         {
                             E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault());
 
                             Utility.DelayAction.Add(
-                                (int)(E.Delay * 1000),
+                                (int)(E.Delay * 1000), 
                                 () =>
                                     {
                                         Q.Cast(Player.ServerPosition.Extend(target.ServerPosition, Q.Range));
 
                                         Utility.DelayAction.Add(
-                                            (int)(Q.Delay * 1000 + Player.Distance(target) / 2500 * 1000),
+                                            (int)(Q.Delay * 1000 + Player.Distance(target) / 2500 * 1000), 
                                             () =>
                                                 {
                                                     Flash.Cast(
-                                                        Player.ServerPosition.Extend(
-                                                            target.ServerPosition, Flash.Range));
+                                                        Player.ServerPosition.Extend(target.ServerPosition, Flash.Range));
 
                                                     Utility.DelayAction.Add(
-                                                        0,
+                                                        0, 
                                                         () =>
                                                             {
                                                                 var nearestUnit =
@@ -405,7 +399,7 @@ namespace Night_Stalker_Azir
                                                                 {
                                                                     R.Cast(
                                                                         Player.ServerPosition.Extend(
-                                                                            nearestUnit.ServerPosition,
+                                                                            nearestUnit.ServerPosition, 
                                                                             R.Range));
                                                                 }
                                                             });
