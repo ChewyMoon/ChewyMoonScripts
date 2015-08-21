@@ -49,7 +49,7 @@ namespace Night_Stalker_Azir
             {
                 return
                     ObjectManager.Get<Obj_AI_Base>()
-                        .Where(x => x.IsAlly && x.CharData.BaseSkinName.Equals("AzirSoldier"));
+                        .Where(x => x.IsAlly && x.CharData.BaseSkinName.Equals("azirsoldier"));
             }
         }
 
