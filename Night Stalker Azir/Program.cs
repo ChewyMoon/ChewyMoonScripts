@@ -267,7 +267,8 @@ namespace Night_Stalker_Azir
                 W.Cast(Player.ServerPosition.Extend(target.ServerPosition, W.Range));
             }
 
-            if (Q.IsReady() && useQCombo && SandSoldiers.Any(x => x.CountEnemiesInRange(AzirSoldierAutoAttackRange) == 0))
+            if (Q.IsReady() && useQCombo
+                && SandSoldiers.Any(x => HeroManager.Enemies.All(y => y.Distance(x) > AzirSoldierAutoAttackRange)))
             {
                 Q.Cast(target);
             }
