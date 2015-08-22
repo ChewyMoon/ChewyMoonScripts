@@ -292,7 +292,9 @@ namespace Night_Stalker_Azir
             var useECombo = Menu.Item("UseECombo").IsActive();
             var useRComboFinisher = Menu.Item("UseRComboFinisher").IsActive();
 
-            if (W.IsReady() && useWCombo && W.IsInRange(target, W.Range + AzirSoldierAutoAttackRange))
+            if (W.IsReady() && useWCombo
+                && (W.IsInRange(target, W.Range + AzirSoldierAutoAttackRange)
+                    || (Q.IsReady() || Q.Instance.State == SpellState.Surpressed)))
             {
                 W.Cast(Player.ServerPosition.Extend(target.ServerPosition, W.Range));
             }
