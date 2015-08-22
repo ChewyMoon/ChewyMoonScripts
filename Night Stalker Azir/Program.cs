@@ -246,6 +246,36 @@ namespace Night_Stalker_Azir
         }
 
         /// <summary>
+        ///     Gets the damages to unit.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>The damage.</returns>
+        private static float DamageToUnit(Obj_AI_Hero target)
+        {
+            var damage = 0f;
+
+            if (Q.IsReady())
+            {
+                damage += Q.GetDamage(target);
+            }
+
+            if (Orbwalking.CanAttack())
+            {
+                damage +=
+                    SandSoldiers.Where(x => target.Distance(x) < AzirSoldierAutoAttackRange)
+                        .Sum(soldier => W.GetDamage(target));
+                damage += (float)Player.GetAutoAttackDamage(target);
+            }
+
+            if (R.IsReady())
+            {
+                damage += R.GetDamage(target);
+            }
+
+            return damage;
+        }
+
+        /// <summary>
         ///     Does the combo.
         /// </summary>
         private static void DoCombo()
@@ -369,42 +399,24 @@ namespace Night_Stalker_Azir
                     () =>
                         {
                             E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault());
+                            Q.Cast(Player.ServerPosition.Extend(target.ServerPosition, Q.Range));
 
                             Utility.DelayAction.Add(
-                                (int)(E.Delay * 1000), 
+                                (int)(Q.Delay * 1000 + Player.Distance(target) / 2500 * 1000), 
                                 () =>
                                     {
-                                        Q.Cast(Player.ServerPosition.Extend(target.ServerPosition, Q.Range));
+                                        Flash.Cast(Player.ServerPosition.Extend(target.ServerPosition, Flash.Range));
 
-                                        Utility.DelayAction.Add(
-                                            (int)(Q.Delay * 1000 + Player.Distance(target) / 2500 * 1000), 
-                                            () =>
-                                                {
-                                                    Flash.Cast(
-                                                        Player.ServerPosition.Extend(target.ServerPosition, Flash.Range));
+                                        var nearestUnit =
+                                            ObjectManager.Get<Obj_AI_Base>()
+                                                .OrderBy(x => x.Distance(Player))
+                                                .FirstOrDefault(
+                                                    x => !x.IsMe || !x.CharData.BaseSkinName.Equals("AzirSoldier"));
 
-                                                    Utility.DelayAction.Add(
-                                                        0, 
-                                                        () =>
-                                                            {
-                                                                var nearestUnit =
-                                                                    ObjectManager.Get<Obj_AI_Base>()
-                                                                        .OrderBy(x => x.Distance(Player))
-                                                                        .FirstOrDefault(
-                                                                            x =>
-                                                                            !x.IsMe
-                                                                            || !x.CharData.BaseSkinName.Equals(
-                                                                                "AzirSoldier"));
-
-                                                                if (nearestUnit != null)
-                                                                {
-                                                                    R.Cast(
-                                                                        Player.ServerPosition.Extend(
-                                                                            nearestUnit.ServerPosition, 
-                                                                            R.Range));
-                                                                }
-                                                            });
-                                                });
+                                        if (nearestUnit != null)
+                                        {
+                                            R.Cast(Player.ServerPosition.Extend(nearestUnit.ServerPosition, R.Range));
+                                        }
                                     });
                         });
             }
@@ -493,8 +505,11 @@ namespace Night_Stalker_Azir
         {
             Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos.Randomize(-100, 100));
 
-            if (!((Q.IsReady() || Q.Instance.State == SpellState.Surpressed) && W.IsReady() && E.IsReady()))
+            if (
+                !((Q.IsReady() || Q.Instance.State == SpellState.Surpressed) && W.IsReady()
+                  && (E.IsReady() || E.Instance.State == SpellState.Surpressed)))
             {
+                Console.WriteLine("RETURNED");
                 return;
             }
 
@@ -509,9 +524,7 @@ namespace Night_Stalker_Azir
                     () =>
                         {
                             E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault());
-                            Utility.DelayAction.Add(
-                                (int)(E.Delay * 1000), 
-                                () => Q.Cast(Player.ServerPosition.Extend(Game.CursorPos, Q.Range)));
+                            Q.Cast(Player.ServerPosition.Extend(Game.CursorPos, Q.Range));
                         });
             }
             else if (option == 1)
@@ -523,10 +536,7 @@ namespace Night_Stalker_Azir
                     () =>
                         {
                             Q.Cast(Player.ServerPosition.Extend(Game.CursorPos, Q.Range));
-
-                            Utility.DelayAction.Add(
-                                (int)(Q.Delay * 1000), 
-                                () => E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault()));
+                            E.CastOnUnit(SandSoldiers.OrderBy(x => x.Distance(Player)).FirstOrDefault());
                         });
             }
         }
@@ -544,11 +554,12 @@ namespace Night_Stalker_Azir
 
             Q = new Spell(SpellSlot.Q, 800 + AzirSoldierAutoAttackRange);
             W = new Spell(SpellSlot.W, 450);
-            E = new Spell(SpellSlot.E, 1100);
+            E = new Spell(SpellSlot.E, float.MaxValue);
             R = new Spell(SpellSlot.R, 250);
             Flash = new Spell(Player.GetSpellSlot("summonerflash"), 425);
 
             Q.SetSkillshot(7.5f / 30, 70, 1000, false, SkillshotType.SkillshotLine);
+            W.Delay = 0.25f;
             E.SetSkillshot(7.5f / 30, 100, 2000, true, SkillshotType.SkillshotLine);
 
             CreateMenu();
@@ -565,34 +576,6 @@ namespace Night_Stalker_Azir
         }
 
         /// <summary>
-        /// Gets the damages to unit.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <returns>The damage.</returns>
-        private static float DamageToUnit(Obj_AI_Hero target)
-        {
-            var damage = 0f;
-
-            if (Q.IsReady())
-            {
-                damage += Q.GetDamage(target);
-            }
-
-            if (Orbwalking.CanAttack())
-            {
-                damage += SandSoldiers.Where(x => target.Distance(x) < AzirSoldierAutoAttackRange).Sum(soldier => W.GetDamage(target));
-                damage += (float)Player.GetAutoAttackDamage(target);
-            }        
-
-            if (R.IsReady())
-            {
-                damage += R.GetDamage(target);
-            }
-
-            return damage;
-        }
-
-        /// <summary>
         ///     The game on update.
         /// </summary>
         /// <param name="args">
@@ -600,6 +583,7 @@ namespace Night_Stalker_Azir
         /// </param>
         private static void Game_OnUpdate(EventArgs args)
         {
+            Console.WriteLine(SandSoldiers.Count());
             switch (Orbwalker.ActiveMode)
             {
                 case Orbwalking.OrbwalkingMode.LastHit:
