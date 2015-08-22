@@ -509,7 +509,6 @@ namespace Night_Stalker_Azir
                 !((Q.IsReady() || Q.Instance.State == SpellState.Surpressed) && W.IsReady()
                   && (E.IsReady() || E.Instance.State == SpellState.Surpressed)))
             {
-                Console.WriteLine("RETURNED");
                 return;
             }
 
@@ -554,7 +553,7 @@ namespace Night_Stalker_Azir
 
             Q = new Spell(SpellSlot.Q, 800 + AzirSoldierAutoAttackRange);
             W = new Spell(SpellSlot.W, 450);
-            E = new Spell(SpellSlot.E, float.MaxValue);
+            E = new Spell(SpellSlot.E, 1100);
             R = new Spell(SpellSlot.R, 250);
             Flash = new Spell(Player.GetSpellSlot("summonerflash"), 425);
 
@@ -583,7 +582,6 @@ namespace Night_Stalker_Azir
         /// </param>
         private static void Game_OnUpdate(EventArgs args)
         {
-            Console.WriteLine(SandSoldiers.Count());
             switch (Orbwalker.ActiveMode)
             {
                 case Orbwalking.OrbwalkingMode.LastHit:
