@@ -31,7 +31,7 @@ namespace Orianna
     using LeagueSharp.Common;
 
     /// <summary>
-    ///     The program.
+    /// The program.
     /// </summary>
     internal class Program
     {
@@ -214,6 +214,8 @@ namespace Orianna
             harassMenu.AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("UseWHarass", "Use W").SetValue(true));
             harassMenu.AddItem(new MenuItem("UseEHarass", "Use E").SetValue(true));
+            harassMenu.AddItem(new MenuItem("Harass", "Harass! (Toggle)").SetValue(new KeyBind(84, KeyBindType.Press)));
+            harassMenu.AddItem(new MenuItem("HarassMana", "Harass Mana (toggle only)").SetValue(new Slider(50)));
             Menu.AddSubMenu(harassMenu);
 
             var laneClearMenu = new Menu("Lane Clear Settings", "LaneClearFarm");
@@ -250,6 +252,11 @@ namespace Orianna
         private static void DoCombo()
         {
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+
+            if (!target.IsValidTarget())
+            {
+                return;
+            }
 
             var useQ = Menu.Item("UseQCombo").IsActive();
             var useW = Menu.Item("UseWCombo").IsActive();
@@ -303,11 +310,22 @@ namespace Orianna
         }
 
         /// <summary>
-        ///     Does the harass.
+        /// Does the harass.
         /// </summary>
-        private static void DoHarass()
+        /// <param name="toggle">if set to <c>true</c> checks the toggle mana.</param>
+        private static void DoHarass(bool toggle)
         {
+            if (toggle && Player.ManaPercent < Menu.Item("HarassMana").GetValue<Slider>().Value)
+            {
+                return;
+            }
+
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+
+            if (!target.IsValidTarget())
+            {
+                return;
+            }
 
             var useQ = Menu.Item("UseQHarass").IsActive();
             var useW = Menu.Item("UseWHarass").IsActive();
@@ -335,7 +353,6 @@ namespace Orianna
 
             if (W.IsReady() && useW)
             {
-                // Workaround, no idea why it works
                 W.Cast(target);
             }
         }
@@ -445,7 +462,7 @@ namespace Orianna
             switch (Orbwalker.ActiveMode)
             {
                 case Orbwalking.OrbwalkingMode.Mixed:
-                    DoHarass();
+                    DoHarass(false);
                     break;
                 case Orbwalking.OrbwalkingMode.LaneClear:
                     DoLaneClear();
@@ -453,6 +470,11 @@ namespace Orianna
                 case Orbwalking.OrbwalkingMode.Combo:
                     DoCombo();
                     break;
+            }
+
+            if (Menu.Item("Harass").IsActive())
+            {
+                DoHarass(true);
             }
 
             AutoR();
