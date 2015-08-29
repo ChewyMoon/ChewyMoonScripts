@@ -31,7 +31,7 @@ namespace Orianna
     using LeagueSharp.Common;
 
     /// <summary>
-    /// The program.
+    ///     The program.
     /// </summary>
     internal class Program
     {
@@ -41,53 +41,57 @@ namespace Orianna
         ///     The initiators list
         /// </summary>
         private static readonly Dictionary<string, string> InitiatorsList = new Dictionary<string, string>
-                                                                       {
-                                                                           { "aatroxq", "Aatrox" }, 
-                                                                           { "akalishadowdance", "Akali" }, 
-                                                                           { "headbutt", "Alistar" }, 
-                                                                           { "bandagetoss", "Amumu" }, 
-                                                                           { "dianateleport", "Diana" }, 
-                                                                           { "elisespidereinitial", "Elise" }, 
-                                                                           { "crowstorm", "FiddleSticks" }, 
-                                                                           { "fioraq", "Fiora" }, { "gragase", "Gragas" }, 
-                                                                           { "hecarimult", "Hecarim" }, 
-                                                                           { "ireliagatotsu", "Irelia" }, 
-                                                                           { "jarvanivdragonstrike", "JarvanIV" }, 
-                                                                           { "jaxleapstrike", "Jax" }, 
-                                                                           { "riftwalk", "Kassadin" }, 
-                                                                           { "katarinae", "Katarina" }, 
-                                                                           { "kennenlightningrush", "Kennen" }, 
-                                                                           { "khazixe", "KhaZix" }, 
-                                                                           { "khazixelong", "KhaZix" }, 
-                                                                           { "blindmonkqtwo", "LeeSin" }, 
-                                                                           { "leonazenithblademissle", "Leona" }, 
-                                                                           { "lissandrae", "Lissandra" }, 
-                                                                           { "ufslash", "Malphite" }, 
-                                                                           { "maokaiunstablegrowth", "Maokai" }, 
-                                                                           { "monkeykingnimbus", "MonkeyKing" }, 
-                                                                           { "monkeykingspintowin", "MonkeyKing" }, 
-                                                                           { "summonerflash", "MonkeyKing" }, 
-                                                                           { "nocturneparanoia", "Nocturne" }, 
-                                                                           { "olafragnarok", "Olaf" }, 
-                                                                           { "poppyheroiccharge", "Poppy" }, 
-                                                                           { "renektonsliceanddice", "Renekton" }, 
-                                                                           { "rengarr", "Rengar" }, 
-                                                                           { "reksaieburrowed", "RekSai" }, 
-                                                                           { "sejuaniarcticassault", "Sejuani" }, 
-                                                                           { "shenshadowdash", "Shen" }, 
-                                                                           { "shyvanatransformcast", "Shyvana" }, 
-                                                                           { "shyvanatransformleap", "Shyvana" }, 
-                                                                           { "sionr", "Sion" }, 
-                                                                           { "taloncutthroat", "Talon" }, 
-                                                                           { "threshqleap", "Thresh" }, 
-                                                                           { "slashcast", "Tryndamere" }, 
-                                                                           { "udyrbearstance", "Udyr" }, 
-                                                                           { "urgotswap2", "Urgot" }, { "viq", "Vi" }, 
-                                                                           { "vir", "Vi" }, { "volibearq", "Volibear" }, 
-                                                                           { "infiniteduress", "Warwick" }, 
-                                                                           { "yasuorknockupcombow", "Yasuo" }, 
-                                                                           { "zace", "Zac" }
-                                                                       };
+                                                                                {
+                                                                                    { "aatroxq", "Aatrox" }, 
+                                                                                    { "akalishadowdance", "Akali" }, 
+                                                                                    { "headbutt", "Alistar" }, 
+                                                                                    { "bandagetoss", "Amumu" }, 
+                                                                                    { "dianateleport", "Diana" }, 
+                                                                                    { "elisespidereinitial", "Elise" }, 
+                                                                                    { "crowstorm", "FiddleSticks" }, 
+                                                                                    { "fioraq", "Fiora" }, 
+                                                                                    { "gragase", "Gragas" }, 
+                                                                                    { "hecarimult", "Hecarim" }, 
+                                                                                    { "ireliagatotsu", "Irelia" }, 
+                                                                                    { "jarvanivdragonstrike", "JarvanIV" }, 
+                                                                                    { "jaxleapstrike", "Jax" }, 
+                                                                                    { "riftwalk", "Kassadin" }, 
+                                                                                    { "katarinae", "Katarina" }, 
+                                                                                    { "kennenlightningrush", "Kennen" }, 
+                                                                                    { "khazixe", "KhaZix" }, 
+                                                                                    { "khazixelong", "KhaZix" }, 
+                                                                                    { "blindmonkqtwo", "LeeSin" }, 
+                                                                                    { "leonazenithblademissle", "Leona" }, 
+                                                                                    { "lissandrae", "Lissandra" }, 
+                                                                                    { "ufslash", "Malphite" }, 
+                                                                                    { "maokaiunstablegrowth", "Maokai" }, 
+                                                                                    { "monkeykingnimbus", "MonkeyKing" }, 
+                                                                                    {
+                                                                                        "monkeykingspintowin", "MonkeyKing"
+                                                                                    }, 
+                                                                                    { "summonerflash", "MonkeyKing" }, 
+                                                                                    { "nocturneparanoia", "Nocturne" }, 
+                                                                                    { "olafragnarok", "Olaf" }, 
+                                                                                    { "poppyheroiccharge", "Poppy" }, 
+                                                                                    { "renektonsliceanddice", "Renekton" }, 
+                                                                                    { "rengarr", "Rengar" }, 
+                                                                                    { "reksaieburrowed", "RekSai" }, 
+                                                                                    { "sejuaniarcticassault", "Sejuani" }, 
+                                                                                    { "shenshadowdash", "Shen" }, 
+                                                                                    { "shyvanatransformcast", "Shyvana" }, 
+                                                                                    { "shyvanatransformleap", "Shyvana" }, 
+                                                                                    { "sionr", "Sion" }, 
+                                                                                    { "taloncutthroat", "Talon" }, 
+                                                                                    { "threshqleap", "Thresh" }, 
+                                                                                    { "slashcast", "Tryndamere" }, 
+                                                                                    { "udyrbearstance", "Udyr" }, 
+                                                                                    { "urgotswap2", "Urgot" }, 
+                                                                                    { "viq", "Vi" }, { "vir", "Vi" }, 
+                                                                                    { "volibearq", "Volibear" }, 
+                                                                                    { "infiniteduress", "Warwick" }, 
+                                                                                    { "yasuorknockupcombow", "Yasuo" }, 
+                                                                                    { "zace", "Zac" }
+                                                                                };
 
         #endregion
 
@@ -310,9 +314,11 @@ namespace Orianna
         }
 
         /// <summary>
-        /// Does the harass.
+        ///     Does the harass.
         /// </summary>
         /// <param name="toggle">if set to <c>true</c> checks the toggle mana.</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
+            Justification = "Reviewed. Suppression is OK here.")]
         private static void DoHarass(bool toggle)
         {
             if (toggle && Player.ManaPercent < Menu.Item("HarassMana").GetValue<Slider>().Value)
@@ -379,12 +385,14 @@ namespace Orianna
                 return;
             }
 
-            if (Q.IsReady())
+            if (Q.IsReady() && W.IsReady())
             {
                 Q.Cast(location.Position);
+                Utility.DelayAction.Add(
+                    (int)((BallManager.BallPosition.Distance(location.Position.To3D()) / 1.2) - 70 - Game.Ping), 
+                    () => W.Cast());
             }
-
-            if (W.IsReady())
+            else if (W.IsReady() && MinionManager.GetMinions(BallManager.BallPosition, W.Width).Count > 0)
             {
                 W.Cast();
             }
