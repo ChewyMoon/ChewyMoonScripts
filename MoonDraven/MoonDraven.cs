@@ -144,6 +144,15 @@ namespace MoonDraven
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Gets or sets the last axe move time.
+        /// </summary>
+        private int LastAxeMoveTime { get; set; }
+
+        #endregion
+
         #region Public Methods and Operators
 
         /// <summary>
@@ -414,8 +423,9 @@ namespace MoonDraven
         {
             var catchOption = this.Menu.Item("AxeMode").GetValue<StringList>().SelectedIndex;
 
-            if ((catchOption == 0 && this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                || (catchOption == 1 && this.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) || catchOption == 2)
+            if (((catchOption == 0 && this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+                 || (catchOption == 1 && this.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None)
+                 || catchOption == 2) && Environment.TickCount - this.LastAxeMoveTime >= 50)
             {
                 var bestReticle =
                     this.QReticles.Where(
@@ -441,6 +451,8 @@ namespace MoonDraven
                         // If we're under the turret as well as the axe, catch the axe
                         if (this.Player.UnderTurret(true) && bestReticle.Object.Position.UnderTurret(true))
                         {
+                            this.LastAxeMoveTime = Environment.TickCount;
+
                             if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
                             {
                                 this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
@@ -450,8 +462,10 @@ namespace MoonDraven
                                 this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
                             }
                         }
-                        else if (!bestReticle.Position.UnderTurret(true)) // Catch axe if not under turret
+                        else if (!bestReticle.Position.UnderTurret(true))
                         {
+                            this.LastAxeMoveTime = Environment.TickCount;
+
                             if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
                             {
                                 this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
@@ -464,6 +478,8 @@ namespace MoonDraven
                     }
                     else
                     {
+                        this.LastAxeMoveTime = Environment.TickCount;
+
                         if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
                         {
                             this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
@@ -481,7 +497,7 @@ namespace MoonDraven
             }
             else
             {
-                this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+                // this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
             }
 
             if (this.W.IsReady() && this.Menu.Item("UseWSlow").IsActive() && this.Player.HasBuffOfType(BuffType.Slow))
