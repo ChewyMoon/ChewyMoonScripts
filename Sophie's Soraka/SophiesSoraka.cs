@@ -304,7 +304,7 @@ namespace Sophies_Soraka
 
             var wMenu = new Menu("W Settings", "WSettings");
             wMenu.AddItem(new MenuItem("autoW", "Use W").SetValue(true));
-            wMenu.AddItem(new MenuItem("autoWPercent", "% Percent").SetValue(new Slider(50, 1)));
+            wMenu.AddItem(new MenuItem("autoWPercent", "Ally Health Percent").SetValue(new Slider(50, 1)));
             wMenu.AddItem(new MenuItem("autoWHealth", "My Health Percent").SetValue(new Slider(30, 1)));
             wMenu.AddItem(new MenuItem("DontWInFountain", "Dont W in Fountain").SetValue(true));
             wMenu.AddItem(
@@ -333,8 +333,8 @@ namespace Sophies_Soraka
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
-            miscMenu.AddItem(new MenuItem("AttackMinions", "Dont Attack Minions").SetValue(false));
-            miscMenu.AddItem(new MenuItem("AttackChampions", "Dont Attack Champions").SetValue(true));
+            miscMenu.AddItem(new MenuItem("AttackMinions", "Attack Minions").SetValue(false));
+            miscMenu.AddItem(new MenuItem("AttackChampions", "Attack Champions").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
             Menu.AddToMainMenu();
