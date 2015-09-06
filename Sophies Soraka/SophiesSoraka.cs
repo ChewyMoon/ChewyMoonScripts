@@ -218,7 +218,7 @@ namespace Sophies_Soraka
 
             var healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value;
 
-            var canidates = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly && x.HealthPercent < healthPercent);
+            var canidates = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(W.Range, false) && x.IsAlly && x.HealthPercent < healthPercent);
             var wMode = Menu.Item("HealingPriority").GetValue<StringList>().SelectedValue;
 
             switch (wMode)
