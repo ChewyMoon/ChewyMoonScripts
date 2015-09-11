@@ -312,7 +312,7 @@ namespace MoonDraven
                     new StringList(new[] { "Combo", "Any", "Always" }, 2)));
             axeMenu.AddItem(new MenuItem("CatchAxeRange", "Catch Axe Range").SetValue(new Slider(800, 120, 1500)));
             axeMenu.AddItem(new MenuItem("MaxAxes", "Maximum Axes").SetValue(new Slider(2, 1, 3)));
-            axeMenu.AddItem(new MenuItem("UseWForQ", "Use W if Axe too far").SetValue(true));
+            axeMenu.AddItem(new MenuItem("UseWForQ", "Use W if Axe Too Far").SetValue(true));
             axeMenu.AddItem(new MenuItem("DontCatchUnderTurret", "Don't Catch Axe Under Turret").SetValue(true));
             this.Menu.AddSubMenu(axeMenu);
 
@@ -325,7 +325,7 @@ namespace MoonDraven
 
             // Misc Menu
             var miscMenu = new Menu("Misc", "misc");
-            miscMenu.AddItem(new MenuItem("UseWSetting", "Use W Instantly(When Available)").SetValue(false));
+            miscMenu.AddItem(new MenuItem("UseWSetting", "Use W Instantly (When Available)").SetValue(false));
             miscMenu.AddItem(new MenuItem("UseEGapcloser", "Use E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("UseEInterrupt", "Use E to Interrupt").SetValue(true));
             miscMenu.AddItem(new MenuItem("UseWManaPercent", "Use W Mana Percent").SetValue(new Slider(50)));
