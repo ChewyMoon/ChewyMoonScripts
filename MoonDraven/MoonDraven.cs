@@ -175,12 +175,108 @@ namespace MoonDraven
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>MoonDraven:</b></font> Loaded");
 
+            Obj_AI_Base.OnNewPath += this.Obj_AI_Base_OnNewPath;
             GameObject.OnCreate += this.GameObjectOnOnCreate;
             GameObject.OnDelete += this.GameObjectOnOnDelete;
             AntiGapcloser.OnEnemyGapcloser += this.AntiGapcloserOnOnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += this.Interrupter2OnOnInterruptableTarget;
             Drawing.OnDraw += this.DrawingOnOnDraw;
             Game.OnUpdate += this.GameOnOnUpdate;
+        }
+
+        /// <summary>
+        /// Fired when the OnNewPath event is called.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="GameObjectNewPathEventArgs"/> instance containing the event data.</param>
+        private void Obj_AI_Base_OnNewPath(Obj_AI_Base sender, GameObjectNewPathEventArgs args)
+        {
+            if (!sender.IsMe || this.QReticles.Any(x => x.Position.Distance(args.Path.LastOrDefault()) < 110))
+            {
+                return;
+            }
+
+            this.CatchAxe();
+        }
+
+        /// <summary>
+        /// Catches the axe.
+        /// </summary>
+        private void CatchAxe()
+        {
+            var catchOption = this.Menu.Item("AxeMode").GetValue<StringList>().SelectedIndex;
+
+            if (((catchOption == 0 && this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+                 || (catchOption == 1 && this.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None))
+                 || catchOption == 2)
+            {
+                var bestReticle =
+                    this.QReticles.Where(
+                        x =>
+                        x.Object.Position.Distance(Game.CursorPos)
+                        < this.Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
+                        .OrderBy(x => x.Position.Distance(this.Player.ServerPosition))
+                        .ThenBy(x => x.Position.Distance(Game.CursorPos))
+                        .ThenBy(x => x.ExpireTime)
+                        .FirstOrDefault();
+
+                if (bestReticle != null && bestReticle.Object.Position.Distance(this.Player.ServerPosition) > 100)
+                {
+                    var eta = 1000 * (this.Player.Distance(bestReticle.Position) / this.Player.MoveSpeed);
+                    var expireTime = bestReticle.ExpireTime - Environment.TickCount;
+
+                    if (eta >= expireTime && this.Menu.Item("UseWForQ").IsActive())
+                    {
+                        this.W.Cast();
+                    }
+
+                    if (this.Menu.Item("DontCatchUnderTurret").IsActive())
+                    {
+                        // If we're under the turret as well as the axe, catch the axe
+                        if (this.Player.UnderTurret(true) && bestReticle.Object.Position.UnderTurret(true))
+                        {
+                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                            {
+                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                            }
+                            else
+                            {
+                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                            }
+                        }
+                        else if (!bestReticle.Position.UnderTurret(true))
+                        {
+                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                            {
+                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                            }
+                            else
+                            {
+                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
+                        {
+                            this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
+                        }
+                        else
+                        {
+                            this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                        }
+                    }
+                }
+                else
+                {
+                    this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+                }
+            }
+            else
+            {
+                 this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+            }
         }
 
         #endregion
@@ -420,85 +516,8 @@ namespace MoonDraven
         /// </summary>
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void GameOnOnUpdate(EventArgs args)
-        {
-            var catchOption = this.Menu.Item("AxeMode").GetValue<StringList>().SelectedIndex;
-
-            if (((catchOption == 0 && this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                 || (catchOption == 1 && this.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None)
-                 || catchOption == 2) && Environment.TickCount - this.LastAxeMoveTime >= 50)
-            {
-                var bestReticle =
-                    this.QReticles.Where(
-                        x =>
-                        x.Object.Position.Distance(Game.CursorPos)
-                        < this.Menu.Item("CatchAxeRange").GetValue<Slider>().Value)
-                        .OrderBy(x => x.Position.Distance(this.Player.ServerPosition))
-                        .ThenBy(x => x.Position.Distance(Game.CursorPos))
-                        .FirstOrDefault();
-
-                if (bestReticle != null && bestReticle.Object.Position.Distance(this.Player.ServerPosition) > 110)
-                {
-                    var eta = 1000 * (this.Player.Distance(bestReticle.Position) / this.Player.MoveSpeed);
-                    var expireTime = bestReticle.ExpireTime - Environment.TickCount;
-
-                    if (eta >= expireTime && this.Menu.Item("UseWForQ").IsActive())
-                    {
-                        this.W.Cast();
-                    }
-
-                    if (this.Menu.Item("DontCatchUnderTurret").IsActive())
-                    {
-                        // If we're under the turret as well as the axe, catch the axe
-                        if (this.Player.UnderTurret(true) && bestReticle.Object.Position.UnderTurret(true))
-                        {
-                            this.LastAxeMoveTime = Environment.TickCount;
-
-                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                            {
-                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                            }
-                            else
-                            {
-                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                            }
-                        }
-                        else if (!bestReticle.Position.UnderTurret(true))
-                        {
-                            this.LastAxeMoveTime = Environment.TickCount;
-
-                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                            {
-                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                            }
-                            else
-                            {
-                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.LastAxeMoveTime = Environment.TickCount;
-
-                        if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                        {
-                            this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                        }
-                        else
-                        {
-                            this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                        }
-                    }
-                }
-                else
-                {
-                    this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
-                }
-            }
-            else
-            {
-                // this.Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
-            }
+        {      
+            this.QReticles.RemoveAll(x => x.Object.IsDead);
 
             if (this.W.IsReady() && this.Menu.Item("UseWSlow").IsActive() && this.Player.HasBuffOfType(BuffType.Slow))
             {
