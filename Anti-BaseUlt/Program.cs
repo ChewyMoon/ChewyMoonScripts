@@ -159,6 +159,7 @@ namespace Anti_BaseUlt
         /// <param name="args">
         ///     The args.
         /// </param>
+        // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;

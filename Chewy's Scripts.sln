@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChewyMoonsShaco", "ChewyMoo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mid or Feed", "Mid or Feed\Mid or Feed.csproj", "{9EB6DEE7-5BE9-46EC-B049-E32664455DDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sophies Soraka", "Sophie's Soraka\Sophies Soraka.csproj", "{42546CA3-0101-4845-BBAE-75F64289AED2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Golderino", "Golderino\Golderino.csproj", "{A7642EAD-070F-4468-A973-6681F5DA66BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cya Nerds", "Cya Nerds\Cya Nerds.csproj", "{C9BC0D42-9B17-4905-B153-D1669874F76E}"
@@ -35,13 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsaneEzreal", "InsaneEzrea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzirRange", "AzirRange\AzirRange.csproj", "{E5E3A3D0-F3E5-4F23-A0A9-D33C2EA07705}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoLeeShit", "HoLeeShit\HoLeeShit.csproj", "{37DE17F4-96A4-4D89-B846-5FEAB8102002}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anti-BaseUlt", "Anti-BaseUlt\Anti-BaseUlt.csproj", "{67225BAC-B3AE-4DE1-9B6F-00EC9C6CB896}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElLeBlanc", "ElLeblanc\ElLeBlanc.csproj", "{57511CB8-7DC6-4455-AA2F-74B59C501B85}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxxyRiven", "BoxxyRiven\BoxxyRiven.csproj", "{A3F61E40-A5EC-4581-B6AB-F0E3A6BC3D45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night Stalker Azir", "Night Stalker Azir\Night Stalker Azir.csproj", "{280C3AF4-8E82-4499-8955-ADED0B466682}"
 EndProject
@@ -49,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lulu and Pix", "Lulu\Lulu a
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orianna Grande", "Orianna\Orianna Grande.csproj", "{0E80B447-7847-4BAB-BBA2-ECFA947D4FC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thresh the Flay Maker", "Thresh the Flay Maker\Thresh the Flay Maker.csproj", "{107D9116-1174-4913-9C70-D894FFAFB382}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sophies Soraka", "Sophies Soraka\Sophies Soraka.csproj", "{42546CA3-0101-4845-BBAE-75F64289AED2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,10 +61,6 @@ Global
 		{9EB6DEE7-5BE9-46EC-B049-E32664455DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EB6DEE7-5BE9-46EC-B049-E32664455DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EB6DEE7-5BE9-46EC-B049-E32664455DDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42546CA3-0101-4845-BBAE-75F64289AED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42546CA3-0101-4845-BBAE-75F64289AED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7642EAD-070F-4468-A973-6681F5DA66BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7642EAD-070F-4468-A973-6681F5DA66BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7642EAD-070F-4468-A973-6681F5DA66BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -121,22 +109,10 @@ Global
 		{E5E3A3D0-F3E5-4F23-A0A9-D33C2EA07705}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5E3A3D0-F3E5-4F23-A0A9-D33C2EA07705}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5E3A3D0-F3E5-4F23-A0A9-D33C2EA07705}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37DE17F4-96A4-4D89-B846-5FEAB8102002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37DE17F4-96A4-4D89-B846-5FEAB8102002}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37DE17F4-96A4-4D89-B846-5FEAB8102002}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37DE17F4-96A4-4D89-B846-5FEAB8102002}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67225BAC-B3AE-4DE1-9B6F-00EC9C6CB896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67225BAC-B3AE-4DE1-9B6F-00EC9C6CB896}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67225BAC-B3AE-4DE1-9B6F-00EC9C6CB896}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67225BAC-B3AE-4DE1-9B6F-00EC9C6CB896}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57511CB8-7DC6-4455-AA2F-74B59C501B85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57511CB8-7DC6-4455-AA2F-74B59C501B85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57511CB8-7DC6-4455-AA2F-74B59C501B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57511CB8-7DC6-4455-AA2F-74B59C501B85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3F61E40-A5EC-4581-B6AB-F0E3A6BC3D45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3F61E40-A5EC-4581-B6AB-F0E3A6BC3D45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3F61E40-A5EC-4581-B6AB-F0E3A6BC3D45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3F61E40-A5EC-4581-B6AB-F0E3A6BC3D45}.Release|Any CPU.Build.0 = Release|Any CPU
 		{280C3AF4-8E82-4499-8955-ADED0B466682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{280C3AF4-8E82-4499-8955-ADED0B466682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{280C3AF4-8E82-4499-8955-ADED0B466682}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -149,10 +125,10 @@ Global
 		{0E80B447-7847-4BAB-BBA2-ECFA947D4FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E80B447-7847-4BAB-BBA2-ECFA947D4FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E80B447-7847-4BAB-BBA2-ECFA947D4FC2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{107D9116-1174-4913-9C70-D894FFAFB382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{107D9116-1174-4913-9C70-D894FFAFB382}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{107D9116-1174-4913-9C70-D894FFAFB382}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{107D9116-1174-4913-9C70-D894FFAFB382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42546CA3-0101-4845-BBAE-75F64289AED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42546CA3-0101-4845-BBAE-75F64289AED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSharp;
-using LeagueSharp.Common;
-
-namespace MoonDraven
+﻿namespace MoonDraven
 {
-    class Program
-    {
+    using System;
 
-        static void Main(string[] args)
-        {
-            CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
-        }
+    using LeagueSharp;
+    using LeagueSharp.Common;
+
+    internal class Program
+    {
+        #region Methods
 
         private static void GameOnOnGameLoad(EventArgs args)
         {
@@ -23,5 +16,12 @@ namespace MoonDraven
                 new MoonDraven().Load();
             }
         }
+
+        private static void Main(string[] args)
+        {
+            CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
+        }
+
+        #endregion
     }
 }

@@ -327,7 +327,7 @@ namespace EasyPeasyRivenSqueezy
             {
                 var aaDelay = Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear
                     ? GetBool("UseFastQ") ? Player.AttackDelay*100 + Game.Ping/2f : Player.AttackCastDelay*1000
-                    : Player.AttackDelay*100;
+                    : Player.AttackDelay*100 + Game.Ping / 2f;
 
                 Utility.DelayAction.Add(
                     (int) (QDelay + aaDelay), () =>
