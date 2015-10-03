@@ -113,9 +113,9 @@ namespace MoonDraven
         {
             get
             {
-                return (this.Player.HasBuff("dravenspinningattack")
-                            ? this.Player.Buffs.First(x => x.Name == "dravenspinningattack").Count
-                            : 0) + this.QReticles.Count;
+                return (this.Player.HasBuff("dravenspinning")
+                            ? 1
+                            : 0) + (this.Player.HasBuff("dravenspinningleft") ? 1 : 0) + this.QReticles.Count;
             }
         }
 
@@ -584,7 +584,7 @@ namespace MoonDraven
             }
 
             if (useQ && this.QCount < this.Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && this.Q.IsReady()
-                && this.Orbwalker.GetTarget() is Obj_AI_Minion && !this.Player.Spellbook.IsAutoAttacking)
+                && this.Orbwalker.GetTarget() is Obj_AI_Minion && !this.Player.Spellbook.IsAutoAttacking && !this.Player.IsWindingUp)
             {
                 this.Q.Cast();
             }
@@ -625,7 +625,7 @@ namespace MoonDraven
         /// <param name="args">The <see cref="GameObjectNewPathEventArgs" /> instance containing the event data.</param>
         private void Obj_AI_Base_OnNewPath(Obj_AI_Base sender, GameObjectNewPathEventArgs args)
         {
-            if (!sender.IsMe || this.QReticles.Any(x => x.Position.Distance(args.Path.LastOrDefault()) < 110))
+            if (!sender.IsMe)
             {
                 return;
             }
