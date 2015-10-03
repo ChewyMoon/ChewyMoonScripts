@@ -176,7 +176,7 @@ namespace MoonDraven
 
             Game.PrintChat("<font color=\"#7CFC00\"><b>MoonDraven:</b></font> Loaded");
 
-            Obj_AI_Base.OnNewPath += this.Obj_AI_Base_OnNewPath;
+            //Obj_AI_Base.OnNewPath += this.Obj_AI_Base_OnNewPath;
             GameObject.OnCreate += this.GameObjectOnOnCreate;
             GameObject.OnDelete += this.GameObjectOnOnDelete;
             AntiGapcloser.OnEnemyGapcloser += this.AntiGapcloserOnOnEnemyGapcloser;
@@ -504,6 +504,8 @@ namespace MoonDraven
         private void GameOnOnUpdate(EventArgs args)
         {
             this.QReticles.RemoveAll(x => x.Object.IsDead);
+
+            this.CatchAxe();
 
             if (this.W.IsReady() && this.Menu.Item("UseWSlow").IsActive() && this.Player.HasBuffOfType(BuffType.Slow))
             {
