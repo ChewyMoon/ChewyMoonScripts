@@ -1,8 +1,0 @@
-language: csharp
-solution: ChewyScripts.sln
-sudo: required
-install:
-    - chmod +x Install.sh
-    - ./Install.sh
-    
-    
