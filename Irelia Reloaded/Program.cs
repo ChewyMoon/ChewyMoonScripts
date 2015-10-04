@@ -1,28 +1,182 @@
 ﻿#region
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using LeagueSharp;
-using LeagueSharp.Common;
-using LeagueSharp.Common.Data;
-using ItemData = LeagueSharp.Common.Data.ItemData;
-
 #endregion
 
 namespace Irelia_Reloaded
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+
+    using LeagueSharp;
+    using LeagueSharp.Common;
+
+    using ItemData = LeagueSharp.Common.Data.ItemData;
+
+    /// <summary>
+    /// The program.
+    /// </summary>
     internal class Program
     {
-        private static void Main(string[] args)
+        #region Static Fields
+
+        /// <summary>
+        ///     The gatotsu tick
+        /// </summary>
+        private static int gatotsuTick;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        ///     Gets or sets the botrk.
+        /// </summary>
+        /// <value>
+        ///     The botrk.
+        /// </value>
+        private static Items.Item Botrk { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the cutlass.
+        /// </summary>
+        /// <value>
+        ///     The cutlass.
+        /// </value>
+        private static Items.Item Cutlass { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the e.
+        /// </summary>
+        /// <value>
+        ///     The e.
+        /// </value>
+        private static Spell E { get; set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this instance has sheen buff.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance has sheen buff; otherwise, <c>false</c>.
+        /// </value>
+        private static bool HasSheenBuff
         {
-            CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
+            get
+            {
+                return Player.HasBuff("sheen");
+            }
         }
 
+        /// <summary>
+        ///     Gets or sets the ignite slot.
+        /// </summary>
+        /// <value>
+        ///     The ignite slot.
+        /// </value>
+        private static SpellSlot IgniteSlot { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the menu.
+        /// </summary>
+        /// <value>
+        ///     The menu.
+        /// </value>
+        private static Menu Menu { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the omen.
+        /// </summary>
+        /// <value>
+        ///     The omen.
+        /// </value>
+        private static Items.Item Omen { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the orbwalker.
+        /// </summary>
+        /// <value>
+        ///     The orbwalker.
+        /// </value>
+        private static Orbwalking.Orbwalker Orbwalker { get; set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this <see cref="Program" /> is packets.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if packets; otherwise, <c>false</c>.
+        /// </value>
+        private static bool Packets
+        {
+            get
+            {
+                return Menu.Item("packets").GetValue<bool>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the player.
+        /// </summary>
+        /// <value>
+        ///     The player.
+        /// </value>
+        private static Obj_AI_Hero Player
+        {
+            get
+            {
+                return ObjectManager.Player;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the q.
+        /// </summary>
+        /// <value>
+        ///     The q.
+        /// </value>
+        private static Spell Q { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the r.
+        /// </summary>
+        /// <value>
+        ///     The r.
+        /// </value>
+        private static Spell R { get; set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the ult is activated.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if the ult is activated; otherwise, <c>false</c>.
+        /// </value>
+        private static bool UltActivated
+        {
+            get
+            {
+                return Player.HasBuff("ireliatranscendentbladesspell");
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the w.
+        /// </summary>
+        /// <value>
+        ///     The w.
+        /// </value>
+        private static Spell W { get; set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        ///     Fired when the OnGameLoad event is fired.
+        /// </summary>
+        /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
         public static void GameOnOnGameLoad(EventArgs args)
         {
-            if (Player.BaseSkinName != "Irelia")
+            if (Player.CharData.BaseSkinName != "Irelia")
             {
                 return;
             }
@@ -65,41 +219,14 @@ namespace Irelia_Reloaded
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
         }
 
-        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (args.SData.Name == "IreliaGatotsu" && sender.IsMe)
-            {
-                _gatotsuTick = Environment.TickCount;
-            }
-        }
+        #endregion
 
-        private static void InterrupterOnOnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
-        {
-            var spell = args;
-            var unit = sender;
+        #region Methods
 
-            if (spell.DangerLevel != Interrupter2.DangerLevel.High || !unit.CanStunTarget())
-            {
-                return;
-            }
-
-            var interruptE = Menu.Item("interruptE").GetValue<bool>();
-            var interruptQe = Menu.Item("interruptQE").GetValue<bool>();
-
-            if (E.IsReady() && E.IsInRange(unit, E.Range) && interruptE)
-            {
-                E.Cast(unit, Packets);
-            }
-
-            if (Q.IsReady() && E.IsReady() && Q.IsInRange(unit, Q.Range) && interruptQe)
-            {
-                Q.Cast(unit, Packets);
-
-                var timeToArrive = (int) (1000*Player.Distance(unit)/Q.Speed + Q.Delay);
-                Utility.DelayAction.Add(timeToArrive, () => E.Cast(unit, Packets));
-            }
-        }
-
+        /// <summary>
+        ///     Fired when there is an incoming capcloser.
+        /// </summary>
+        /// <param name="gapcloser">The gapcloser.</param>
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             if (gapcloser.Sender.IsValidTarget() && Menu.Item("gapcloserE").GetValue<bool>() && E.IsReady())
@@ -108,127 +235,9 @@ namespace Irelia_Reloaded
             }
         }
 
-        private static void DrawingOnOnDraw(EventArgs args)
-        {
-            var drawQ = Menu.Item("drawQ").GetValue<bool>();
-            var drawE = Menu.Item("drawE").GetValue<bool>();
-            var drawR = Menu.Item("drawR").GetValue<bool>();
-            var drawStunnable = Menu.Item("drawStunnable").GetValue<bool>();
-            var p = Player.Position;
-
-            if (drawQ)
-            {
-                Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
-            }
-
-            if (drawE)
-            {
-                Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
-            }
-
-            if (drawR)
-            {
-                Render.Circle.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
-            }
-
-            foreach (
-                var minion in
-                    MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
-            {
-                Render.Circle.DrawCircle(minion.Position, 65, Color.FromArgb(124, 252, 0), 3);
-            }
-
-            if (!drawStunnable)
-            {
-                return;
-            }
-
-            foreach (
-                var unit in
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.CanStunTarget())
-                        .Where(x => x.IsEnemy)
-                        .Where(x => !x.IsDead)
-                        .Where(x => !x.IsAlly)
-                        .Where(x => x.IsVisible))
-            {
-                var drawPos = Drawing.WorldToScreen(unit.Position);
-                var textSize = Drawing.GetTextExtent("Stunnable");
-                Drawing.DrawText(drawPos.X - textSize.Width/2f, drawPos.Y, Color.Aqua, "Stunnable");
-            }
-        }
-
-        private static void Game_OnGameUpdate(EventArgs args)
-        {
-            KillSteal();
-
-            switch (Orbwalker.ActiveMode)
-            {
-                case Orbwalking.OrbwalkingMode.LastHit:
-                    LastHit();
-                    break;
-                case Orbwalking.OrbwalkingMode.LaneClear:
-                    WaveClear();
-                    break;
-                case Orbwalking.OrbwalkingMode.Combo:
-                    Combo();
-                    break;
-            }
-        }
-
-        private static void KillSteal()
-        {
-            var useQ = Menu.Item("useQKS").GetValue<bool>();
-            var useR = Menu.Item("useRKS").GetValue<bool>();
-            var useIgnite = Menu.Item("useIgniteKS").GetValue<bool>();
-
-            if (useQ && Q.IsReady())
-            {
-                var bestTarget =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.IsValidTarget(Q.Range))
-                        .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
-                        .OrderBy(x => x.Distance(Player))
-                        .FirstOrDefault();
-
-                if (bestTarget != null)
-                {
-                    Q.Cast(bestTarget, Packets);
-                }
-            }
-
-            if (useR && (R.IsReady() || UltActivated))
-            {
-                //TODO: Account for all 4 Charges
-                var bestTarget =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.IsValidTarget(R.Range))
-                        .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
-                        .OrderBy(x => x.Distance(Player))
-                        .FirstOrDefault();
-
-                if (bestTarget != null)
-                {
-                    R.Cast(bestTarget, Packets);
-                }
-            }
-
-            if (useIgnite && IgniteSlot.IsReady())
-            {
-                var bestTarget =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(x => x.IsValidTarget(600))
-                        .Where(x => Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite)/5 > x.Health)
-                        .OrderBy(x => x.ChampionsKilled)
-                        .FirstOrDefault();
-
-                if (bestTarget != null)
-                {
-                    Player.Spellbook.CastSpell(IgniteSlot, bestTarget);
-                }
-            }
-        }
-
+        /// <summary>
+        ///     Does the combo.
+        /// </summary>
         private static void Combo()
         {
             var useQ = Menu.Item("useQ").GetValue<bool>();
@@ -247,32 +256,41 @@ namespace Irelia_Reloaded
 
             if (target == null && useQGapclose)
             {
-                    var minionQ =
+                /** var minionQ =
                     ObjectManager.Get<Obj_AI_Minion>()
                         .Where(x => x.IsValidTarget())
                         .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
                         .FirstOrDefault(
                             x =>
                                 x.Distance(TargetSelector.GetTarget(Q.Range * 5, TargetSelector.DamageType.Physical)) <
-                                Q.Range);
+                                Q.Range);*/
 
-                    if (minionQ != null)
-                    {
-                        Q.CastOnUnit(minionQ, Packets);
-                        return;
-                    }
+                var minionQ =
+                    MinionManager.GetMinions(Q.Range)
+                        .Where(
+                            x =>
+                            x.IsValidTarget(Q.Range) && Player.GetSpellDamage(x, SpellSlot.Q) > x.Health
+                            && Player.Distance(HeroManager.Enemies.OrderBy(y => y.Distance(Player)).FirstOrDefault())
+                            < x.Distance(HeroManager.Enemies.OrderBy(y => y.Distance(Player)).FirstOrDefault()))
+                        .FirstOrDefault(
+                            x =>
+                            x.Distance(HeroManager.Enemies.OrderBy(y => y.Distance(Player)).FirstOrDefault()) < Q.Range);
+
+                if (minionQ != null)
+                {
+                    Q.CastOnUnit(minionQ, Packets);
+                    return;
+                }
 
                 if (useRGapclose)
                 {
-                    var minionR =
-                        ObjectManager.Get<Obj_AI_Minion>()
-                            .Where(x => x.IsValidTarget())
-                            .Where(x => x.Distance(Player) < Q.Range) // Use Q.Range so we follow up with a Q
-                            .Where(x => x.CountEnemiesInRange(Q.Range) >= 1)
-                            .FirstOrDefault(
-                                x =>
-                                    x.Health - Player.GetSpellDamage(x, SpellSlot.R) <
-                                    Player.GetSpellDamage(x, SpellSlot.Q));
+                    var minionR = ObjectManager.Get<Obj_AI_Minion>()
+                        .Where(x => x.IsValidTarget())
+                        .Where(x => x.Distance(Player) < Q.Range) // Use Q.Range so we follow up with a Q
+                        .Where(x => x.CountEnemiesInRange(Q.Range) >= 1)
+                        .FirstOrDefault(
+                            x =>
+                            x.Health - Player.GetSpellDamage(x, SpellSlot.R) < Player.GetSpellDamage(x, SpellSlot.Q));
 
                     if (minionR != null)
                     {
@@ -296,15 +314,15 @@ namespace Irelia_Reloaded
                 Cutlass.Cast(target);
             }
 
-            if (Omen.IsReady() && Omen.IsInRange(target) &&
-                target.Distance(Player) > Orbwalking.GetRealAutoAttackRange(Player))
+            if (Omen.IsReady() && Omen.IsInRange(target)
+                && target.Distance(Player) > Orbwalking.GetRealAutoAttackRange(Player))
             {
                 Omen.Cast();
             }
 
-            if (useIgnite && target != null && target.IsValidTarget(600) &&
-                (IgniteSlot.IsReady() &&
-                 Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) > target.Health))
+            if (useIgnite && target != null && target.IsValidTarget(600)
+                && (IgniteSlot.IsReady()
+                    && Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) > target.Health))
             {
                 Player.Spellbook.CastSpell(IgniteSlot, target);
             }
@@ -382,65 +400,203 @@ namespace Irelia_Reloaded
             }
         }
 
-        private static void WaveClear()
+        /// <summary>
+        ///     Get the damage to a hero.
+        /// </summary>
+        /// <param name="hero">The hero.</param>
+        /// <returns>The damage done to the hero.</returns>
+        private static float DamageToUnit(Obj_AI_Hero hero)
         {
-            var useQ = Menu.Item("waveclearQ").GetValue<bool>();
-            var useQKillable = Menu.Item("waveclearQKillable").GetValue<bool>();
-            var useW = Menu.Item("waveclearW").GetValue<bool>();
-            var useR = Menu.Item("waveclearR").GetValue<bool>();
-            var reqMana = Menu.Item("waveClearMana").GetValue<Slider>().Value;
-            var waitTime = Menu.Item("gatotsuTime").GetValue<Slider>().Value;
-            var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
+            float dmg = 0;
 
-            if (Player.ManaPercentage() < reqMana)
+            var spells = new List<Spell> { Q, W, E, R };
+            foreach (var spell in spells.Where(x => x.IsReady()))
             {
-                return;
-            }
-
-            if (useQ && Q.IsReady() && Environment.TickCount - _gatotsuTick >= waitTime * 10)
-            {
-                if (useQKillable)
+                // Account for each blade
+                if (spell.Slot == SpellSlot.R)
                 {
-                    foreach (var minion in
-                        MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
-                    {
-                        if (dontQUnderTower)
-                        {
-                            if (!minion.UnderTurret())
-                            {
-                                Q.Cast(minion, Packets);
-                            }
-                        }
-                        else
-                        {
-                            Q.Cast(minion, Packets);
-                        }
-                    }
+                    dmg += spell.GetDamage(hero) * 4;
                 }
                 else
                 {
-                    Q.Cast(MinionManager.GetMinions(Q.Range).FirstOrDefault(), Packets);
+                    dmg += spell.GetDamage(hero);
                 }
             }
 
-            if (useW && W.IsReady())
+            if (Botrk.IsReady())
             {
-                if (Orbwalker.GetTarget() is Obj_AI_Minion && W.IsInRange(Orbwalker.GetTarget().Position, W.Range))
-                {
-                    W.Cast(Packets);
-                }
+                dmg += (float)Player.GetItemDamage(hero, Damage.DamageItems.Botrk);
             }
 
-            if (!useR || !R.IsReady())
+            if (Cutlass.IsReady())
+            {
+                dmg += (float)Player.GetItemDamage(hero, Damage.DamageItems.Bilgewater);
+            }
+
+            return dmg;
+        }
+
+        /// <summary>
+        ///     Fired when the game redraws itself.
+        /// </summary>
+        /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private static void DrawingOnOnDraw(EventArgs args)
+        {
+            var drawQ = Menu.Item("drawQ").GetValue<bool>();
+            var drawE = Menu.Item("drawE").GetValue<bool>();
+            var drawR = Menu.Item("drawR").GetValue<bool>();
+            var drawStunnable = Menu.Item("drawStunnable").GetValue<bool>();
+            var p = Player.Position;
+
+            if (drawQ)
+            {
+                Render.Circle.DrawCircle(p, Q.Range, Q.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawE)
+            {
+                Render.Circle.DrawCircle(p, E.Range, E.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            if (drawR)
+            {
+                Render.Circle.DrawCircle(p, R.Range, R.IsReady() ? Color.Aqua : Color.Red);
+            }
+
+            foreach (var minion in
+                MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
+            {
+                Render.Circle.DrawCircle(minion.Position, 65, Color.FromArgb(124, 252, 0), 3);
+            }
+
+            if (!drawStunnable)
             {
                 return;
             }
 
-            // Get best position for ult
-            var pos = R.GetLineFarmLocation(MinionManager.GetMinions(R.Range));
-            R.Cast(pos.Position, Packets);
+            foreach (var unit in
+                ObjectManager.Get<Obj_AI_Hero>().Where(x => x.CanStunTarget() && x.IsValidTarget()))
+            {
+                var drawPos = Drawing.WorldToScreen(unit.Position);
+                var textSize = Drawing.GetTextExtent("Stunnable");
+                Drawing.DrawText(drawPos.X - textSize.Width / 2f, drawPos.Y, Color.Aqua, "Stunnable");
+            }
         }
 
+        /// <summary>
+        ///     Fired when teh game updates.
+        /// </summary>
+        /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private static void Game_OnGameUpdate(EventArgs args)
+        {
+            KillSteal();
+
+            switch (Orbwalker.ActiveMode)
+            {
+                case Orbwalking.OrbwalkingMode.LastHit:
+                    LastHit();
+                    break;
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    WaveClear();
+                    break;
+                case Orbwalking.OrbwalkingMode.Combo:
+                    Combo();
+                    break;
+            }
+        }
+
+        /// <summary>
+        ///     Fired when there is an interruptable target.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="Interrupter2.InterruptableTargetEventArgs" /> instance containing the event data.</param>
+        private static void InterrupterOnOnPossibleToInterrupt(
+            Obj_AI_Hero sender,
+            Interrupter2.InterruptableTargetEventArgs args)
+        {
+            var spell = args;
+            var unit = sender;
+
+            if (spell.DangerLevel != Interrupter2.DangerLevel.High || !unit.CanStunTarget())
+            {
+                return;
+            }
+
+            var interruptE = Menu.Item("interruptE").GetValue<bool>();
+            var interruptQe = Menu.Item("interruptQE").GetValue<bool>();
+
+            if (E.IsReady() && E.IsInRange(unit, E.Range) && interruptE)
+            {
+                E.Cast(unit, Packets);
+            }
+
+            if (Q.IsReady() && E.IsReady() && Q.IsInRange(unit, Q.Range) && interruptQe)
+            {
+                Q.Cast(unit, Packets);
+
+                var timeToArrive = (int)(1000 * Player.Distance(unit) / Q.Speed + Q.Delay);
+                Utility.DelayAction.Add(timeToArrive, () => E.Cast(unit, Packets));
+            }
+        }
+
+        /// <summary>
+        ///     Steals kills.
+        /// </summary>
+        private static void KillSteal()
+        {
+            var useQ = Menu.Item("useQKS").GetValue<bool>();
+            var useR = Menu.Item("useRKS").GetValue<bool>();
+            var useIgnite = Menu.Item("useIgniteKS").GetValue<bool>();
+
+            if (useQ && Q.IsReady())
+            {
+                var bestTarget =
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.IsValidTarget(Q.Range) && Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
+                        .OrderBy(x => x.Distance(Player))
+                        .FirstOrDefault();
+
+                if (bestTarget != null)
+                {
+                    Q.Cast(bestTarget, Packets);
+                }
+            }
+
+            if (useR && (R.IsReady() || UltActivated))
+            {
+                //TODO: Account for all 4 Charges
+                var bestTarget =
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.IsValidTarget(R.Range))
+                        .Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health)
+                        .OrderBy(x => x.Distance(Player))
+                        .FirstOrDefault();
+
+                if (bestTarget != null)
+                {
+                    R.Cast(bestTarget, Packets);
+                }
+            }
+
+            if (useIgnite && IgniteSlot.IsReady())
+            {
+                var bestTarget =
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(x => x.IsValidTarget(600))
+                        .Where(x => Player.GetSummonerSpellDamage(x, Damage.SummonerSpell.Ignite) / 5 > x.Health)
+                        .OrderBy(x => x.ChampionsKilled)
+                        .FirstOrDefault();
+
+                if (bestTarget != null)
+                {
+                    Player.Spellbook.CastSpell(IgniteSlot, bestTarget);
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Last hits minions.
+        /// </summary>
         private static void LastHit()
         {
             var useQ = Menu.Item("lastHitQ").GetValue<bool>();
@@ -448,8 +604,8 @@ namespace Irelia_Reloaded
             var manaNeeded = Menu.Item("manaNeededQ").GetValue<Slider>().Value;
             var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
 
-            if (useQ && Player.Mana / Player.MaxMana * 100 > manaNeeded &&
-                Environment.TickCount - _gatotsuTick >= waitTime * 10)
+            if (useQ && Player.Mana / Player.MaxMana * 100 > manaNeeded
+                && Environment.TickCount - gatotsuTick >= waitTime * 10)
             {
                 foreach (var minion in
                     MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
@@ -466,6 +622,31 @@ namespace Irelia_Reloaded
             }
         }
 
+        /// <summary>
+        ///     The entry point of the application.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        private static void Main(string[] args)
+        {
+            CustomEvents.Game.OnGameLoad += GameOnOnGameLoad;
+        }
+
+        /// <summary>
+        ///     Fired when the OnProcessSpellCast event is fired.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="GameObjectProcessSpellCastEventArgs" /> instance containing the event data.</param>
+        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (args.SData.Name == "IreliaGatotsu" && sender.IsMe)
+            {
+                gatotsuTick = Environment.TickCount;
+            }
+        }
+
+        /// <summary>
+        ///     Setups the menu.
+        /// </summary>
         private static void SetupMenu()
         {
             Menu = new Menu("Irelia Reloaded", "cmIreliaReloaded", true);
@@ -540,96 +721,89 @@ namespace Irelia_Reloaded
             Menu.AddToMainMenu();
         }
 
-        private static float DamageToUnit(Obj_AI_Hero hero)
+        /// <summary>
+        ///     Does the wave clear.
+        /// </summary>
+        private static void WaveClear()
         {
-            float dmg = 0;
+            var useQ = Menu.Item("waveclearQ").GetValue<bool>();
+            var useQKillable = Menu.Item("waveclearQKillable").GetValue<bool>();
+            var useW = Menu.Item("waveclearW").GetValue<bool>();
+            var useR = Menu.Item("waveclearR").GetValue<bool>();
+            var reqMana = Menu.Item("waveClearMana").GetValue<Slider>().Value;
+            var waitTime = Menu.Item("gatotsuTime").GetValue<Slider>().Value;
+            var dontQUnderTower = Menu.Item("noQMinionTower").GetValue<bool>();
 
-            var spells = new List<Spell> {Q, W, E, R};
-            foreach (var spell in spells.Where(x => x.IsReady()))
+            if (Player.ManaPercent < reqMana)
             {
-                // Account for each blade
-                if (spell.Slot == SpellSlot.R)
+                return;
+            }
+
+            if (useQ && Q.IsReady() && Environment.TickCount - gatotsuTick >= waitTime * 10)
+            {
+                if (useQKillable)
                 {
-                    dmg += spell.GetDamage(hero)*4;
+                    foreach (var minion in
+                        MinionManager.GetMinions(Q.Range).Where(x => Player.GetSpellDamage(x, SpellSlot.Q) > x.Health))
+                    {
+                        if (dontQUnderTower)
+                        {
+                            if (!minion.UnderTurret())
+                            {
+                                Q.Cast(minion, Packets);
+                            }
+                        }
+                        else
+                        {
+                            Q.Cast(minion, Packets);
+                        }
+                    }
                 }
                 else
                 {
-                    dmg += spell.GetDamage(hero);
+                    Q.Cast(MinionManager.GetMinions(Q.Range).FirstOrDefault(), Packets);
                 }
             }
 
-            if (Botrk.IsReady())
+            if (useW && W.IsReady())
             {
-                dmg += (float) Player.GetItemDamage(hero, Damage.DamageItems.Botrk);
+                if (Orbwalker.GetTarget() is Obj_AI_Minion && W.IsInRange(Orbwalker.GetTarget().Position, W.Range))
+                {
+                    W.Cast(Packets);
+                }
             }
 
-            if (Cutlass.IsReady())
+            if (!useR || !R.IsReady())
             {
-                dmg += (float) Player.GetItemDamage(hero, Damage.DamageItems.Bilgewater);
+                return;
             }
 
-            return dmg;
-        }
-
-        #region Spells
-
-        private static Spell Q { get; set; }
-        private static Spell W { get; set; }
-        private static Spell R { get; set; }
-        private static Spell E { get; set; }
-        private static SpellSlot IgniteSlot { get; set; }
-
-        private static int _gatotsuTick;
-
-        #endregion
-
-        #region Config
-
-        private static bool Packets
-        {
-            get { return Menu.Item("packets").GetValue<bool>(); }
-        }
-
-        private static Obj_AI_Hero Player
-        {
-            get { return ObjectManager.Player; }
-        }
-
-        private static Menu Menu { get; set; }
-        private static Orbwalking.Orbwalker Orbwalker { get; set; }
-
-        #endregion
-
-        #region Items
-
-        private static Items.Item Botrk { get; set; }
-        private static Items.Item Cutlass { get; set; }
-        private static Items.Item Omen { get; set; }
-
-        #endregion
-
-        #region Buffs
-
-        private static bool UltActivated
-        {
-            get { return Player.HasBuff("ireliatranscendentbladesspell", true); }
-        }
-
-        private static bool HasSheenBuff
-        {
-            get { return Player.HasBuff("sheen", true); }
+            // Get best position for ult
+            var pos = R.GetLineFarmLocation(MinionManager.GetMinions(R.Range));
+            R.Cast(pos.Position, Packets);
         }
 
         #endregion
     }
 
-    // Helpful extension to see if unit is stunnable
+    /// <summary>
+    ///     Provides helpful extensions
+    /// </summary>
     public static class Extension
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        ///     Determines whether this instance can stun the target.
+        /// </summary>
+        /// <param name="unit">The unit.</param>
+        /// <returns><c>true</c> if the Player can stun the unit.</returns>
         public static bool CanStunTarget(this AttackableUnit unit)
         {
-            return unit.Health/unit.MaxHealth*100 >
-                   ObjectManager.Player.Health/ObjectManager.Player.MaxHealth*100;
+            return unit.Health / unit.MaxHealth * 100
+                   > ObjectManager.Player.Health / ObjectManager.Player.MaxHealth * 100;
         }
+
+        #endregion
     }
 }
