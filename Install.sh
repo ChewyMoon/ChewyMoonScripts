@@ -1,10 +1,10 @@
 sudo apt-get install wget
-wget http://chewymoon.me/ci/System.zip
 sudo apt-get install unzip
+wget http://chewymoon.me/ci/System.zip
 unzip System.zip -d LSBin
 
 for file in LSBin/*.dll
 do
-    cp "$file" "/usr/lib/mono/4.5/"
+    sudo cp "$file" "/usr/lib/mono/4.5/"
 done
 
