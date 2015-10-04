@@ -5,6 +5,6 @@ unzip System.zip -d LSBin
 
 for file in LSBin/*.dll
 do
-    gacutil -i "$file"
+    cp "$file" "/usr/lib/mono/4.5/"
 done
 
