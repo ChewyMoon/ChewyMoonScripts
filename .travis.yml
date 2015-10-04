@@ -1,3 +1,7 @@
 language: csharp
 solution: ChewyScripts.sln
-sudo: false
+sudo: required
+install:
+    - ./Install.sh
+    
+    
