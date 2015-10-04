@@ -113,9 +113,8 @@ namespace MoonDraven
         {
             get
             {
-                return (this.Player.HasBuff("dravenspinning")
-                            ? 1
-                            : 0) + (this.Player.HasBuff("dravenspinningleft") ? 1 : 0) + this.QReticles.Count;
+                return (this.Player.HasBuff("dravenspinning") ? 1 : 0)
+                       + (this.Player.HasBuff("dravenspinningleft") ? 1 : 0) + this.QReticles.Count;
             }
         }
 
@@ -584,7 +583,8 @@ namespace MoonDraven
             }
 
             if (useQ && this.QCount < this.Menu.Item("MaxAxes").GetValue<Slider>().Value - 1 && this.Q.IsReady()
-                && this.Orbwalker.GetTarget() is Obj_AI_Minion && !this.Player.Spellbook.IsAutoAttacking && !this.Player.IsWindingUp)
+                && this.Orbwalker.GetTarget() is Obj_AI_Minion && !this.Player.Spellbook.IsAutoAttacking
+                && !this.Player.IsWindingUp)
             {
                 this.Q.Cast();
             }
