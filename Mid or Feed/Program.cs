@@ -1,21 +1,41 @@
 ﻿#region
 
-using System;
-using System.Reflection.Emit;
-using LeagueSharp;
-using LeagueSharp.Common;
+
 
 #endregion
 
 namespace Mid_or_Feed
 {
+    using System;
+    using System.Reflection.Emit;
+
+    using LeagueSharp;
+    using LeagueSharp.Common;
+
     internal class Program
     {
-        private static void Main(string[] args)
+        #region Methods
+
+        /// <summary>
+        ///     Currents the domain on unhandled exception.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="unhandledExceptionEventArgs">
+        ///     The <see cref="UnhandledExceptionEventArgs" /> instance containing the event
+        ///     data.
+        /// </param>
+        private static void CurrentDomainOnUnhandledException(
+            object sender,
+            UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
-            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+            Console.WriteLine(((Exception)unhandledExceptionEventArgs.ExceptionObject).Message);
+            Plugin.PrintChat("encountered an error! (This error may have been caused by another assembly)");
         }
 
+        /// <summary>
+        ///     Fired when the game loads.
+        /// </summary>
+        /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
         private static void Game_OnGameLoad(EventArgs args)
         {
             var plugin = Type.GetType("Mid_or_Feed.Champions." + ObjectManager.Player.ChampionName);
@@ -31,26 +51,54 @@ namespace Mid_or_Feed
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
         }
 
-        private static void CurrentDomainOnUnhandledException(object sender,
-            UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        /// <summary>
+        ///     The entry point of the executable.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        private static void Main(string[] args)
         {
-            Console.WriteLine(((Exception) unhandledExceptionEventArgs.ExceptionObject).Message);
-            Plugin.PrintChat("encountered an error! (This error may have been caused by another assembly)");
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
+
+        #endregion
     }
 
+    /// <summary>
+    ///     Dynamicly creates objects.
+    /// </summary>
     public class DynamicInitializer
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        ///     Creates a new instance.
+        /// </summary>
+        /// <typeparam name="TV">The type of the v.</typeparam>
+        /// <returns></returns>
         public static TV NewInstance<TV>() where TV : class
         {
             return ObjectGenerator(typeof(TV)) as TV;
         }
 
+        /// <summary>
+        ///     Creates a new Instance.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static object NewInstance(Type type)
         {
             return ObjectGenerator(type);
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Generates an object.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         private static object ObjectGenerator(Type type)
         {
             var target = type.GetConstructor(Type.EmptyTypes);
@@ -65,5 +113,7 @@ namespace Mid_or_Feed
             var method = (Func<object>)dynamic.CreateDelegate(typeof(Func<object>));
             return method();
         }
+
+        #endregion
     }
 }

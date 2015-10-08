@@ -1,244 +1,62 @@
-﻿using System;
-using System.Linq;
-using LeagueSharp;
-using LeagueSharp.Common;
-using SharpDX;
-
-namespace Mid_or_Feed.Champions
+﻿namespace Mid_or_Feed.Champions
 {
-    class _Katarina : Plugin
+    using System;
+    using System.Linq;
+
+    using LeagueSharp;
+    using LeagueSharp.Common;
+
+    internal class _Katarina : Plugin
     {
-        public Spell Q;
-        public Spell W;
+        #region Fields
+
         public Spell E;
+
+        public Spell Q;
+
         public Spell R;
+
+        public Spell W;
+
         private bool overrideRProtection = false;
 
-        private bool IsChannelingR
-        {
-            get { return Player.HasBuff("katarinarsound", true); }
-        }
+        #endregion
+
+        #region Constructors and Destructors
+
         public _Katarina()
         {
-            Q = new Spell(SpellSlot.Q, 675);
-            W = new Spell(SpellSlot.W, 400);
-            E = new Spell(SpellSlot.E, 700);
-            R = new Spell(SpellSlot.R, 550);
+            this.Q = new Spell(SpellSlot.Q, 675);
+            this.W = new Spell(SpellSlot.W, 400);
+            this.E = new Spell(SpellSlot.E, 700);
+            this.R = new Spell(SpellSlot.R, 550);
 
-            Q.SetTargetted(0.4f, 1800);
+            this.Q.SetTargetted(0.4f, 1800);
 
             PrintChat("Katarina loaded!");
 
-            Game.OnUpdate += GameOnOnUpdate;
-            Obj_AI_Base.OnIssueOrder += ObjAiBaseOnOnIssueOrder;
-            Obj_AI_Base.OnProcessSpellCast += ObjAiBaseOnOnProcessSpellCast;
-            Spellbook.OnStopCast += SpellbookOnOnStopCast;
-            Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
-         }
+            Game.OnUpdate += this.GameOnOnUpdate;
+            Obj_AI_Base.OnIssueOrder += this.ObjAiBaseOnOnIssueOrder;
+            Obj_AI_Base.OnProcessSpellCast += this.ObjAiBaseOnOnProcessSpellCast;
+            Spellbook.OnStopCast += this.SpellbookOnOnStopCast;
+            Spellbook.OnCastSpell += this.SpellbookOnOnCastSpell;
+        }
 
-        private void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        #endregion
+
+        #region Properties
+
+        private bool IsChannelingR
         {
-            if (!sender.Owner.IsMe)
+            get
             {
-                return;
-            }
-
-            if (IsChannelingR)
-            {
-                args.Process = false;
+                return this.Player.HasBuff("katarinarsound", true);
             }
         }
 
-        private void SpellbookOnOnStopCast(Spellbook sender, SpellbookStopCastEventArgs args)
-        {
-            if (!sender.Owner.IsMe)
-            {
-                return;
-            }
+        #endregion
 
-            if (!IsChannelingR || !sender.IsChanneling)
-            {
-                Orbwalker.SetMovement(true);
-                Orbwalker.SetAttack(true);
-            }
-        }
-
-        private void ObjAiBaseOnOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (!sender.IsMe)
-            {
-                return;
-            }
-
-            if (args.SData.Name == "KatarinaR")
-            {
-                Orbwalker.SetAttack(false);
-                Orbwalker.SetMovement(false);
-            }
-
-            if (args.SData.Name == "KatarinaE")
-            {
-                //Utility.DelayAction.Add(0, () => Player.IssueOrder(GameObjectOrder.MoveTo, ObjectManager.Player.Position));
-            }
-            
-            
-        }
-
-        private void ObjAiBaseOnOnIssueOrder(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)
-        {
-            if (!sender.IsMe || !GetBool("PreventUltCanceling"))
-            {
-                return;
-            }
-
-            if (!IsChannelingR)
-            {
-                return;
-            }
-
-            if (!overrideRProtection)
-            {
-                args.Process = false;
-            }
-
-            overrideRProtection = false;
-        }
-
-        private void GameOnOnUpdate(EventArgs args)
-        {
-            Console.Clear();
-            Console.WriteLine(string.Join(" ", ObjectManager.Player.Buffs.Select(x => x.Name)));
-
-            switch (Orbwalker.ActiveMode)
-            {
-                case Orbwalking.OrbwalkingMode.Mixed:
-                    DoHarass();
-                    break;
-                case Orbwalking.OrbwalkingMode.LaneClear:
-                    DoLaneClear();
-                    break;
-                case Orbwalking.OrbwalkingMode.Combo:
-                    DoCombo();
-                    break;
-            }
-        }
-
-        private void DoCombo()
-        {
-            var mode = GetValue<StringList>("ComboMode").SelectedIndex;
-            var target = TargetSelector.GetTarget(mode == 0 ? Q.Range : E.Range, TargetSelector.DamageType.Magical);
-
-            if (!target.IsValidTarget())
-            {
-                return;
-            }
-
-            var useQ = GetBool("UseQCombo");
-            var useW = GetBool("UseWCombo");
-            var useE = GetBool("UseECombo");
-            var useR = GetBool("UseRCombo");
-            var waitForQ = GetBool("WaitForQ");
-
-            //QEW
-            if (mode == 0)
-            {
-                if (Q.IsReady() && useQ && !IsChannelingR)
-                {
-                    Q.CastOnUnit(target);
-                }
-
-                if (E.IsReady() && useE && !IsChannelingR)
-                {
-                    if (waitForQ)
-                    {
-                        if (target.HasBuff("katarinaqmark", true))
-                        {
-                            E.CastOnUnit(target);
-                        }
-                    }
-                    else
-                    {
-                        E.CastOnUnit(target);
-                    }
-                }
-
-                if (W.IsReady() && useW && W.IsInRange(target) && !IsChannelingR)
-                {
-                    W.Cast();
-                }
-                else if (R.IsReady() && useR && R.IsInRange(target) && !IsChannelingR)
-                {
-                    Player.IssueOrder(GameObjectOrder.HoldPosition, ObjectManager.Player);
-
-                    Orbwalker.SetMovement(false);
-                    Orbwalker.SetAttack(false);
-
-                    Utility.DelayAction.Add(Game.Ping / 2, () =>
-                    {
-                        R.Cast();
-                    });            
-                }
-            }
-            // EQW
-            else if (mode == 1)
-            {
-                if (E.IsReady() && useE && !IsChannelingR)
-                {
-                    if (waitForQ)
-                    {
-                        if (target.HasBuff("katarinaqmark", true))
-                        {
-                            E.CastOnUnit(target);
-                        }
-                    }
-                    else
-                    {
-                        E.CastOnUnit(target);
-                    }
-                }
-
-                if (Q.IsReady() && useQ && !IsChannelingR)
-                {
-                    Q.CastOnUnit(target);
-                }
-
-                // Use else since w likes to cancel R
-                if (W.IsReady() && useW && W.IsInRange(target) && !IsChannelingR)
-                {
-                    W.Cast();
-                }
-                else if (R.IsReady() && useR && R.IsInRange(target) && !IsChannelingR)
-                {
-                    Player.IssueOrder(GameObjectOrder.HoldPosition, ObjectManager.Player);
-
-                    Orbwalker.SetMovement(false);
-                    Orbwalker.SetAttack(false);
-
-                    Utility.DelayAction.Add(
-                        Game.Ping / 2, () =>
-                        {
-                            R.Cast();     
-                        });
-                }
-            }
-
-            if (target.IsDead)
-            {
-                // Cancel ult, allowing another combo
-                overrideRProtection = true;
-                Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
-            }
-        }
-
-        private void DoLaneClear()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void DoHarass()
-        {
-            throw new NotImplementedException();
-        }
+        #region Public Methods and Operators
 
         public override void Combo(Menu config)
         {
@@ -249,18 +67,19 @@ namespace Mid_or_Feed.Champions
             config.AddItem(new MenuItem("ComboMode", "Combo Mode:").SetValue(new StringList(new[] { "QEW", "EQW" })));
         }
 
+        public override void Drawings(Menu config)
+        {
+            config.AddItem(new MenuItem("DrawQ", "Draw Q").SetValue(true));
+            config.AddItem(new MenuItem("DrawW", "Draw W").SetValue(true));
+            config.AddItem(new MenuItem("DrawE", "Draw E").SetValue(true));
+            config.AddItem(new MenuItem("DrawR", "Draw R").SetValue(true));
+        }
+
         public override void Harass(Menu config)
         {
             config.AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
             config.AddItem(new MenuItem("UseWHarass", "Use W").SetValue(true));
             config.AddItem(new MenuItem("UseEHarass", "Use E").SetValue(true));
-        }
-
-        public override void WaveClear(Menu config)
-        {
-            config.AddItem(new MenuItem("UseQWaveClear", "Use Q").SetValue(true));
-            config.AddItem(new MenuItem("UseWWaveClear", "Use W").SetValue(true));
-            config.AddItem(new MenuItem("UseEWaveClear", "Use E").SetValue(true));
         }
 
         public override void ItemMenu(Menu config)
@@ -277,12 +96,214 @@ namespace Mid_or_Feed.Champions
             //TODO: KS stuff XD
         }
 
-        public override void Drawings(Menu config)
+        public override void WaveClear(Menu config)
         {
-            config.AddItem(new MenuItem("DrawQ", "Draw Q").SetValue(true));
-            config.AddItem(new MenuItem("DrawW", "Draw W").SetValue(true));
-            config.AddItem(new MenuItem("DrawE", "Draw E").SetValue(true));
-            config.AddItem(new MenuItem("DrawR", "Draw R").SetValue(true));
+            config.AddItem(new MenuItem("UseQWaveClear", "Use Q").SetValue(true));
+            config.AddItem(new MenuItem("UseWWaveClear", "Use W").SetValue(true));
+            config.AddItem(new MenuItem("UseEWaveClear", "Use E").SetValue(true));
         }
+
+        #endregion
+
+        #region Methods
+
+        private void DoCombo()
+        {
+            var mode = this.GetValue<StringList>("ComboMode").SelectedIndex;
+            var target = TargetSelector.GetTarget(
+                mode == 0 ? this.Q.Range : this.E.Range,
+                TargetSelector.DamageType.Magical);
+
+            if (!target.IsValidTarget())
+            {
+                return;
+            }
+
+            var useQ = this.GetBool("UseQCombo");
+            var useW = this.GetBool("UseWCombo");
+            var useE = this.GetBool("UseECombo");
+            var useR = this.GetBool("UseRCombo");
+            var waitForQ = this.GetBool("WaitForQ");
+
+            //QEW
+            if (mode == 0)
+            {
+                if (this.Q.IsReady() && useQ && !this.IsChannelingR)
+                {
+                    this.Q.CastOnUnit(target);
+                }
+
+                if (this.E.IsReady() && useE && !this.IsChannelingR)
+                {
+                    if (waitForQ)
+                    {
+                        if (target.HasBuff("katarinaqmark", true))
+                        {
+                            this.E.CastOnUnit(target);
+                        }
+                    }
+                    else
+                    {
+                        this.E.CastOnUnit(target);
+                    }
+                }
+
+                if (this.W.IsReady() && useW && this.W.IsInRange(target) && !this.IsChannelingR)
+                {
+                    this.W.Cast();
+                }
+                else if (this.R.IsReady() && useR && this.R.IsInRange(target) && !this.IsChannelingR)
+                {
+                    this.Player.IssueOrder(GameObjectOrder.HoldPosition, ObjectManager.Player);
+
+                    this.Orbwalker.SetMovement(false);
+                    this.Orbwalker.SetAttack(false);
+
+                    Utility.DelayAction.Add(Game.Ping / 2, () => { this.R.Cast(); });
+                }
+            }
+            // EQW
+            else if (mode == 1)
+            {
+                if (this.E.IsReady() && useE && !this.IsChannelingR)
+                {
+                    if (waitForQ)
+                    {
+                        if (target.HasBuff("katarinaqmark", true))
+                        {
+                            this.E.CastOnUnit(target);
+                        }
+                    }
+                    else
+                    {
+                        this.E.CastOnUnit(target);
+                    }
+                }
+
+                if (this.Q.IsReady() && useQ && !this.IsChannelingR)
+                {
+                    this.Q.CastOnUnit(target);
+                }
+
+                // Use else since w likes to cancel R
+                if (this.W.IsReady() && useW && this.W.IsInRange(target) && !this.IsChannelingR)
+                {
+                    this.W.Cast();
+                }
+                else if (this.R.IsReady() && useR && this.R.IsInRange(target) && !this.IsChannelingR)
+                {
+                    this.Player.IssueOrder(GameObjectOrder.HoldPosition, ObjectManager.Player);
+
+                    this.Orbwalker.SetMovement(false);
+                    this.Orbwalker.SetAttack(false);
+
+                    Utility.DelayAction.Add(Game.Ping / 2, () => { this.R.Cast(); });
+                }
+            }
+
+            if (target.IsDead)
+            {
+                // Cancel ult, allowing another combo
+                this.overrideRProtection = true;
+                this.Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+            }
+        }
+
+        private void DoHarass()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoLaneClear()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GameOnOnUpdate(EventArgs args)
+        {
+            Console.Clear();
+            Console.WriteLine(string.Join(" ", ObjectManager.Player.Buffs.Select(x => x.Name)));
+
+            switch (this.Orbwalker.ActiveMode)
+            {
+                case Orbwalking.OrbwalkingMode.Mixed:
+                    this.DoHarass();
+                    break;
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    this.DoLaneClear();
+                    break;
+                case Orbwalking.OrbwalkingMode.Combo:
+                    this.DoCombo();
+                    break;
+            }
+        }
+
+        private void ObjAiBaseOnOnIssueOrder(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)
+        {
+            if (!sender.IsMe || !this.GetBool("PreventUltCanceling"))
+            {
+                return;
+            }
+
+            if (!this.IsChannelingR)
+            {
+                return;
+            }
+
+            if (!this.overrideRProtection)
+            {
+                args.Process = false;
+            }
+
+            this.overrideRProtection = false;
+        }
+
+        private void ObjAiBaseOnOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!sender.IsMe)
+            {
+                return;
+            }
+
+            if (args.SData.Name == "KatarinaR")
+            {
+                this.Orbwalker.SetAttack(false);
+                this.Orbwalker.SetMovement(false);
+            }
+
+            if (args.SData.Name == "KatarinaE")
+            {
+                //Utility.DelayAction.Add(0, () => Player.IssueOrder(GameObjectOrder.MoveTo, ObjectManager.Player.Position));
+            }
+        }
+
+        private void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
+            if (!sender.Owner.IsMe)
+            {
+                return;
+            }
+
+            if (this.IsChannelingR)
+            {
+                args.Process = false;
+            }
+        }
+
+        private void SpellbookOnOnStopCast(Spellbook sender, SpellbookStopCastEventArgs args)
+        {
+            if (!sender.Owner.IsMe)
+            {
+                return;
+            }
+
+            if (!this.IsChannelingR || !sender.IsChanneling)
+            {
+                this.Orbwalker.SetMovement(true);
+                this.Orbwalker.SetAttack(true);
+            }
+        }
+
+        #endregion
     }
 }
