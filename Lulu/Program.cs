@@ -226,7 +226,9 @@ namespace Lulu_and_Pix
             var harassMenu = new Menu("Harass Settings", "Harass");
             harassMenu.AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("UseEQHarass", "Use EQ").SetValue(true));
-            harassMenu.AddItem(new MenuItem("UseEHarass", "Use E on Enemy if My HP >").SetValue(new Slider(70)));
+            harassMenu.AddItem(new MenuItem("UseEHarass", "Use E").SetValue(true));
+            harassMenu.AddItem(new MenuItem("UseEHarassTargetOnly", "Always Use E on Enemy").SetValue(false));
+            harassMenu.AddItem(new MenuItem("UseEHarassHP", "Use E on Enemy if My HP >").SetValue(new Slider(70)));
             harassMenu.AddItem(
                 new MenuItem("HarassToggle", "Harass! (Toggle)").SetValue(new KeyBind(84, KeyBindType.Toggle)));
             harassMenu.AddItem(new MenuItem("HarassMana", "Harass Mana Percent (Toggle Only)").SetValue(new Slider(65)));
@@ -287,7 +289,7 @@ namespace Lulu_and_Pix
             var useE = Menu.Item("UseECombo").GetValue<Slider>();
             var useEq = Menu.Item("UseEQCombo").IsActive();
 
-            if (target == null && useEq)
+            if (target == null && useEq && Player.Mana > Q.Instance.ManaCost + E.Instance.ManaCost)
             {
                 var targetEq = TargetSelector.GetTarget(Q.Range + E.Range, TargetSelector.DamageType.Magical);
 
@@ -357,10 +359,12 @@ namespace Lulu_and_Pix
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
 
             var useQ = Menu.Item("UseQHarass").IsActive();
-            var useE = Menu.Item("UseEHarass").GetValue<Slider>();
+            var useE = Menu.Item("UseEHarass").IsActive();
+            var useETargetOnly = Menu.Item("UseEHarassTargetOnly").IsActive();
+            var useEHp = Menu.Item("UseEHarassHP").GetValue<Slider>();
             var useEq = Menu.Item("UseEQHarass").IsActive();
 
-            if (target == null && useEq)
+            if (target == null && useEq && Player.Mana > Q.Instance.ManaCost + E.Instance.ManaCost)
             {
                 var targetEq = TargetSelector.GetTarget(Q.Range + E.Range, TargetSelector.DamageType.Magical);
 
@@ -398,9 +402,9 @@ namespace Lulu_and_Pix
                 Q.Cast(target);
             }
 
-            if (E.IsReady())
+            if (E.IsReady() && useE)
             {
-                E.CastOnUnit(Player.HealthPercent > useE.Value ? target : Player);
+                E.CastOnUnit(((Player.HealthPercent > useEHp.Value) || useETargetOnly) ? target : Player);
             }
         }
 
