@@ -8,6 +8,7 @@
     using LeagueSharp;
     using LeagueSharp.Common;
 
+    using SharpDX;
     using SharpDX.Direct3D9;
 
     class Program
@@ -95,6 +96,30 @@
         /// </value>
         static Font TextFont { get; set; }
 
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
+        /// <value>
+        /// The position.
+        /// </value>
+        static Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the box is being dragged.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the box is being dragged; otherwise, <c>false</c>.
+        /// </value>
+        static bool BeingDragged { get; set; }
+
+        const int Width = 250;
+
+        const int Height = 100;
+
+        static bool MouseOverBox { get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height).Contains(Utils.GetCursorPos());} }
+
+        static Vector2 lastMousePos;
+
         #endregion
 
         #region Methods
@@ -115,7 +140,17 @@
         /// <exception cref="System.NotImplementedException"></exception>
         private static void Drawing_OnDraw(EventArgs args)
         {
-             
+            if (Status == CalcStatus.NoEnemies || !Menu.Item("DrawCalculation").IsActive())
+            {
+                //return;
+            }
+
+            BoxLine.Width = 100;
+            BoxLine.Begin();
+            BoxLine.Draw(new []{Position, Position + new Vector2(250, 0)}, new ColorBGRA(0, 0, 0, 256 / 2));
+            BoxLine.End();
+
+            
         }
 
         /// <summary>
@@ -134,10 +169,46 @@
 
             Status = CalcStatus.NoEnemies;
 
+            BoxLine = new Line(Drawing.Direct3DDevice);
+            TextFont = new Font(
+                Drawing.Direct3DDevice,
+                new FontDescription()
+                    {
+                        FaceName = "Tahoma", Height = 14, OutputPrecision = FontPrecision.Default,
+                        Quality = FontQuality.Antialiased
+                    });
+
+            Position = new Vector2(100, 200);
+
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnPreReset += Drawing_OnPreReset;
             Drawing.OnPostReset += DrawingOnOnPostReset;
+            Game.OnWndProc += Game_OnWndProc;
             Game.OnUpdate += GameOnOnUpdate;
+        }
+
+        private static void Game_OnWndProc(WndEventArgs args)
+        {
+            // TODO save position
+
+            if (BeingDragged)
+            {
+                var newPos = Utils.GetCursorPos();
+                Position += newPos - lastMousePos;
+                lastMousePos = newPos;
+            }
+
+            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONDOWN && MouseOverBox)
+            {
+                BeingDragged = true;
+                lastMousePos = Utils.GetCursorPos();
+            }
+
+            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONUP && BeingDragged)
+            {
+                BeingDragged = false;
+            }
+
         }
 
         /// <summary>
