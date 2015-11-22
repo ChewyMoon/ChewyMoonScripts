@@ -218,7 +218,7 @@ namespace TeamFightCalculator
         /// </value>
         private static Vector2 IndicatorPosition
         {
-            get { return RealBoxPosition + new Vector2(Width - 100, 0); }
+            get { return RealBoxPosition + new Vector2(Width - 100, 10); }
         }
 
         /// <summary>
@@ -238,18 +238,18 @@ namespace TeamFightCalculator
         private static bool DrawCalculation { get; set; }
 
         /// <summary>
-        /// Gets or sets the green bitmap.
+        ///     Gets or sets the green bitmap.
         /// </summary>
         /// <value>
-        /// The green bitmap.
+        ///     The green bitmap.
         /// </value>
         private static Bitmap GreenBitmap { get; set; }
 
         /// <summary>
-        /// Gets or sets the red bitmap.
+        ///     Gets or sets the red bitmap.
         /// </summary>
         /// <value>
-        /// The red bitmap.
+        ///     The red bitmap.
         /// </value>
         private static Bitmap RedBitmap { get; set; }
 
@@ -263,12 +263,40 @@ namespace TeamFightCalculator
         private static void CreateMenu()
         {
             Menu = new Menu("Team Fight Calculator", "cmTFC", true);
+
+            var calcSettingMenu = new Menu("Calculation Settings", "CalcSettings");
+            calcSettingMenu.AddItem(new MenuItem("SpellReadyCheck", "Check if spells are ready").SetValue(true));
+            Menu.AddSubMenu(calcSettingMenu);
+
             Menu.AddItem(new MenuItem("CalculateRange", "Calculate Range").SetValue(new Slider(0x5DC, 0x9C4, 0x1388)));
+            Menu.AddItem(new MenuItem("XPos", "X Position").SetValue(new Slider(100, 0, Drawing.Width)));
+            Menu.AddItem(new MenuItem("YPos", "Y Position").SetValue(new Slider(200, 0, Drawing.Height)));
             Menu.AddItem(new MenuItem("DrawCalculation", "Draw Calculation").SetValue(true));
             Menu.AddItem(new MenuItem("DrawRange", "Draw Calculation Range").SetValue(true));
+            Menu.AddToMainMenu();
+
             Menu.Item("DrawCalculation").ValueChanged += (sender, args) => DrawCalculation = args.GetNewValue<bool>();
             DrawCalculation = Menu.Item("DrawCalculation").GetValue<bool>();
-            Menu.AddToMainMenu();
+
+            Menu.Item("XPos").ValueChanged +=
+                (sender, args) =>
+                {
+                    if (!BeingDragged)
+                    {
+                        Position = new Vector2(args.GetNewValue<Slider>().Value, Position.Y);
+                    }
+                };
+            Menu.Item("YPos").ValueChanged +=
+                (sender, args) =>
+                {
+                    if (!BeingDragged)
+                    {
+                        Position = new Vector2(Position.X, args.GetOldValue<Slider>().Value);
+                    }
+                };
+
+            Position = new Vector2(Menu.Item("XPos").GetValue<Slider>().Value,
+                Menu.Item("YPos").GetValue<Slider>().Value);
         }
 
         /// <summary>
@@ -279,7 +307,7 @@ namespace TeamFightCalculator
         {
             if (Status == CalcStatus.NoEnemies || DrawCalculation)
             {
-                //return;
+                return;
             }
 
             // Draw box
@@ -369,11 +397,9 @@ namespace TeamFightCalculator
             IndicatorSprite = new Render.Sprite(Resources.Green_Check, IndicatorPosition);
             IndicatorSprite.PositionUpdate += () => IndicatorPosition;
             IndicatorSprite.VisibleCondition =
-                sender => /*Status != CalcStatus.NoEnemies &&*/ DrawCalculation;
-            IndicatorSprite.Scale = new Vector2(0.5f);
+                sender => Status != CalcStatus.NoEnemies && DrawCalculation;
+            IndicatorSprite.Scale = new Vector2(0.4f);
             IndicatorSprite.Add();
-
-            Position = new Vector2(100, 200);
 
             TextHeightSpacing = TextFont.MeasureText(Sprite, "A").Height + 10;
 
@@ -408,8 +434,10 @@ namespace TeamFightCalculator
 
             if (args.Msg == (uint) WindowsMessages.WM_LBUTTONUP && BeingDragged)
             {
+                Menu.Item("XPos").SetValue(new Slider((int) Position.X, 0, Drawing.Width));
+                Menu.Item("YPos").SetValue(new Slider((int) Position.Y, 0, Drawing.Height));
+
                 BeingDragged = false;
-                // TODO save position
             }
         }
 
@@ -429,16 +457,24 @@ namespace TeamFightCalculator
             if (!enemies.Any())
             {
                 Status = CalcStatus.NoEnemies;
-                ////return;
+                return;
             }
+
+            var spellReadyCheck = Menu.Item("SpellReadyCheck").IsActive();
 
             enemyDamage =
                 enemies.Sum(
-                    x => x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
+                    x =>
+                        x.GetComboDamage(new Obj_AI_Base(),
+                            spellReadyCheck ? CalculatedSlots.Where(y => x.GetSpell(y).IsReady()) : CalculatedSlots) +
+                        x.GetAutoAttackDamage(new Obj_AI_Base()));
 
             allyDamage =
                 allies.Sum(
-                    x => x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
+                    x =>
+                        x.GetComboDamage(new Obj_AI_Base(),
+                            spellReadyCheck ? CalculatedSlots.Where(y => x.GetSpell(y).IsReady()) : CalculatedSlots) +
+                        x.GetAutoAttackDamage(new Obj_AI_Base()));
 
             allyHealth = allies.Sum(x => x.Health);
             enemyHealth = enemies.Sum(x => x.Health);
