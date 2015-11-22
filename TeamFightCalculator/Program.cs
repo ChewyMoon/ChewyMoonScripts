@@ -1,4 +1,12 @@
-﻿namespace TeamFightCalculator
+﻿using System.CodeDom;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Security.Permissions;
+using TeamFightCalculator.Properties;
+
+namespace TeamFightCalculator
 {
     using System;
     using System.Collections.Generic;
@@ -182,6 +190,46 @@
         /// </value>
         private static Font TextFont { get; set; }
 
+        /// <summary>
+        /// Gets or sets the last result.
+        /// </summary>
+        /// <value>
+        /// The last result.
+        /// </value>
+        private static Bitmap LastResult { get; set; }
+
+        /// <summary>
+        /// Gets or sets the indicator sprite.
+        /// </summary>
+        /// <value>
+        /// The indicator sprite.
+        /// </value>
+        private static Render.Sprite IndicatorSprite { get; set; }
+
+        /// <summary>
+        /// Gets the indicator position.
+        /// </summary>
+        /// <value>
+        /// The indicator position.
+        /// </value>
+        private static Vector2 IndicatorPosition { get { return RealBoxPosition + new Vector2(Width - 100, 0); } }
+
+        /// <summary>
+        /// Gets or sets the text height spacing.
+        /// </summary>
+        /// <value>
+        /// The text height spacing.
+        /// </value>
+        private static int TextHeightSpacing { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [draw calculation].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [draw calculation]; otherwise, <c>false</c>.
+        /// </value>
+        private static bool DrawCalculation { get; set; }
+
         #endregion
 
         #region Methods
@@ -195,6 +243,8 @@
             Menu.AddItem(new MenuItem("CalculateRange", "Calculate Range").SetValue(new Slider(0x5DC, 0x9C4, 0x1388)));
             Menu.AddItem(new MenuItem("DrawCalculation", "Draw Calculation").SetValue(true));
             Menu.AddItem(new MenuItem("DrawRange", "Draw Calculation Range").SetValue(true));
+            Menu.Item("DrawCalculation").ValueChanged += (sender, args) => DrawCalculation = args.GetNewValue<bool>();
+            DrawCalculation = Menu.Item("DrawCalculation").GetValue<bool>();
             Menu.AddToMainMenu();
         }
 
@@ -204,7 +254,7 @@
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (Status == CalcStatus.NoEnemies || !Menu.Item("DrawCalculation").IsActive())
+            if (Status == CalcStatus.NoEnemies || DrawCalculation)
             {
                 //return;
             }
@@ -214,8 +264,6 @@
             BoxLine.Begin();
             BoxLine.Draw(new[] { Position, Position + new Vector2(Width, 0) }, new ColorBGRA(0, 0, 0, 256 / 2));
             BoxLine.End();
-
-            var textHeightSpacing = TextFont.MeasureText(Sprite, "A").Height + 10;
 
             // Draw text
             TextFont.DrawText(
@@ -229,21 +277,21 @@
                 null,
                 string.Format("Ally Health: {0}", (int)allyHealth),
                 (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + textHeightSpacing,
+                (int)RealBoxPosition.Y + 5 + TextHeightSpacing,
                 new ColorBGRA(0, 255, 0, 255));
 
             TextFont.DrawText(
                 null,
                 string.Format("Enemy Damage: {0}", (int)enemyDamage),
                 (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + textHeightSpacing * 2,
+                (int)RealBoxPosition.Y + 5 + TextHeightSpacing * 2,
                 new ColorBGRA(255, 0, 0, 255));
 
             TextFont.DrawText(
                 null,
                 string.Format("Enemy Health: {0}", (int)enemyHealth),
                 (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + textHeightSpacing * 3,
+                (int)RealBoxPosition.Y + 5 + TextHeightSpacing * 3,
                 new ColorBGRA(255, 0, 0, 255));
         }
 
@@ -292,8 +340,17 @@
                         Quality = FontQuality.Antialiased
                     });
             Sprite = new Sprite(Drawing.Direct3DDevice);
-
+           
+            IndicatorSprite = new Render.Sprite(Resources.Green_Check, IndicatorPosition);
+            IndicatorSprite.PositionUpdate += () => IndicatorPosition;
+            IndicatorSprite.VisibleCondition =
+                sender => /*Status != CalcStatus.NoEnemies &&*/ DrawCalculation;
+            IndicatorSprite.Scale = new Vector2(0.5f);
+            IndicatorSprite.Add();
+           
             Position = new Vector2(100, 200);
+
+            TextHeightSpacing = TextFont.MeasureText(Sprite, "A").Height + 10;
 
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnPreReset += Drawing_OnPreReset;
@@ -307,9 +364,7 @@
         /// </summary>
         /// <param name="args">The <see cref="WndEventArgs"/> instance containing the event data.</param>
         private static void Game_OnWndProc(WndEventArgs args)
-        {
-            // TODO save position
-
+        {      
             if (BeingDragged)
             {
                 var newPos = Utils.GetCursorPos();
@@ -326,6 +381,7 @@
             if (args.Msg == (uint)WindowsMessages.WM_LBUTTONUP && BeingDragged)
             {
                 BeingDragged = false;
+               // TODO save position
             }
         }
 
@@ -333,6 +389,7 @@
         ///     Fired when the game is updated.
         /// </summary>
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
+        [PermissionSet(SecurityAction.Assert, Unrestricted =  true)]
         private static void GameOnOnUpdate(EventArgs args)
         {
             var enemies = Enemies.Where(x => x.IsValidTarget(CalculateRange)).ToArray();
@@ -347,20 +404,25 @@
                 ////return;
             }
 
-            Parallel.ForEach(
-                enemies,
-                x =>
-                enemyDamage +=
-                x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
+            enemyDamage =
+                enemies.Sum(
+                    x => x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
 
-            Parallel.ForEach(
-                allies,
-                x =>
-                allyDamage +=
-                x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
+            allyDamage =
+                allies.Sum(
+                    x => x.GetComboDamage(new Obj_AI_Base(), CalculatedSlots) + x.GetAutoAttackDamage(new Obj_AI_Base()));
 
             allyHealth = allies.Sum(x => x.Health);
             enemyHealth = enemies.Sum(x => x.Health);
+
+            var result = allyHealth - enemyDamage > enemyHealth - allyDamage ? Resources.Green_Check : Resources.Red_X;
+
+            if (LastResult != result)
+            {
+                IndicatorSprite.UpdateTextureBitmap(result);
+            }
+
+            LastResult = result;
 
             Status = CalcStatus.Calculated;
         }
