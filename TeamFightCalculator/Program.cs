@@ -1,29 +1,39 @@
-﻿using System.CodeDom;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+using System.Linq;
 using System.Security.Permissions;
+using LeagueSharp;
+using LeagueSharp.Common;
+using SharpDX;
+using SharpDX.Direct3D9;
 using TeamFightCalculator.Properties;
+using Font = SharpDX.Direct3D9.Font;
+using Rectangle = SharpDX.Rectangle;
 
 namespace TeamFightCalculator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using LeagueSharp;
-    using LeagueSharp.Common;
-
-    using SharpDX;
-    using SharpDX.Direct3D9;
-
     /// <summary>
-    /// The program.
+    ///     The program.
     /// </summary>
     internal class Program
     {
+        /// <summary>
+        ///     The status of the calculation
+        /// </summary>
+        public enum CalcStatus
+        {
+            /// <summary>
+            ///     There are no enemies.
+            /// </summary>
+            NoEnemies,
+
+            /// <summary>
+            ///     The calculation was calculated
+            /// </summary>
+            Calculated
+        }
+
         #region Constants
 
         /// <summary>
@@ -43,7 +53,7 @@ namespace TeamFightCalculator
         /// <summary>
         ///     The calculated slots
         /// </summary>
-        private static readonly SpellSlot[] CalculatedSlots = { SpellSlot.Q, SpellSlot.W, SpellSlot.E, SpellSlot.R };
+        private static readonly SpellSlot[] CalculatedSlots = {SpellSlot.Q, SpellSlot.W, SpellSlot.E, SpellSlot.R};
 
         /// <summary>
         ///     The ally damage
@@ -106,10 +116,7 @@ namespace TeamFightCalculator
         /// </value>
         private static int CalculateRange
         {
-            get
-            {
-                return Menu.Item("CalculateRange").GetValue<Slider>().Value;
-            }
+            get { return Menu.Item("CalculateRange").GetValue<Slider>().Value; }
         }
 
         /// <summary>
@@ -139,7 +146,7 @@ namespace TeamFightCalculator
             get
             {
                 return
-                    new Rectangle((int)Position.X, (int)Position.Y - Height / 2, Width, Height).Contains(
+                    new Rectangle((int) Position.X, (int) Position.Y - Height/2, Width, Height).Contains(
                         Utils.GetCursorPos());
             }
         }
@@ -160,17 +167,14 @@ namespace TeamFightCalculator
         /// </value>
         private static Vector2 RealBoxPosition
         {
-            get
-            {
-                return Position - new Vector2(0, Height / 2f);
-            }
+            get { return Position - new Vector2(0, Height/2f); }
         }
 
         /// <summary>
-        /// Gets or sets the sprite.
+        ///     Gets or sets the sprite.
         /// </summary>
         /// <value>
-        /// The sprite.
+        ///     The sprite.
         /// </value>
         private static Sprite Sprite { get; set; }
 
@@ -191,51 +195,70 @@ namespace TeamFightCalculator
         private static Font TextFont { get; set; }
 
         /// <summary>
-        /// Gets or sets the last result.
+        ///     Gets or sets the last result.
         /// </summary>
         /// <value>
-        /// The last result.
+        ///     The last result.
         /// </value>
         private static Bitmap LastResult { get; set; }
 
         /// <summary>
-        /// Gets or sets the indicator sprite.
+        ///     Gets or sets the indicator sprite.
         /// </summary>
         /// <value>
-        /// The indicator sprite.
+        ///     The indicator sprite.
         /// </value>
         private static Render.Sprite IndicatorSprite { get; set; }
 
         /// <summary>
-        /// Gets the indicator position.
+        ///     Gets the indicator position.
         /// </summary>
         /// <value>
-        /// The indicator position.
+        ///     The indicator position.
         /// </value>
-        private static Vector2 IndicatorPosition { get { return RealBoxPosition + new Vector2(Width - 100, 0); } }
+        private static Vector2 IndicatorPosition
+        {
+            get { return RealBoxPosition + new Vector2(Width - 100, 0); }
+        }
 
         /// <summary>
-        /// Gets or sets the text height spacing.
+        ///     Gets or sets the text height spacing.
         /// </summary>
         /// <value>
-        /// The text height spacing.
+        ///     The text height spacing.
         /// </value>
         private static int TextHeightSpacing { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [draw calculation].
+        ///     Gets or sets a value indicating whether [draw calculation].
         /// </summary>
         /// <value>
-        ///   <c>true</c> if [draw calculation]; otherwise, <c>false</c>.
+        ///     <c>true</c> if [draw calculation]; otherwise, <c>false</c>.
         /// </value>
         private static bool DrawCalculation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the green bitmap.
+        /// </summary>
+        /// <value>
+        /// The green bitmap.
+        /// </value>
+        private static Bitmap GreenBitmap { get; set; }
+
+        /// <summary>
+        /// Gets or sets the red bitmap.
+        /// </summary>
+        /// <value>
+        /// The red bitmap.
+        /// </value>
+        private static Bitmap RedBitmap { get; set; }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Creates the menu.
+        ///     Creates the menu.
         /// </summary>
         private static void CreateMenu()
         {
@@ -262,36 +285,36 @@ namespace TeamFightCalculator
             // Draw box
             BoxLine.Width = Height;
             BoxLine.Begin();
-            BoxLine.Draw(new[] { Position, Position + new Vector2(Width, 0) }, new ColorBGRA(0, 0, 0, 256 / 2));
+            BoxLine.Draw(new[] {Position, Position + new Vector2(Width, 0)}, new ColorBGRA(0, 0, 0, 256/2));
             BoxLine.End();
 
             // Draw text
             TextFont.DrawText(
                 null,
-                string.Format("Ally Damage: {0}", (int)allyDamage),
-                (int)RealBoxPosition.X + 10,
-                (int)RealBoxPosition.Y + 5,
+                string.Format("Ally Damage: {0}", (int) allyDamage),
+                (int) RealBoxPosition.X + 10,
+                (int) RealBoxPosition.Y + 5,
                 new ColorBGRA(0, 255, 0, 255));
 
             TextFont.DrawText(
                 null,
-                string.Format("Ally Health: {0}", (int)allyHealth),
-                (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + TextHeightSpacing,
+                string.Format("Ally Health: {0}", (int) allyHealth),
+                (int) (RealBoxPosition.X + 10),
+                (int) RealBoxPosition.Y + 5 + TextHeightSpacing,
                 new ColorBGRA(0, 255, 0, 255));
 
             TextFont.DrawText(
                 null,
-                string.Format("Enemy Damage: {0}", (int)enemyDamage),
-                (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + TextHeightSpacing * 2,
+                string.Format("Enemy Damage: {0}", (int) enemyDamage),
+                (int) (RealBoxPosition.X + 10),
+                (int) RealBoxPosition.Y + 5 + TextHeightSpacing*2,
                 new ColorBGRA(255, 0, 0, 255));
 
             TextFont.DrawText(
                 null,
-                string.Format("Enemy Health: {0}", (int)enemyHealth),
-                (int)(RealBoxPosition.X + 10),
-                (int)RealBoxPosition.Y + 5 + TextHeightSpacing * 3,
+                string.Format("Enemy Health: {0}", (int) enemyHealth),
+                (int) (RealBoxPosition.X + 10),
+                (int) RealBoxPosition.Y + 5 + TextHeightSpacing*3,
                 new ColorBGRA(255, 0, 0, 255));
         }
 
@@ -334,23 +357,28 @@ namespace TeamFightCalculator
             BoxLine = new Line(Drawing.Direct3DDevice);
             TextFont = new Font(
                 Drawing.Direct3DDevice,
-                new FontDescription()
-                    {
-                        FaceName = "Tahoma", Height = 14, OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Antialiased
-                    });
+                new FontDescription
+                {
+                    FaceName = "Tahoma",
+                    Height = 14,
+                    OutputPrecision = FontPrecision.Default,
+                    Quality = FontQuality.Antialiased
+                });
             Sprite = new Sprite(Drawing.Direct3DDevice);
-           
+
             IndicatorSprite = new Render.Sprite(Resources.Green_Check, IndicatorPosition);
             IndicatorSprite.PositionUpdate += () => IndicatorPosition;
             IndicatorSprite.VisibleCondition =
                 sender => /*Status != CalcStatus.NoEnemies &&*/ DrawCalculation;
             IndicatorSprite.Scale = new Vector2(0.5f);
             IndicatorSprite.Add();
-           
+
             Position = new Vector2(100, 200);
 
             TextHeightSpacing = TextFont.MeasureText(Sprite, "A").Height + 10;
+
+            GreenBitmap = Resources.Green_Check;
+            RedBitmap = Resources.Red_X;
 
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnPreReset += Drawing_OnPreReset;
@@ -360,11 +388,11 @@ namespace TeamFightCalculator
         }
 
         /// <summary>
-        /// Fired when the game receives an event.
+        ///     Fired when the game receives an event.
         /// </summary>
-        /// <param name="args">The <see cref="WndEventArgs"/> instance containing the event data.</param>
+        /// <param name="args">The <see cref="WndEventArgs" /> instance containing the event data.</param>
         private static void Game_OnWndProc(WndEventArgs args)
-        {      
+        {
             if (BeingDragged)
             {
                 var newPos = Utils.GetCursorPos();
@@ -372,16 +400,16 @@ namespace TeamFightCalculator
                 lastMousePos = newPos;
             }
 
-            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONDOWN && MouseOverBox)
+            if (args.Msg == (uint) WindowsMessages.WM_LBUTTONDOWN && MouseOverBox)
             {
                 BeingDragged = true;
                 lastMousePos = Utils.GetCursorPos();
             }
 
-            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONUP && BeingDragged)
+            if (args.Msg == (uint) WindowsMessages.WM_LBUTTONUP && BeingDragged)
             {
                 BeingDragged = false;
-               // TODO save position
+                // TODO save position
             }
         }
 
@@ -389,7 +417,7 @@ namespace TeamFightCalculator
         ///     Fired when the game is updated.
         /// </summary>
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
-        [PermissionSet(SecurityAction.Assert, Unrestricted =  true)]
+        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private static void GameOnOnUpdate(EventArgs args)
         {
             var enemies = Enemies.Where(x => x.IsValidTarget(CalculateRange)).ToArray();
@@ -415,11 +443,13 @@ namespace TeamFightCalculator
             allyHealth = allies.Sum(x => x.Health);
             enemyHealth = enemies.Sum(x => x.Health);
 
-            var result = allyHealth - enemyDamage > enemyHealth - allyDamage ? Resources.Green_Check : Resources.Red_X;
+            var result = allyHealth - enemyDamage > enemyHealth - allyDamage ? GreenBitmap : RedBitmap;
 
             if (LastResult != result)
             {
+                IndicatorSprite.Remove();
                 IndicatorSprite.UpdateTextureBitmap(result);
+                IndicatorSprite.Add();
             }
 
             LastResult = result;
@@ -437,21 +467,5 @@ namespace TeamFightCalculator
         }
 
         #endregion
-
-        /// <summary>
-        ///     The status of the calculation
-        /// </summary>
-        public enum CalcStatus
-        {
-            /// <summary>
-            ///     There are no enemies.
-            /// </summary>
-            NoEnemies,
-
-            /// <summary>
-            ///     The calculation was calculated
-            /// </summary>
-            Calculated
-        }
     }
 }
