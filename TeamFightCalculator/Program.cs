@@ -8,6 +8,7 @@ using LeagueSharp.Common;
 using SharpDX;
 using SharpDX.Direct3D9;
 using TeamFightCalculator.Properties;
+using Color = System.Drawing.Color;
 using Font = SharpDX.Direct3D9.Font;
 using Rectangle = SharpDX.Rectangle;
 
@@ -305,6 +306,12 @@ namespace TeamFightCalculator
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
         private static void Drawing_OnDraw(EventArgs args)
         {
+            if (Menu.Item("DrawRange").IsActive())
+            {
+                Render.Circle.DrawCircle(ObjectManager.Player.Position,
+                    Menu.Item("CalculateRange").GetValue<Slider>().Value, Color.CadetBlue);
+            }
+
             if (Status == CalcStatus.NoEnemies || DrawCalculation)
             {
                 return;
@@ -445,7 +452,6 @@ namespace TeamFightCalculator
         ///     Fired when the game is updated.
         /// </summary>
         /// <param name="args">The <see cref="EventArgs" /> instance containing the event data.</param>
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private static void GameOnOnUpdate(EventArgs args)
         {
             var enemies = Enemies.Where(x => x.IsValidTarget(CalculateRange)).ToArray();
