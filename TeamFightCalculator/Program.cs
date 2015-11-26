@@ -312,7 +312,7 @@ namespace TeamFightCalculator
                     Menu.Item("CalculateRange").GetValue<Slider>().Value, Color.CadetBlue);
             }
 
-            if (Status == CalcStatus.NoEnemies || DrawCalculation)
+            if (Status == CalcStatus.NoEnemies || !DrawCalculation)
             {
                 return;
             }
@@ -413,6 +413,9 @@ namespace TeamFightCalculator
             GreenBitmap = Resources.Green_Check;
             RedBitmap = Resources.Red_X;
 
+            Game.PrintChat(
+                "<font color=\"#7CFC00\"><b>Team Fight Calculator:</b></font> by ChewyMoon loaded. The UI only shows when there is enemies! (for now)");
+
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnPreReset += Drawing_OnPreReset;
             Drawing.OnPostReset += DrawingOnOnPostReset;
@@ -490,7 +493,7 @@ namespace TeamFightCalculator
             if (LastResult != result)
             {
                 IndicatorSprite.Remove();
-                IndicatorSprite.UpdateTextureBitmap(result);
+                IndicatorSprite.UpdateTextureBitmap((Bitmap) result.Clone());
                 IndicatorSprite.Add();
             }
 
