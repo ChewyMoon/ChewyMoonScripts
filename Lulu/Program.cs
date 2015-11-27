@@ -289,7 +289,7 @@ namespace Lulu_and_Pix
             var useE = Menu.Item("UseECombo").GetValue<Slider>();
             var useEq = Menu.Item("UseEQCombo").IsActive();
 
-            if (target == null && useEq && Player.Mana > Q.Instance.ManaCost + E.Instance.ManaCost)
+            if (target == null && useEq && Player.Mana > Q.Instance.ManaCost + E.Instance.ManaCost && Q.IsReady() && E.IsReady())
             {
                 var targetEq = TargetSelector.GetTarget(Q.Range + E.Range, TargetSelector.DamageType.Magical);
 
