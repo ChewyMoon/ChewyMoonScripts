@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Permissions;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -460,9 +459,6 @@ namespace TeamFightCalculator
             var enemies = Enemies.Where(x => x.IsValidTarget(CalculateRange)).ToArray();
             var allies = Allies.Where(x => x.IsValidTarget(CalculateRange, false)).ToArray();
 
-            allyDamage = 0;
-            enemyDamage = 0;
-
             if (!enemies.Any())
             {
                 Status = CalcStatus.NoEnemies;
@@ -471,19 +467,8 @@ namespace TeamFightCalculator
 
             var spellReadyCheck = Menu.Item("SpellReadyCheck").IsActive();
 
-            enemyDamage =
-                enemies.Sum(
-                    x =>
-                        x.GetComboDamage(new Obj_AI_Base(),
-                            spellReadyCheck ? CalculatedSlots.Where(y => x.GetSpell(y).IsReady()) : CalculatedSlots) +
-                        x.GetAutoAttackDamage(new Obj_AI_Base()));
-
-            allyDamage =
-                allies.Sum(
-                    x =>
-                        x.GetComboDamage(new Obj_AI_Base(),
-                            spellReadyCheck ? CalculatedSlots.Where(y => x.GetSpell(y).IsReady()) : CalculatedSlots) +
-                        x.GetAutoAttackDamage(new Obj_AI_Base()));
+            allyDamage = CalculateDamage(allies.ToList(), spellReadyCheck);
+            enemyDamage = CalculateDamage(enemies.ToList(), spellReadyCheck);
 
             allyHealth = allies.Sum(x => x.Health);
             enemyHealth = enemies.Sum(x => x.Health);
@@ -500,6 +485,32 @@ namespace TeamFightCalculator
             LastResult = result;
 
             Status = CalcStatus.Calculated;
+        }
+
+        /// <summary>
+        ///     Calculates the damage.
+        /// </summary>
+        /// <param name="heroes">The heroes.</param>
+        /// <param name="spellReadyCheck">if set to <c>true</c> checks if the spell is ready.</param>
+        /// <returns></returns>
+        private static double CalculateDamage(List<Obj_AI_Hero> heroes,
+            bool spellReadyCheck)
+        {
+            var dmg = 0d;
+
+            for (var i = 0; i < 5; i++)
+            {
+                var i1 = i;
+
+                dmg += heroes.Sum(
+                    x =>
+                        x.GetComboDamage(new Obj_AI_Base(),
+                            (spellReadyCheck ? CalculatedSlots.Where(y => x.GetSpell(y).IsReady()) : CalculatedSlots)
+                                .Select(z => new Tuple<SpellSlot, int>(z, i1))) +
+                        x.GetAutoAttackDamage(new Obj_AI_Base(), true));
+            }
+
+            return dmg;
         }
 
         /// <summary>
