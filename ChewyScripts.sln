@@ -43,6 +43,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orianna Grande", "Orianna\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sophies Soraka", "Sophies Soraka\Sophies Soraka.csproj", "{42546CA3-0101-4845-BBAE-75F64289AED2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamFightCalculator", "TeamFightCalculator\TeamFightCalculator.csproj", "{0E8495EC-6B11-49FA-8717-C18B60EAB6F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LolliPoppy", "LolliPoppy\LolliPoppy.csproj", "{0CD76C41-BACA-4E97-AEF3-12EFD7B43F08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +133,14 @@ Global
 		{42546CA3-0101-4845-BBAE-75F64289AED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42546CA3-0101-4845-BBAE-75F64289AED2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E8495EC-6B11-49FA-8717-C18B60EAB6F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E8495EC-6B11-49FA-8717-C18B60EAB6F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E8495EC-6B11-49FA-8717-C18B60EAB6F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E8495EC-6B11-49FA-8717-C18B60EAB6F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CD76C41-BACA-4E97-AEF3-12EFD7B43F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CD76C41-BACA-4E97-AEF3-12EFD7B43F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD76C41-BACA-4E97-AEF3-12EFD7B43F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CD76C41-BACA-4E97-AEF3-12EFD7B43F08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
