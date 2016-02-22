@@ -591,11 +591,36 @@
                     }
                 };
 
+            DamageIndicator.DamageToUnit = DamageToUnit;
+            DamageIndicator.Enabled = true;
+
             Game.OnUpdate += Game_OnUpdate;
             AttackableUnit.OnDamage += AttackableUnit_OnDamage;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnEndScene += Drawing_OnEndScene;
+        }
+
+        private static float DamageToUnit(Obj_AI_Hero hero)
+        {
+            var damage = 0f;
+
+            if (Q.IsReady())
+            {
+                damage += Q.GetDamage(hero) + hero.GetPassiveDamage();
+            }
+
+            if (E.IsReady())
+            {
+                damage += E.GetDamage(hero) + hero.GetPassiveDamage();
+            }
+
+            if (R.IsReady())
+            {
+                damage += R.GetDamage(hero) + hero.GetPassiveDamage() * 2;
+            }
+
+            return damage;
         }
 
         /// <summary>
@@ -656,6 +681,14 @@
         public static bool HasPassive(this Obj_AI_Hero target)
         {
             return target.HasBuff("luxilluminatingfraulein");
+        }
+
+        public static float GetPassiveDamage(this Obj_AI_Hero target)
+        {
+            return (float)ObjectManager.Player.CalcDamage(
+                target,
+                Damage.DamageType.Magical, 
+                10 + (8 * ObjectManager.Player.Level) + (0.2 * ObjectManager.Player.TotalMagicalDamage));
         }
 
         #endregion
