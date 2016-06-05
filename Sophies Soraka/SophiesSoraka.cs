@@ -25,6 +25,7 @@ namespace Sophies_Soraka
     using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
     using System.Linq;
+    using System.Reflection;
 
     using LeagueSharp;
     using LeagueSharp.Common;
@@ -114,17 +115,17 @@ namespace Sophies_Soraka
                 return;
             }
 
-            Q = new Spell(SpellSlot.Q, 950);
+            Q = new Spell(SpellSlot.Q, 750);
             W = new Spell(SpellSlot.W, 550);
-            E = new Spell(SpellSlot.E, 925);
+            E = new Spell(SpellSlot.E, 900);
             R = new Spell(SpellSlot.R);
             
-            Q.SetSkillshot(0.26f, 125, 1600, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(0.5f, 70f, 1750, false, SkillshotType.SkillshotCircle);
+            Q.SetSkillshot(0.3f, 125, 1750, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(0.4f, 70f, 1750, false, SkillshotType.SkillshotCircle);
 
             CreateMenu();
 
-            PrintChat("loaded.");
+            PrintChat("loaded!");
 
             Interrupter2.OnInterruptableTarget += InterrupterOnOnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloserOnOnEnemyGapcloser;
@@ -139,7 +140,7 @@ namespace Sophies_Soraka
         /// <param name="msg">The message.</param>
         public static void PrintChat(string msg)
         {
-            Game.PrintChat("<font color='#3492EB'>Sophie's Soraka:</font> <font color='#FFFFFF'>" + msg + "</font>");
+            Game.PrintChat("<font color='#F778A1'><b>Sophie's Soraka:</b></font> <font color='#FFFFFF'>" + msg + "</font>");
         }
 
         #endregion
@@ -179,18 +180,13 @@ namespace Sophies_Soraka
                 return;
             }
 
-            if (
-                ObjectManager.Get<Obj_AI_Hero>()
-                    .Where(x => x.IsAlly && x.IsValidTarget(float.MaxValue, false))
-                    .Select(x => (int)x.Health / x.MaxHealth * 100)
-                    .Select(
-                        friendHealth =>
-                        new { friendHealth, health = Menu.Item("autoRPercent").GetValue<Slider>().Value })
-                    .Where(x => x.friendHealth <= x.health)
-                    .Select(x => x.friendHealth)
-                    .Any())
+            if (ObjectManager.Get<Obj_AI_Hero>()
+                    .Any(
+                        x =>
+                        x.IsAlly && x.IsValidTarget(float.MaxValue, false)
+                        && x.HealthPercent < Menu.Item("autoRPercent").GetValue<Slider>().Value))
             {
-                R.Cast(Packets);
+                R.Cast();
             }
         }
 
@@ -288,19 +284,22 @@ namespace Sophies_Soraka
             Menu.AddSubMenu(orbwalkingMenu);
 
             // Combo
-            var comboMenu = new Menu("Combo", "ssCombo");
+            var comboMenu = new Menu("Combo Settings", "ssCombo");
             comboMenu.AddItem(new MenuItem("useQ", "Use Q").SetValue(true));
             comboMenu.AddItem(new MenuItem("useE", "Use E").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             // Harass
-            var harassMenu = new Menu("Harass", "ssHarass");
+            var harassMenu = new Menu("Harass Settings", "ssHarass");
             harassMenu.AddItem(new MenuItem("useQHarass", "Use Q").SetValue(true));
             harassMenu.AddItem(new MenuItem("useEHarass", "Use E").SetValue(true));
+            harassMenu.AddItem(new MenuItem("HarassMana", "Harass Mana Percent").SetValue(new Slider(50)));
+            harassMenu.AddItem(
+                new MenuItem("HarassToggle", "Harass! (toggle)").SetValue(new KeyBind(84, KeyBindType.Toggle)));
             Menu.AddSubMenu(harassMenu);
 
             // Healing
-            var healingMenu = new Menu("Healing", "ssHeal");
+            var healingMenu = new Menu("Healing Settings", "ssHeal");
 
             var wMenu = new Menu("W Settings", "WSettings");
             wMenu.AddItem(new MenuItem("autoW", "Use W").SetValue(true));
@@ -322,14 +321,14 @@ namespace Sophies_Soraka
             Menu.AddSubMenu(healingMenu);
 
             // Drawing
-            var drawingMenu = new Menu("Drawing", "ssDrawing");
+            var drawingMenu = new Menu("Drawing Settings", "ssDrawing");
             drawingMenu.AddItem(new MenuItem("drawQ", "Draw Q").SetValue(true));
             drawingMenu.AddItem(new MenuItem("drawW", "Draw W").SetValue(true));
             drawingMenu.AddItem(new MenuItem("drawE", "Draw E").SetValue(true));
             Menu.AddSubMenu(drawingMenu);
 
             // Misc
-            var miscMenu = new Menu("Misc", "ssMisc");
+            var miscMenu = new Menu("Miscellaneous Settings", "ssMisc");
             miscMenu.AddItem(new MenuItem("useQGapcloser", "Q on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("useEGapcloser", "E on Gapcloser").SetValue(true));
             miscMenu.AddItem(new MenuItem("eInterrupt", "Use E to Interrupt").SetValue(true));
@@ -337,6 +336,11 @@ namespace Sophies_Soraka
             miscMenu.AddItem(new MenuItem("AttackChampions", "Attack Champions").SetValue(true));
             Menu.AddSubMenu(miscMenu);
 
+            Menu.AddItem(new MenuItem("Seperator", string.Empty));
+            Menu.AddItem(
+                new MenuItem("Version", "Sophie's Soraka " + Assembly.GetExecutingAssembly().GetName().Version)
+                    .SetFontStyle(FontStyle.Bold, new SharpDX.Color(247, 120, 161, 255)));
+            Menu.AddItem(new MenuItem("Author", "Made by ChewyMoon!").SetFontStyle(FontStyle.Bold));
             Menu.AddToMainMenu();
         }
 
@@ -386,6 +390,12 @@ namespace Sophies_Soraka
                 case Orbwalking.OrbwalkingMode.Combo:
                     Combo();
                     break;
+            }
+
+            if (Menu.Item("HarassToggle").IsActive()
+                && ObjectManager.Player.Mana > Menu.Item("HarassMana").GetValue<Slider>().Value)
+            {
+                Harass();
             }
 
             if (Menu.Item("autoW").GetValue<bool>())
@@ -464,23 +474,12 @@ namespace Sophies_Soraka
         /// <param name="args">The <see cref="Orbwalking.BeforeAttackEventArgs" /> instance containing the event data.</param>
         private static void OrbwalkingOnBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
-            if (args.Target.IsValid<Obj_AI_Minion>()
-                && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed
-                    || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LastHit)
-                && !Menu.Item("AttackMinions").GetValue<bool>())
+            if (args.Target.IsValid<Obj_AI_Minion>() && !Menu.Item("AttackMinions").IsActive() && ObjectManager.Player.CountAlliesInRange(1200) > 0)
             {
-                if (ObjectManager.Player.CountAlliesInRange(1200) != 0)
-                {
-                    args.Process = false;
-                }
+                args.Process = false;
             }
 
-            if (!args.Target.IsValid<Obj_AI_Hero>() || Menu.Item("AttackChampions").GetValue<bool>())
-            {
-                return;
-            }
-
-            if (ObjectManager.Player.CountAlliesInRange(1200) != 0)
+            if (args.Target.IsValid<Obj_AI_Hero>() &&  !Menu.Item("AttackChampions").GetValue<bool>() && ObjectManager.Player.CountAlliesInRange(1000) > 0)
             {
                 args.Process = false;
             }
