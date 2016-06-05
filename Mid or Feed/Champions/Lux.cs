@@ -93,6 +93,7 @@ namespace Mid_or_Feed.Champions
             AntiGapcloser.OnEnemyGapcloser += this.AntiGapcloserOnOnEnemyGapcloser;
 
             PrintChat("Lux loaded!");
+            PrintChat("Please use MoonLux instead of Mid or Feed for Lux.");
         }
 
         #endregion
