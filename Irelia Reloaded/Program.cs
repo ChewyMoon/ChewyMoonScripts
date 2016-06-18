@@ -182,10 +182,6 @@
 
             // to get Q tickcount in least amount of lines.
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Obj_AI_Base.OnBuffAdd += (sender, eventArgs) =>
-                {
-                    if (sender.IsMe) Console.WriteLine(eventArgs.Buff.Name);
-                };
         }
 
         #endregion
