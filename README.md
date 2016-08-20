@@ -1,12 +1,6 @@
 ChewyMoon's Scripts
 ===================
 
-Ayy lmao, I'm Chewymoon, above are the source code to my scripts. pls no snorflakerino
+This repository is a collection of my scripts for LeagueSharp. Most (if not all) of these scripts are more than likely extremely old and probably have been rewritten in my new repository. You can find my new repository [here](https://github.com/ChewyMoon/LeagueSharp-Reloaded).
 
-### Donations
-
-I glady accept donations. Leave a message and if you want I'll make a script of your choice(Will be free and public). Be sure to include your usename
-Donate to chewymoonleaguesharp@gmail.com
-
-### Other
-If you have a script recommendaton/idea/bug fix, please shoot me PM on the forum.
+![](https://img.joduska.me/?q=https://s.put.re/fX2HaV9.png)
