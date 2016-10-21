@@ -19,6 +19,7 @@
 //   The sophies soraka.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Sophies_Soraka
 {
     using System;
@@ -26,15 +27,14 @@ namespace Sophies_Soraka
     using System.Drawing;
     using System.Linq;
     using System.Reflection;
-
     using LeagueSharp;
     using LeagueSharp.Common;
 
     /// <summary>
     ///     The sophies soraka.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
-        Justification = "Reviewed. Suppression is OK here.")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+         Justification = "Reviewed. Suppression is OK here.")]
     internal class SophiesSoraka
     {
         #region Public Properties
@@ -66,13 +66,7 @@ namespace Sophies_Soraka
         /// <summary>
         ///     Gets a value indicating whether to use packets.
         /// </summary>
-        public static bool Packets
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public static bool Packets => false;
 
         /// <summary>
         ///     Gets or sets the q.
@@ -119,7 +113,7 @@ namespace Sophies_Soraka
             W = new Spell(SpellSlot.W, 550);
             E = new Spell(SpellSlot.E, 900);
             R = new Spell(SpellSlot.R);
-            
+
             Q.SetSkillshot(0.3f, 125, 1750, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(0.4f, 70f, 1750, false, SkillshotType.SkillshotCircle);
 
@@ -140,7 +134,8 @@ namespace Sophies_Soraka
         /// <param name="msg">The message.</param>
         public static void PrintChat(string msg)
         {
-            Game.PrintChat("<font color='#F778A1'><b>Sophie's Soraka:</b></font> <font color='#FFFFFF'>" + msg + "</font>");
+            Game.PrintChat("<font color='#F778A1'><b>Sophie's Soraka:</b></font> <font color='#FFFFFF'>" + msg +
+                           "</font>");
         }
 
         #endregion
@@ -153,8 +148,8 @@ namespace Sophies_Soraka
         /// <param name="gapcloser">
         ///     The gapcloser.
         /// </param>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
-            Justification = "Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+             Justification = "Reviewed. Suppression is OK here.")]
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             var unit = gapcloser.Sender;
@@ -181,8 +176,8 @@ namespace Sophies_Soraka
             }
 
             if (ObjectManager.Get<Obj_AI_Hero>()
-                    .Any(
-                        x =>
+                .Any(
+                    x =>
                         x.IsAlly && x.IsValidTarget(float.MaxValue, false)
                         && x.HealthPercent < Menu.Item("autoRPercent").GetValue<Slider>().Value))
             {
@@ -214,7 +209,13 @@ namespace Sophies_Soraka
 
             var healthPercent = Menu.Item("autoWPercent").GetValue<Slider>().Value;
 
-            var canidates = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(W.Range, false) && x.IsAlly && x.HealthPercent < healthPercent);
+            var canidates =
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(
+                        x =>
+                            x.IsValidTarget(W.Range, false) && x.IsAlly && x.HealthPercent < healthPercent &&
+                            !x.IsRecalling());
+
             var wMode = Menu.Item("HealingPriority").GetValue<StringList>().SelectedValue;
 
             switch (wMode)
@@ -309,7 +310,7 @@ namespace Sophies_Soraka
             wMenu.AddItem(
                 new MenuItem("HealingPriority", "Healing Priority").SetValue(
                     new StringList(
-                        new[] { "Most AD", "Most AP", "Least Health", "Least Health (Prioritize Squishies)" }, 
+                        new[] {"Most AD", "Most AP", "Least Health", "Least Health (Prioritize Squishies)"},
                         3)));
             healingMenu.AddSubMenu(wMenu);
 
@@ -444,7 +445,7 @@ namespace Sophies_Soraka
         ///     The args.
         /// </param>
         private static void InterrupterOnOnPossibleToInterrupt(
-            Obj_AI_Hero sender, 
+            Obj_AI_Hero sender,
             Interrupter2.InterruptableTargetEventArgs args)
         {
             var unit = sender;
@@ -474,12 +475,14 @@ namespace Sophies_Soraka
         /// <param name="args">The <see cref="Orbwalking.BeforeAttackEventArgs" /> instance containing the event data.</param>
         private static void OrbwalkingOnBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
-            if (args.Target.IsValid<Obj_AI_Minion>() && !Menu.Item("AttackMinions").IsActive() && ObjectManager.Player.CountAlliesInRange(1200) > 0)
+            if (args.Target.IsValid<Obj_AI_Minion>() && !Menu.Item("AttackMinions").IsActive() &&
+                ObjectManager.Player.CountAlliesInRange(1200) > 0)
             {
                 args.Process = false;
             }
 
-            if (args.Target.IsValid<Obj_AI_Hero>() &&  !Menu.Item("AttackChampions").GetValue<bool>() && ObjectManager.Player.CountAlliesInRange(1000) > 0)
+            if (args.Target.IsValid<Obj_AI_Hero>() && !Menu.Item("AttackChampions").GetValue<bool>() &&
+                ObjectManager.Player.CountAlliesInRange(1000) > 0)
             {
                 args.Process = false;
             }
