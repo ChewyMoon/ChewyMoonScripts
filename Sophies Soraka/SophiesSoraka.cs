@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SophiesSoraka.cs" company="ChewyMoon">
 //   Copyright (C) 2015 ChewyMoon
 //   
@@ -156,12 +156,12 @@ namespace Sophies_Soraka
 
             if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady())
             {
-                Q.Cast(unit, Packets);
+                Q.Cast(unit);
             }
 
             if (Menu.Item("useEGapcloser").GetValue<bool>() && unit.IsValidTarget(E.Range) && E.IsReady())
             {
-                E.Cast(unit, Packets);
+                E.Cast(unit);
             }
         }
 
@@ -258,12 +258,12 @@ namespace Sophies_Soraka
 
             if (useQ && Q.IsReady())
             {
-                Q.Cast(target, Packets);
+                Q.Cast(target);
             }
 
             if (useE && E.IsReady())
             {
-                E.Cast(target, Packets);
+                E.Cast(target);
             }
         }
 
@@ -426,12 +426,12 @@ namespace Sophies_Soraka
 
             if (useQ && Q.IsReady())
             {
-                Q.Cast(target, Packets);
+                Q.Cast(target);
             }
 
             if (useE && E.IsReady())
             {
-                E.Cast(target, Packets);
+                E.Cast(target);
             }
         }
 
@@ -466,7 +466,7 @@ namespace Sophies_Soraka
                 return;
             }
 
-            E.Cast(unit, Packets);
+            E.Cast(unit);
         }
 
         /// <summary>
