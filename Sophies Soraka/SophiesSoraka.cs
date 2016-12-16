@@ -34,7 +34,7 @@ namespace Sophies_Soraka
     ///     The sophies soraka.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
-         Justification = "Reviewed. Suppression is OK here.")]
+        Justification = "Reviewed. Suppression is OK here.")]
     internal class SophiesSoraka
     {
         #region Public Properties
@@ -114,7 +114,7 @@ namespace Sophies_Soraka
             E = new Spell(SpellSlot.E, 925);
             R = new Spell(SpellSlot.R);
 
-            Q.SetSkillshot(0.283f,210,1100,false,SkillshotType.SkillshotCircle);
+            Q.SetSkillshot(0.283f, 210, 1100, false, SkillshotType.SkillshotCircle);
 
             E.SetSkillshot(0.4f, 70f, 1750, false, SkillshotType.SkillshotCircle);
 
@@ -150,14 +150,15 @@ namespace Sophies_Soraka
         ///     The gapcloser.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
-             Justification = "Reviewed. Suppression is OK here.")]
+            Justification = "Reviewed. Suppression is OK here.")]
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             var unit = gapcloser.Sender;
+            var prediction = GetQPrediction(unit);
 
-            if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady())
+            if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady() && prediction.Hitchance >= HitChance.High)
             {
-                Q.Cast(unit);
+                Q.Cast(prediction.CastPosition);
             }
 
             if (Menu.Item("useEGapcloser").GetValue<bool>() && unit.IsValidTarget(E.Range) && E.IsReady())
@@ -256,21 +257,25 @@ namespace Sophies_Soraka
             {
                 return;
             }
-
-            if (useQ && Q.IsReady())
+            var prediction = GetQPrediction(target);
+            if (useQ && Q.IsReady() && prediction.Hitchance >= HitChance.High)
             {
-      // credits to princerchu007 for this
-                float divider = target.Position.Distance(ObjectManager.Player.Position) / Q.Range;
-                Q.Delay = 0.2f + 0.8f * divider;
-               var prediction = Q.GetPrediction(target,true);
-                if(prediction.Hitchance >= HitChance.High)
-                    Q.Cast(prediction.CastPosition);
+                Q.Cast(prediction.CastPosition);
             }
 
             if (useE && E.IsReady())
             {
                 E.Cast(target);
             }
+        }
+
+
+        public static PredictionOutput GetQPrediction(Obj_AI_Base target)
+        {
+            float divider = target.Position.Distance(ObjectManager.Player.Position) / Q.Range;
+            Q.Delay = 0.2f + 0.8f * divider;
+            var prediction = Q.GetPrediction(target, true);
+            return prediction;
         }
 
         /// <summary>
@@ -316,7 +321,13 @@ namespace Sophies_Soraka
             wMenu.AddItem(
                 new MenuItem("HealingPriority", "Healing Priority").SetValue(
                     new StringList(
-                        new[] {"Most AD", "Most AP", "Least Health", "Least Health (Prioritize Squishies)"},
+                        new[]
+                        {
+                            "Most AD",
+                            "Most AP",
+                            "Least Health",
+                            "Least Health (Prioritize Squishies)"
+                        },
                         3)));
             healingMenu.AddSubMenu(wMenu);
 
