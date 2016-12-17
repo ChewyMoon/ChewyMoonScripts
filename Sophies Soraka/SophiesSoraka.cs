@@ -34,7 +34,7 @@ namespace Sophies_Soraka
     ///     The sophies soraka.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
-         Justification = "Reviewed. Suppression is OK here.")]
+        Justification = "Reviewed. Suppression is OK here.")]
     internal class SophiesSoraka
     {
         #region Public Properties
@@ -114,7 +114,8 @@ namespace Sophies_Soraka
             E = new Spell(SpellSlot.E, 925);
             R = new Spell(SpellSlot.R);
 
-            Q.SetSkillshot(0.5f, 300, 1750, false, SkillshotType.SkillshotCircle);
+            Q.SetSkillshot(0.283f, 210, 1100, false, SkillshotType.SkillshotCircle);
+
             E.SetSkillshot(0.4f, 70f, 1750, false, SkillshotType.SkillshotCircle);
 
             CreateMenu();
@@ -149,19 +150,20 @@ namespace Sophies_Soraka
         ///     The gapcloser.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
-             Justification = "Reviewed. Suppression is OK here.")]
+            Justification = "Reviewed. Suppression is OK here.")]
         private static void AntiGapcloserOnOnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             var unit = gapcloser.Sender;
+            var prediction = GetQPrediction(unit);
 
-            if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady())
+            if (Menu.Item("useQGapcloser").GetValue<bool>() && unit.IsValidTarget(Q.Range) && Q.IsReady() && prediction.Hitchance >= HitChance.High)
             {
-                Q.Cast(unit, Packets);
+                Q.Cast(prediction.CastPosition);
             }
 
             if (Menu.Item("useEGapcloser").GetValue<bool>() && unit.IsValidTarget(E.Range) && E.IsReady())
             {
-                E.Cast(unit, Packets);
+                E.Cast(unit);
             }
         }
 
@@ -236,7 +238,7 @@ namespace Sophies_Soraka
 
             var target = dontWInFountain ? canidates.FirstOrDefault(x => !x.InFountain()) : canidates.FirstOrDefault();
 
-            if (target != null)
+            if (target != null && !ObjectManager.Player.IsRecalling())
             {
                 W.CastOnUnit(target);
             }
@@ -255,16 +257,25 @@ namespace Sophies_Soraka
             {
                 return;
             }
-
-            if (useQ && Q.IsReady())
+            var prediction = GetQPrediction(target);
+            if (useQ && Q.IsReady() && prediction.Hitchance >= HitChance.High)
             {
-                Q.Cast(target, Packets);
+                Q.Cast(prediction.CastPosition);
             }
 
             if (useE && E.IsReady())
             {
-                E.Cast(target, Packets);
+                E.Cast(target);
             }
+        }
+
+
+        public static PredictionOutput GetQPrediction(Obj_AI_Base target)
+        {
+            float divider = target.Position.Distance(ObjectManager.Player.Position) / Q.Range;
+            Q.Delay = 0.2f + 0.8f * divider;
+            var prediction = Q.GetPrediction(target, true);
+            return prediction;
         }
 
         /// <summary>
@@ -310,7 +321,13 @@ namespace Sophies_Soraka
             wMenu.AddItem(
                 new MenuItem("HealingPriority", "Healing Priority").SetValue(
                     new StringList(
-                        new[] {"Most AD", "Most AP", "Least Health", "Least Health (Prioritize Squishies)"},
+                        new[]
+                        {
+                            "Most AD",
+                            "Most AP",
+                            "Least Health",
+                            "Least Health (Prioritize Squishies)"
+                        },
                         3)));
             healingMenu.AddSubMenu(wMenu);
 
@@ -426,12 +443,12 @@ namespace Sophies_Soraka
 
             if (useQ && Q.IsReady())
             {
-                Q.Cast(target, Packets);
+                Q.Cast(target);
             }
 
             if (useE && E.IsReady())
             {
-                E.Cast(target, Packets);
+                E.Cast(target);
             }
         }
 
@@ -466,7 +483,7 @@ namespace Sophies_Soraka
                 return;
             }
 
-            E.Cast(unit, Packets);
+            E.Cast(unit);
         }
 
         /// <summary>
