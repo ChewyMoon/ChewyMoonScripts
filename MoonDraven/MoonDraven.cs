@@ -234,42 +234,22 @@ namespace MoonDraven
                         this.W.Cast();
                     }
 
-                    if (this.Menu.Item("DontCatchUnderTurret").IsActive())
+                    if (this.Menu.Item("DontCatchUnderTurret").IsActive()) // debug this?
                     {
                         // If we're under the turret as well as the axe, catch the axe
                         if (this.Player.UnderTurret(true) && bestReticle.Object.Position.UnderTurret(true))
                         {
-                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                            {
-                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                            }
-                            else
-                            {
-                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                            }
+                            this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
+                            
                         }
                         else if (!bestReticle.Position.UnderTurret(true))
                         {
-                            if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                            {
-                                this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                            }
-                            else
-                            {
-                                this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                            }
+                            this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
                         }
                     }
                     else
                     {
-                        if (this.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None)
-                        {
-                            this.Player.IssueOrder(GameObjectOrder.MoveTo, bestReticle.Position);
-                        }
-                        else
-                        {
-                            this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
-                        }
+                        this.Orbwalker.SetOrbwalkingPoint(bestReticle.Position);
                     }
                 }
                 else
