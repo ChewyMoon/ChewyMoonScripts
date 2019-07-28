@@ -4,13 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using LeagueSharp;
-    using LeagueSharp.Common;
+    using EnsoulSharp;
+    using EnsoulSharp.Common;
 
     using SharpDX;
 
     using Color = System.Drawing.Color;
-    using ItemData = LeagueSharp.Common.Data.ItemData;
+    using ItemData = EnsoulSharp.Common.Data.ItemData;
 
     /// <summary>
     ///     A plugin for Yasuo.
